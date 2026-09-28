@@ -1,0 +1,2516 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hindu College Schedule</title>
+<link rel="icon" href="Ai Assitant/school-logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<script type="module">
+  const firebaseConfig = {
+    apiKey:            "AIzaSyBh5PYhost31YBNWmr4G3sVCPxcaD2yNEY",
+    authDomain:        "whc-full-data.firebaseapp.com",
+    projectId:         "whc-full-data",
+    storageBucket:     "whc-full-data.firebasestorage.app",
+    messagingSenderId: "600680727409",
+    appId:             "1:600680727409:web:ffedf16d56098282bfecd0",
+    measurementId:     "G-YSQCY0FHP0"
+  };
+  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, getDocs, doc, getDoc,
+           setDoc, updateDoc, deleteDoc, query, where,
+           orderBy, serverTimestamp }
+                               from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+  window.FB = { db, collection, getDocs, doc, getDoc,
+    setDoc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp };
+
+  // ── STAFF LOGIN (Firestore-only, created via Admin Teacher Management panel) ──
+  const STAFF_COL = "whc_staff";
+  window.AUTH = {
+    getSession(){ const s=sessionStorage.getItem("whc_session"); return s?JSON.parse(s):null; },
+    setSession(u){ sessionStorage.setItem("whc_session",JSON.stringify(u)); },
+    clearSession(){ sessionStorage.removeItem("whc_session"); },
+    async login(username, password){
+      username = (username||"").trim();
+      password = (password||"").trim();
+      if(!username || !password) return null;
+      try{
+        const q = query(
+          collection(db, STAFF_COL),
+          where("username","==", username),
+          where("password","==", password)
+        );
+        const snap = await getDocs(q);
+        if(snap.empty) return null;
+        const docSnap = snap.docs[0];
+        const d = docSnap.data();
+        const isAdminRole = ["principal","deputy_principal","vice_principal"].includes(d.role);
+        const u = {
+          id: docSnap.id,
+          role: isAdminRole ? "principal" : (d.role || "teacher"),
+          rawRole: d.role || "teacher",
+          name: d.name || username,
+          email: d.username || username,
+          className: d.className || "",
+          subject: d.subject || "",
+          assignedClasses: d.className ? [d.className] : []
+        };
+        this.setSession(u);
+        return u;
+      } catch(e){
+        console.error("Login error:", e);
+        return null;
+      }
+    }
+  };
+
+  window.dispatchEvent(new Event("firebaseReady"));
+</script>
+
+<style>
+/* ================================================================
+   RESET & ROOT VARIABLES  (identical to index.html)
+   ================================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue-dark:   #0a1628;
+  --blue-mid:    #0d2147;
+  --blue-main:   #1a3a8f;
+  --blue-light:  #2563eb;
+  --blue-accent: #3b82f6;
+  --cyan:        #06b6d4;
+  --sky:         #38bdf8;
+  --white:       #ffffff;
+  --glass-bg:    rgba(255,255,255,0.07);
+  --glass-border:rgba(255,255,255,0.15);
+  --text-main:   #e2e8f0;
+  --text-muted:  #94a3b8;
+  --text-dark:   #1e293b;
+  --success:     #10b981;
+  --warning:     #f59e0b;
+  --danger:      #ef4444;
+  --late:        #f97316;
+  --card-radius: 18px;
+  --sidebar-w:   260px;
+  --transition:  all .3s cubic-bezier(.4,0,.2,1);
+}
+html{ overflow-x:hidden; width:100%; }
+body{ font-family:'Nunito',sans-serif; background:var(--blue-dark); color:var(--text-main); min-height:100vh; overflow-x:hidden; width:100%; }
+body::before{ content:''; position:fixed; inset:0; z-index:-1; background: radial-gradient(ellipse 80% 60% at 20% 10%,rgba(37,99,235,.35) 0%,transparent 60%), radial-gradient(ellipse 60% 50% at 80% 80%,rgba(6,182,212,.25) 0%,transparent 60%), linear-gradient(160deg,#0a1628 0%,#0d2147 50%,#0f172a 100%); }
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--blue-accent);border-radius:3px}
+
+/* UTILITY */
+.hidden{display:none!important} .flex{display:flex} .items-center{align-items:center}
+.gap-2{gap:.5rem} .gap-3{gap:.75rem} .gap-4{gap:1rem}
+.mt-2{margin-top:.5rem} .mt-4{margin-top:1rem} .mb-4{margin-bottom:1rem}
+.w-full{width:100%} .text-sm{font-size:.85rem} .text-xs{font-size:.75rem}
+.font-bold{font-weight:700} .text-center{text-align:center}
+
+/* GLASS */
+.glass{ background:var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-radius:var(--card-radius); }
+
+/* BUTTONS */
+.btn{ display:inline-flex; align-items:center; gap:.45rem; padding:.6rem 1.3rem; border:none; cursor:pointer; border-radius:10px; font-family:'Nunito',sans-serif; font-size:.9rem; font-weight:700; transition:var(--transition); white-space:nowrap; }
+.btn-primary{ background:linear-gradient(135deg,var(--blue-light),var(--blue-accent)); color:#fff; box-shadow:0 4px 20px rgba(37,99,235,.45); }
+.btn-primary:hover{ transform:translateY(-2px); box-shadow:0 8px 28px rgba(37,99,235,.6); }
+.btn-success{ background:linear-gradient(135deg,#059669,var(--success)); color:#fff; }
+.btn-success:hover{ transform:translateY(-2px); }
+.btn-danger{ background:linear-gradient(135deg,#dc2626,var(--danger)); color:#fff; }
+.btn-warning{ background:linear-gradient(135deg,#d97706,var(--warning)); color:#fff; }
+.btn-outline{ background:transparent; color:var(--text-main); border:1px solid var(--glass-border); }
+.btn-outline:hover{ background:var(--glass-bg); }
+.btn-sm{ padding:.4rem .9rem; font-size:.8rem; border-radius:8px; }
+.btn-icon{ padding:.5rem; border-radius:8px; aspect-ratio:1; justify-content:center; }
+
+/* INPUTS */
+.input-group{ display:flex; flex-direction:column; gap:.35rem; margin-bottom:1rem; }
+.input-group label{ font-size:.82rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em; }
+.form-control{ background:rgba(255,255,255,0.06); border:1px solid var(--glass-border); color:var(--text-main); border-radius:10px; padding:.65rem 1rem; font-family:'Nunito',sans-serif; font-size:.9rem; transition:var(--transition); width:100%; }
+.form-control:focus{ outline:none; border-color:var(--blue-accent); background:rgba(255,255,255,0.1); box-shadow:0 0 0 3px rgba(59,130,246,.25); }
+.form-control option{ background:var(--blue-mid); }
+
+/* BADGES */
+.badge{ display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .65rem; border-radius:999px; font-size:.72rem; font-weight:700; }
+.badge-present{ background:rgba(16,185,129,.2); color:var(--success); border:1px solid rgba(16,185,129,.3); }
+.badge-absent{ background:rgba(239,68,68,.2); color:var(--danger); border:1px solid rgba(239,68,68,.3); }
+.badge-admin{ background:rgba(139,92,246,.2); color:#a78bfa; border:1px solid rgba(139,92,246,.3); }
+.badge-teacher{ background:rgba(37,99,235,.2); color:var(--sky); border:1px solid rgba(37,99,235,.3); }
+
+/* TOAST */
+#toast-container{ position:fixed; top:1.2rem; right:1.2rem; z-index:9999; display:flex; flex-direction:column; gap:.6rem; pointer-events:none; }
+.toast{ background:var(--blue-mid); border:1px solid var(--glass-border); color:var(--text-main); padding:.85rem 1.2rem; border-radius:12px; display:flex; align-items:center; gap:.7rem; font-size:.88rem; font-weight:600; backdrop-filter:blur(16px); box-shadow:0 8px 32px rgba(0,0,0,.4); animation:slideIn .35s ease; pointer-events:auto; min-width:260px; }
+.toast.success{border-left:4px solid var(--success)} .toast.error{border-left:4px solid var(--danger)}
+.toast.info{border-left:4px solid var(--blue-accent)} .toast.warning{border-left:4px solid var(--warning)}
+@keyframes slideIn{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(60px)}}
+
+/* LOADER */
+#loader{ position:fixed; inset:0; z-index:9998; background:var(--blue-dark); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.5rem; }
+.loader-ring{ width:64px; height:64px; border:5px solid rgba(255,255,255,.1); border-top-color:var(--blue-accent); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin{to{transform:rotate(360deg)}}
+#loader p{color:var(--text-muted);font-size:.95rem}
+
+/* LOGIN */
+#page-login{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:1.5rem; }
+.login-card{ width:100%; max-width:420px; padding:2.5rem 2rem; animation:fadeUp .6s ease; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.login-logo{ text-align:center; margin-bottom:2rem; }
+.login-logo img{ width:80px; height:80px; object-fit:contain; border-radius:50%; border:3px solid var(--glass-border); background:rgba(255,255,255,.05); padding:6px; animation:pulse 3s ease-in-out infinite; }
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.5)}50%{box-shadow:0 0 0 16px rgba(37,99,235,0)}}
+.login-logo h1{ font-family:'Poppins',sans-serif; font-size:1.15rem; font-weight:800; background:linear-gradient(135deg,#fff,var(--sky)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-top:.75rem; line-height:1.3; }
+.login-logo p{color:var(--text-muted);font-size:.8rem;margin-top:.25rem}
+.login-btn{width:100%;padding:.8rem;font-size:1rem;margin-top:.5rem;border-radius:12px}
+
+/* APP SHELL */
+#app-shell{display:flex;min-height:100vh;width:100%;max-width:100vw;overflow-x:hidden;}
+
+/* SIDEBAR */
+#sidebar{ width:var(--sidebar-w); height:100vh; background:rgba(10,22,40,.85); border-right:1px solid var(--glass-border); backdrop-filter:blur(20px); display:flex; flex-direction:column; position:fixed; left:0; top:0; z-index:100; transition:var(--transition); overflow-x:hidden; }
+#sidebar.collapsed{width:70px}
+.sidebar-header{ padding:1.25rem 1rem; display:flex; align-items:center; gap:.75rem; border-bottom:1px solid var(--glass-border); }
+.sidebar-logo{ width:40px; height:40px; object-fit:contain; border-radius:10px; background:rgba(255,255,255,.05); flex-shrink:0; }
+.sidebar-title{flex:1;overflow:hidden}
+.sidebar-title h2{font-size:.82rem;font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-title p{font-size:.68rem;color:var(--text-muted);margin-top:2px}
+#collapse-btn{ background:none; border:none; color:var(--text-muted); cursor:pointer; padding:.3rem; border-radius:6px; transition:var(--transition); }
+#collapse-btn:hover{color:var(--white);background:var(--glass-bg)}
+.sidebar-user{ padding:1rem; border-bottom:1px solid var(--glass-border); display:flex; align-items:center; gap:.75rem; overflow:hidden; }
+.user-avatar{ width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--blue-light),var(--cyan)); display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:700; flex-shrink:0; color:#fff; }
+.user-info{flex:1;overflow:hidden}
+.user-info h4{font-size:.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-info p{font-size:.72rem;color:var(--text-muted)}
+.sidebar-nav{flex:1;padding:.75rem .6rem;overflow-y:auto}
+.nav-section-title{ font-size:.65rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--text-muted); padding:.5rem .6rem .3rem; }
+.nav-item{ display:flex; align-items:center; gap:.8rem; padding:.7rem .9rem; border-radius:12px; cursor:pointer; transition:var(--transition); margin-bottom:.2rem; color:var(--text-muted); font-size:.88rem; font-weight:600; white-space:nowrap; overflow:hidden; position:relative; }
+.nav-item:hover{background:var(--glass-bg);color:var(--white)}
+.nav-item.active{ background:linear-gradient(135deg,rgba(37,99,235,.35),rgba(6,182,212,.15)); color:var(--white); border:1px solid rgba(37,99,235,.3); }
+.nav-item i{width:18px;text-align:center;flex-shrink:0}
+.nav-item span{transition:var(--transition)}
+#sidebar.collapsed .nav-item span,
+#sidebar.collapsed .nav-section-title,
+#sidebar.collapsed .user-info,
+#sidebar.collapsed .sidebar-title{opacity:0;width:0;overflow:hidden}
+.sidebar-footer{padding:.75rem .6rem;border-top:1px solid var(--glass-border)}
+
+/* MAIN */
+#main-content{ flex:1; margin-left:var(--sidebar-w); width:calc(100% - var(--sidebar-w)); max-width:calc(100% - var(--sidebar-w)); min-width:0; transition:var(--transition); min-height:100vh; display:flex; flex-direction:column; overflow-x:hidden; }
+#sidebar.collapsed ~ #main-content{margin-left:70px; width:calc(100% - 70px); max-width:calc(100% - 70px);}
+
+/* TOPBAR */
+#topbar{ position:sticky; top:0; z-index:90; background:rgba(10,22,40,.8); border-bottom:1px solid var(--glass-border); backdrop-filter:blur(16px); padding:.9rem 1.5rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+#page-title{font-size:1.1rem;font-weight:800;flex:1}
+.topbar-actions{display:flex;align-items:center;gap:.75rem}
+.topbar-date{font-size:.78rem;color:var(--text-muted);white-space:nowrap}
+
+/* PAGE CONTENT */
+.page-content{flex:1;padding:1.5rem;animation:fadeIn .4s ease;min-width:0;max-width:100%;overflow-x:hidden;box-sizing:border-box;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.section-header{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem; margin-bottom:1.25rem; }
+.section-header h2{font-size:1.25rem;font-weight:800}
+
+/* CARDS */
+.card{padding:1.25rem;border-radius:var(--card-radius)}
+
+/* STATS */
+.stats-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+.stat-card{ padding:1.25rem 1rem; border-radius:var(--card-radius); display:flex; flex-direction:column; gap:.5rem; position:relative; overflow:hidden; animation:statIn .5s ease both; }
+@keyframes statIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.stat-card .stat-icon{ width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+.stat-card .stat-value{font-size:2rem;font-weight:800;line-height:1}
+.stat-card .stat-label{font-size:.78rem;color:var(--text-muted);font-weight:600}
+.stat-blue .stat-icon{background:rgba(37,99,235,.2);color:var(--blue-accent)}
+.stat-green .stat-icon{background:rgba(16,185,129,.2);color:var(--success)}
+.stat-orange .stat-icon{background:rgba(249,115,22,.2);color:var(--late)}
+.stat-cyan .stat-icon{background:rgba(6,182,212,.2);color:var(--cyan)}
+
+/* TABLE */
+.table-wrapper{overflow-x:auto;border-radius:var(--card-radius)}
+table{width:auto;border-collapse:collapse;font-size:.87rem}
+thead th{ background:rgba(37,99,235,.15); color:var(--text-muted); font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; padding:.85rem 1rem; text-align:left; white-space:nowrap; }
+tbody td{padding:.7rem 1rem;border-bottom:1px solid var(--glass-border);vertical-align:middle;text-align:center}
+tbody td:nth-child(1),tbody td:nth-child(2),tbody td:nth-child(3){text-align:left}
+thead th:nth-child(3),tbody td:nth-child(3){padding-right:.3rem}
+thead th:nth-child(4),tbody td:nth-child(4){padding-left:.3rem}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+.td-actions{display:flex;gap:.4rem}
+
+/* MODAL */
+.modal-overlay{ position:fixed; inset:0; z-index:200; background:rgba(5,12,26,.75); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn .25s ease; }
+.modal{ width:100%; max-width:540px; max-height:90vh; overflow-y:auto; padding:2rem; animation:scaleIn .3s cubic-bezier(.34,1.56,.64,1); }
+@keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.modal-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+.modal-header h3{font-size:1.1rem;font-weight:800}
+.modal-close{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;padding:.25rem}
+.modal-close:hover{color:var(--danger)}
+.modal-footer{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.25rem}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text-muted)}
+.empty-state i{font-size:3rem;opacity:.3;margin-bottom:1rem;display:block}
+.empty-state p{font-size:.9rem}
+
+/* TABS (class selector) */
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.tab-btn{ padding:.5rem 1.1rem; border-radius:10px; border:1px solid var(--glass-border); background:transparent; color:var(--text-muted); cursor:pointer; font-size:.85rem; font-weight:700; transition:var(--transition); font-family:'Nunito',sans-serif; }
+.tab-btn.active,.tab-btn:hover{background:var(--glass-bg);color:var(--white);border-color:var(--blue-accent)}
+.tab-btn.sum-tab{border-color:rgba(245,158,11,.3);color:var(--warning)}
+.tab-btn.sum-tab.active,.tab-btn.sum-tab:hover{background:rgba(245,158,11,.15);color:var(--warning);border-color:var(--warning)}
+
+/* MARKS-SPECIFIC STYLES */
+.score-val{ display:inline-block; min-width:36px; padding:2px 8px; border-radius:8px; font-weight:700; cursor:pointer; transition:.15s; font-size:.82rem; }
+.score-val.empty{color:var(--text-muted);font-weight:500}
+.score-a{color:#10b981;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3)}
+.score-b{color:var(--sky);background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25)}
+.score-c{color:var(--warning);background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25)}
+.score-s{color:var(--late);background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3)}
+.score-f{color:var(--danger);background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25)}
+.score-absent{color:#c084fc;background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3)}
+.score-val.score-a:hover,.score-val.score-b:hover,.score-val.score-c:hover,.score-val.score-s:hover,.score-val.score-f:hover,.score-val.score-absent:hover,.score-val.empty:hover{filter:brightness(1.3)}
+
+td.editable input{ width:58px; padding:4px 6px; border:2px solid var(--blue-accent); border-radius:8px; text-align:center; font-size:.85rem; font-family:'Nunito',sans-serif; font-weight:700; color:var(--text-main); outline:none; background:rgba(37,99,235,.2); }
+
+.sep-label-row td{ background:rgba(37,99,235,.08); padding:5px 1rem; text-align:left; font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); border-bottom:1px solid var(--glass-border); }
+
+.rank-num{ font-size:.85rem; font-weight:800; }
+.rank-1{color:#f59e0b} .rank-2{color:var(--text-muted)} .rank-3{color:#c2783b}
+.total-cell{font-weight:800;color:var(--text-main)}
+.avg-cell{font-weight:700;color:var(--sky)}
+
+/* SAVE BAR */
+.save-bar{ position:fixed; bottom:1.5rem; right:1.5rem; z-index:200; display:flex; gap:.75rem; align-items:center; }
+.save-status{ background:var(--blue-mid); border:1px solid var(--glass-border); padding:.7rem 1.1rem; border-radius:12px; font-size:.85rem; font-weight:700; box-shadow:0 4px 20px rgba(0,0,0,.3); display:none; backdrop-filter:blur(12px); }
+.save-status.show{display:block}
+.save-status.ok{color:var(--success);border-color:rgba(16,185,129,.4)}
+.save-status.err{color:var(--danger);border-color:rgba(239,68,68,.4)}
+
+/* SUMMARY/PRINT */
+.sum-table-wrap{overflow-x:auto}
+.sum-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.sum-table th{ background:rgba(37,99,235,.2); color:var(--text-muted); padding:.65rem .75rem; text-align:center; font-weight:800; white-space:nowrap; font-size:.7rem; text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid var(--glass-border); }
+.sum-table th:nth-child(1),.sum-table th:nth-child(2),.sum-table th:nth-child(3){text-align:left}
+.sum-table td{padding:.6rem .75rem;border-bottom:1px solid var(--glass-border);text-align:center;vertical-align:middle}
+.sum-table td:nth-child(1),.sum-table td:nth-child(2),.sum-table td:nth-child(3){text-align:left}
+.sum-table tr:last-child td{border-bottom:none}
+.sum-table .sep-sum-row td{height:6px;background:rgba(37,99,235,.06);padding:0;border-color:var(--glass-border)}
+.sum-table .stotal{font-weight:800}
+.sum-table .savg{font-weight:700;color:var(--sky)}
+.sum-table .srank{font-weight:900}
+.srank.r1{color:#f59e0b} .srank.r2{color:var(--text-muted)} .srank.r3{color:#c2783b}
+
+/* Signature */
+.sig-section{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:2rem; padding:1.75rem 1.5rem 1.5rem; border-top:1px solid var(--glass-border); }
+#print-content.sig-align-left .sig-section{ display:flex; justify-content:flex-start; gap:3rem; }
+#print-content.sig-align-center .sig-section{ display:flex; justify-content:center; gap:3rem; }
+#print-content.sig-align-right .sig-section{ display:flex; justify-content:flex-end; gap:3rem; }
+#print-content.sig-align-left .sig-section > div,
+#print-content.sig-align-center .sig-section > div,
+#print-content.sig-align-right .sig-section > div{ flex:0 0 220px; }
+.sig-label{font-size:.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
+.sig-space{border-bottom:1.5px solid rgba(255,255,255,.25);height:50px;width:100%;margin:.5rem 0 .2rem}
+.sig-caption{font-size:.7rem;color:var(--text-muted);text-align:center;font-weight:600}
+.sig-date-row{display:flex;align-items:center;gap:.5rem;margin-top:.75rem}
+.sig-date-label{font-size:.75rem;font-weight:800;color:var(--text-muted);white-space:nowrap}
+.sig-name-input,.sig-date-input{ border:none; border-bottom:1px solid rgba(255,255,255,.2); padding:3px 0; font-size:.82rem; font-family:'Nunito',sans-serif; font-weight:700; background:transparent; color:var(--text-main); outline:none; }
+.sig-name-input{width:100%}
+.sig-name-input::placeholder,.sig-date-input::placeholder{color:var(--text-muted);font-weight:400}
+.sig-date-input{flex:1;text-align:center}
+
+/* PRINT SHEET SIZING — kept OUTSIDE @media print (unconditional) on purpose.
+   #print-area is display:none by default (see rule below) so these rules have
+   zero effect during normal app use. Keeping them active whenever #print-area
+   is shown means the JS fit-to-page measurement (done just before window.print())
+   sees the EXACT same sizes that will end up on paper — no on-screen/print
+   mismatch, which was the root cause of content being clipped into a corner. */
+#print-area{display:none}
+#print-sheet{
+  /* Exact usable A4-landscape content box at the @page margins below:
+     297mm x 210mm page, 8mm top/bottom + 9mm left/right margins
+     => 279mm x 194mm usable => 1055px x 733px at 96 CSS px/in. */
+  width:1055px;
+  margin:0 auto;
+  background:#fff;
+  color:#1e293b;
+  font-size:11px;
+  box-sizing:border-box;
+}
+#print-area .glass{background:#fff!important;border:1px solid #e2e8f0!important}
+#print-area .summary-print-title{font-size:13px;color:#0f1f45;text-align:center;margin-bottom:.4rem;padding-bottom:.35rem;border-bottom:1px solid #cbd5e1;}
+#print-area .section-header{display:block!important;margin-bottom:.4rem!important}
+#print-area .stats-grid,#print-area canvas,#print-area [style*="chart"]{display:none!important}
+#print-area > #print-sheet > div[style*="border-bottom:3px double"]{padding:.4rem 0 .3rem!important;margin-bottom:.5rem!important;}
+#print-area > #print-sheet > div[style*="border-bottom:3px double"] img{width:38px!important;height:38px!important;}
+#print-area > #print-sheet > div[style*="border-bottom:3px double"] h1{font-size:14px!important}
+#print-area .glass.card{padding:.5rem .6rem!important;margin-bottom:.7rem!important;}
+#print-area .sum-table{font-size:10.5px!important}
+#print-area .sum-table th{background:#1a3a8f!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:.25rem .3rem!important;font-size:8.5px!important}
+#print-area .sum-table td{padding:.2rem .3rem!important;border-bottom:1px solid #94a3b8!important}
+#print-area .sum-table th:nth-child(3),#print-area .sum-table td:nth-child(3){padding-right:.05rem!important}
+#print-area .sum-table th:nth-child(4),#print-area .sum-table td:nth-child(4){padding-left:.05rem!important}
+#print-area .score-val{padding:1px 5px!important;min-width:0!important}
+#print-area .sum-table thead{display:table-header-group}
+#print-area .sum-table tbody tr{page-break-inside:avoid;break-inside:avoid}
+#print-area .sum-table tbody tr:last-child td{border-bottom:1px solid #94a3b8!important}
+#print-area .sig-space{border-color:#333!important;height:34px!important}
+#print-area .sig-section{page-break-inside:avoid;break-inside:avoid;padding:.9rem .5rem .5rem!important;gap:1.25rem!important;margin-top:1.1rem!important;border-top:1px solid #cbd5e1!important}
+#print-area .sig-label,#print-area .sig-caption,#print-area .sig-date-label{font-size:10.5px!important}
+#print-area .sig-name-input,#print-area .sig-date-input{font-size:11.5px!important}
+#print-area .score-a{color:#15803d!important;background:#dcfce7!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#print-area .score-b{color:#1d4ed8!important;background:#dbeafe!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#print-area .score-c{color:#d97706!important;background:#fef3c7!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#print-area .score-f{color:#dc2626!important;background:#fee2e2!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#print-area .score-absent{color:#7e22ce!important;background:#f3e8ff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#print-area .sep-sum-row td{background:#dde3ef!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+/* Step 1: compact table/signatures — used when content slightly overflows one page */
+#print-content.print-compact .sum-table{font-size:9.3px!important}
+#print-content.print-compact .sum-table th{font-size:7.6px!important;padding:.18rem .25rem!important}
+#print-content.print-compact .sum-table td{padding:.12rem .25rem!important;border-bottom:1px solid #94a3b8!important}
+#print-content.print-compact .glass.card{padding:.4rem .5rem!important;margin-bottom:.5rem!important}
+#print-content.print-compact .sig-section{padding:.6rem .5rem .35rem!important;gap:1rem!important;margin-top:.8rem!important;border-top:1px solid #cbd5e1!important}
+#print-content.print-compact .sig-space{height:26px!important}
+#print-content.print-compact .sig-label,#print-content.print-compact .sig-caption,#print-content.print-compact .sig-date-label{font-size:9.5px!important}
+#print-content.print-compact .sig-name-input,#print-content.print-compact .sig-date-input{font-size:10.3px!important}
+
+/* Step 2: extra-compact — used when step 1 still doesn't fit */
+#print-content.print-compact-2 .sum-table{font-size:8.3px!important}
+#print-content.print-compact-2 .sum-table th{font-size:7px!important;padding:.12rem .2rem!important}
+#print-content.print-compact-2 .sum-table td{padding:.08rem .2rem!important;border-bottom:1px solid #94a3b8!important}
+#print-content.print-compact-2 .glass.card{padding:.3rem .4rem!important;margin-bottom:.4rem!important}
+#print-content.print-compact-2 .sig-section{padding:.45rem .4rem .25rem!important;gap:.85rem!important;margin-top:.6rem!important;border-top:1px solid #cbd5e1!important}
+#print-content.print-compact-2 .sig-space{height:20px!important}
+#print-content.print-compact-2 .sig-label,#print-content.print-compact-2 .sig-caption,#print-content.print-compact-2 .sig-date-label{font-size:8.8px!important}
+#print-content.print-compact-2 .sig-name-input,#print-content.print-compact-2 .sig-date-input{font-size:9.5px!important}
+
+/* Step 3: maximum compaction — last resort before allowing a natural 2nd page */
+#print-content.print-compact-3 .sum-table{font-size:7.5px!important}
+#print-content.print-compact-3 .sum-table th{font-size:6.3px!important;padding:.08rem .18rem!important}
+#print-content.print-compact-3 .sum-table td{padding:.05rem .18rem!important;border-bottom:1px solid #94a3b8!important}
+#print-content.print-compact-3 .glass.card{padding:.2rem .3rem!important;margin-bottom:.3rem!important}
+#print-content.print-compact-3 .sig-section{padding:.3rem .3rem .18rem!important;gap:.6rem!important;margin-top:.4rem!important;border-top:1px solid #cbd5e1!important}
+#print-content.print-compact-3 .sig-space{height:16px!important}
+#print-content.print-compact-3 .sig-label,#print-content.print-compact-3 .sig-caption,#print-content.print-compact-3 .sig-date-label{font-size:7.8px!important}
+#print-content.print-compact-3 .sig-name-input,#print-content.print-compact-3 .sig-date-input{font-size:8.3px!important}
+
+@media print {
+  @page{ size:A4 landscape; margin:8mm 9mm; }
+  html,body{width:100%;margin:0;padding:0;}
+  body{background:#fff!important;}
+  body::before{display:none!important}
+  #app-shell,#sidebar,#topbar,.save-bar,.no-print{display:none!important}
+  #print-area{display:block!important}
+  #print-sheet{margin:0!important}
+}
+
+/* LIGHT MODE */
+body.light{--glass-bg:rgba(255,255,255,0.65);--glass-border:rgba(0,0,0,.1);--text-main:#1e293b;--text-muted:#64748b;color:var(--text-main)}
+body.light::before{background:linear-gradient(160deg,#dbeafe 0%,#eff6ff 50%,#f0f9ff 100%)}
+body.light #sidebar{background:rgba(248,250,252,.92)}
+body.light #topbar{background:rgba(248,250,252,.85)}
+body.light .form-control{background:rgba(0,0,0,.04);color:var(--text-dark);border-color:rgba(0,0,0,.12)}
+body.light td.editable input{background:#dbeafe;color:#1e293b}
+body.light .sig-space{border-color:#666}
+body.light .sig-name-input,body.light .sig-date-input{color:#1e293b;border-color:#999}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  :root{--sidebar-w:0px}
+  #sidebar{transform:translateX(-260px);width:260px}
+  #sidebar.mobile-open{transform:translateX(0)}
+  #main-content{margin-left:0;width:100%;max-width:100%;}
+  #mobile-menu-btn{display:flex!important}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .sig-section{grid-template-columns:1fr}
+  #topbar{padding:.75rem 1rem;gap:.5rem}
+  #page-title{font-size:.95rem}
+  .page-content{padding:1rem}
+  .login-card{padding:1.75rem 1.25rem}
+}
+@media(max-width:480px){
+  .topbar-date{display:none}
+  .page-content{padding:.75rem}
+}
+#mobile-menu-btn{display:none;background:none;border:none;color:var(--text-main);font-size:1.2rem;cursor:pointer}
+#mobile-overlay{display:none;position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.5)}
+#mobile-overlay.show{display:block}
+</style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-ring"></div>
+  <p>Loading BD/Hindu College Welimada — Marks...</p>
+</div>
+
+<!-- LOGIN -->
+<div id="page-login" class="hidden">
+  <div class="login-card glass">
+    <div class="login-logo">
+      <img src="whc.png" alt="School Logo" onclick="secretClick()" style="cursor:pointer;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🏫</text></svg>'"/>
+      <h1 onclick="secretClick()" style="cursor:pointer;">BD/Hindu College<br>Welimada</h1>
+      <p>Marks Schedule System</p>
+    </div>
+    <div class="input-group">
+      <label><i class="fas fa-user"></i> Username</label>
+      <input type="text" id="login-user" class="form-control" placeholder="principal@whc.lk" autocomplete="username"/>
+    </div>
+    <div class="input-group">
+      <label><i class="fas fa-lock"></i> Password</label>
+      <div style="position:relative;">
+        <input type="password" id="login-pass" class="form-control" placeholder="••••••••" autocomplete="current-password" style="padding-right:2.8rem;"/>
+        <button onclick="MARKS.togglePwd()" style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.9rem;" id="pwd-eye"><i class="fas fa-eye"></i></button>
+      </div>
+    </div>
+    <div id="login-error" style="display:none;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.65rem 1rem;font-size:.83rem;color:#f87171;margin-bottom:.75rem;">
+      <i class="fas fa-exclamation-circle"></i> Invalid username or password.
+    </div>
+    <button class="btn btn-primary login-btn" onclick="MARKS.login()">
+      <i class="fas fa-sign-in-alt"></i> Sign In
+    </button>
+    <p class="text-center mt-4 text-sm" style="color:var(--text-muted);">
+      <i class="fas fa-link"></i> Also use the
+      <a href="attandance.html" style="color:var(--sky);font-weight:700;text-decoration:none;"><i class="fas fa-clipboard-check"></i> Attendance System</a>
+      with the same login.
+    </p>
+  </div>
+</div>
+
+<!-- YEAR / TERM SELECTION -->
+<div id="page-period" class="hidden">
+  <div class="login-card glass">
+    <div class="login-logo">
+      <img src="Ai Assitant/school-logo.png" alt="School Logo" onclick="secretClick()" style="cursor:pointer;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🏫</text></svg>'"/>
+      <h1 onclick="secretClick()" style="cursor:pointer;">BD/Hindu College<br>Welimada</h1>
+      <p>Select Year &amp; Term</p>
+    </div>
+    <div class="input-group">
+      <label><i class="fas fa-calendar"></i> Year</label>
+      <select id="period-year" class="form-control">
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+        <option value="2028">2028</option>
+        <option value="2029">2029</option>
+        <option value="2030">2030</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label><i class="fas fa-layer-group"></i> Term</label>
+      <select id="period-term" class="form-control">
+        <option value="1">1st Term</option>
+        <option value="2">2nd Term</option>
+        <option value="3">3rd Term</option>
+      </select>
+    </div>
+    <button class="btn btn-primary login-btn" onclick="MARKS.confirmPeriod()">
+      <i class="fas fa-arrow-right"></i> Continue
+    </button>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app-shell" class="hidden">
+  <div id="mobile-overlay" onclick="MARKS.closeMobile()"></div>
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <img src="whc.png" alt="Logo" class="sidebar-logo" onclick="secretClick()" style="cursor:pointer;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🏫</text></svg>'"/>
+      <div class="sidebar-title" onclick="secretClick()" style="cursor:pointer;">
+        <h2>BD/Hindu College</h2>
+        <p>Welimada</p>
+      </div>
+      <button id="collapse-btn" onclick="MARKS.toggleSidebar()"><i class="fas fa-bars"></i></button>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sb-avatar">P</div>
+      <div class="user-info">
+        <h4 id="sb-name">Principal</h4>
+        <p id="sb-role">Administrator</p>
+      </div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="nav-section-title">Marks Entry</div>
+      <div id="class-nav-items"></div>
+      <div class="nav-section-title" style="margin-top:.5rem;">Summary & Print</div>
+      <div id="summary-nav-items"></div>
+      <div class="nav-section-title" id="manage-nav-title" style="margin-top:.5rem;display:none;">Principal Tools</div>
+      <div class="nav-item" id="manage-classes-btn" style="display:none;" onclick="openManageClasses()">
+        <i class="fas fa-school" style="color:var(--sky);"></i><span>Manage Classes</span>
+      </div>
+      <div class="nav-item" id="school-summary-btn" style="display:none;" onclick="showSchoolSummary()">
+        <i class="fas fa-globe" style="color:var(--sky);"></i><span>School Summary</span>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <a href="https://hinducollegewellimada-code.github.io/register/" target="_blank" rel="noopener" class="nav-item" style="text-decoration:none;color:inherit;border:1px solid rgba(6,182,212,.3);background:rgba(6,182,212,.08);margin-bottom:4px;">
+        <i class="fas fa-clipboard-check" style="color:#67e8f9;"></i>
+        <span style="color:#67e8f9;font-weight:800;">Attendance</span>
+      </a>
+      <div class="nav-item" onclick="MARKS.logout()">
+        <i class="fas fa-sign-out-alt"></i><span>Sign Out</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div id="main-content">
+    <div id="topbar">
+      <button id="mobile-menu-btn" onclick="MARKS.openMobile()"><i class="fas fa-bars"></i></button>
+      <div id="page-title"><i class="fas fa-chart-bar" style="color:var(--blue-accent);margin-right:.5rem;"></i>Marks Schedule</div>
+      <div class="topbar-actions">
+        <div class="badge badge-admin" id="topbar-period" style="font-size:.75rem;"></div>
+        <div class="topbar-date" id="topbar-date"></div>
+        <a href="attandance.html" style="display:inline-flex;align-items:center;gap:6px;background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.35);color:#67e8f9;padding:.4rem .75rem;border-radius:8px;font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap;">
+          <i class="fas fa-clipboard-check"></i><span>Attendance</span>
+        </a>
+        <button onclick="MARKS.toggleTheme()" title="Toggle Theme" style="background:none;border:1px solid var(--glass-border);color:var(--text-muted);cursor:pointer;padding:.45rem .65rem;border-radius:8px;font-size:.85rem;" id="theme-btn"><i class="fas fa-moon"></i></button>
+        <button id="saveBtn" onclick="saveData()" style="display:none;" class="btn btn-success btn-sm"><i class="fas fa-save"></i> Save</button>
+      </div>
+    </div>
+    <div class="page-content" id="page-content">
+      <!-- content injected here -->
+    </div>
+  </div>
+</div>
+
+<!-- PRINT AREA (hidden, shown only during print) -->
+<div id="print-area">
+  <div id="print-sheet">
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px;text-align:center;padding:1rem 0 .75rem;border-bottom:3px double #1a3a8f;margin-bottom:1rem;">
+      <img src="whc.png" alt="School Logo" style="width:58px;height:58px;object-fit:contain;flex-shrink:0;" onerror="this.style.display='none'"/>
+      <div>
+        <h1 style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:900;color:#0f1f45;">BD/Hindu College Welimada</h1>
+        <p id="print-class-line" style="font-size:13px;font-weight:800;color:#1a3a8f;margin-top:2px;"></p>
+        <p id="print-date-line" style="font-size:12px;color:#64748b;margin-top:3px;"></p>
+      </div>
+    </div>
+    <div id="print-content"></div>
+  </div>
+</div>
+
+<!-- Save status -->
+<div class="save-bar">
+  <div class="save-status" id="saveStatus"></div>
+</div>
+
+<!-- Modal -->
+<div id="modal-container"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════════
+let currentUser = null;
+let currentGrade = null;
+let marksData = {};
+let hasUnsaved = false;
+let GRADES = {};
+let currentPeriod = null; // { year, term } — asked fresh on every login
+
+// ════════════════════════════════════════════════════════════════
+//  FIREBASE INIT
+// ════════════════════════════════════════════════════════════════
+window.addEventListener("firebaseReady", () => {
+  document.getElementById("loader").classList.add("hidden");
+  const session = window.AUTH.getSession();
+  if (session) {
+    currentUser = session;
+    document.getElementById("page-period").classList.remove("hidden");
+  } else {
+    document.getElementById("page-login").classList.remove("hidden");
+  }
+});
+setTimeout(() => {
+  if (!window.FB) {
+    document.getElementById("loader").classList.add("hidden");
+    document.getElementById("page-login").classList.remove("hidden");
+  }
+}, 3000);
+
+// ════════════════════════════════════════════════════════════════
+//  APP CONTROLLER
+// ════════════════════════════════════════════════════════════════
+const MARKS = {
+  sidebarCollapsed: false,
+  darkMode: localStorage.getItem("whc_theme") !== "light",
+
+  async login() {
+    const u = document.getElementById("login-user").value.trim();
+    const p = document.getElementById("login-pass").value;
+    const errEl = document.getElementById("login-error");
+    const btn = document.querySelector(".login-btn");
+    errEl.style.display = "none";
+    if (!u || !p) { errEl.style.display = "block"; return; }
+
+    const originalBtnHTML = btn ? btn.innerHTML : "";
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...'; }
+
+    const user = await window.AUTH.login(u, p);
+
+    if (btn) { btn.disabled = false; btn.innerHTML = originalBtnHTML; }
+
+    if (!user) { errEl.style.display = "block"; return; }
+    currentUser = user;
+    document.getElementById("page-login").classList.add("hidden");
+    document.getElementById("page-period").classList.remove("hidden");
+  },
+
+  confirmPeriod() {
+    const year = document.getElementById("period-year").value;
+    const term = document.getElementById("period-term").value;
+    currentPeriod = { year, term };
+    document.getElementById("page-period").classList.add("hidden");
+    showApp();
+    initMarks();
+    toast("Welcome back, " + currentUser.name + "! (" + year + " — " + MARKS.termLabel(term) + ")", "success");
+  },
+
+  termLabel(t) {
+    return t==="1" ? "1st Term" : t==="2" ? "2nd Term" : "3rd Term";
+  },
+
+  togglePwd() {
+    const i = document.getElementById("login-pass");
+    const e = document.getElementById("pwd-eye");
+    i.type = i.type === "password" ? "text" : "password";
+    e.innerHTML = i.type === "password" ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+  },
+
+  logout() {
+    if (hasUnsaved && !confirm("You have unsaved marks. Logout?")) return;
+    window.AUTH.clearSession();
+    currentUser = null; GRADES = {}; marksData = {}; currentPeriod = null;
+    document.getElementById("app-shell").classList.add("hidden");
+    document.getElementById("page-period").classList.add("hidden");
+    document.getElementById("page-login").classList.remove("hidden");
+    document.getElementById("login-pass").value = "";
+    toast("Signed out", "info");
+  },
+
+  toggleSidebar() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+    document.getElementById("sidebar").classList.toggle("collapsed", this.sidebarCollapsed);
+  },
+  openMobile() {
+    document.getElementById("sidebar").classList.add("mobile-open");
+    document.getElementById("mobile-overlay").classList.add("show");
+  },
+  closeMobile() {
+    document.getElementById("sidebar").classList.remove("mobile-open");
+    document.getElementById("mobile-overlay").classList.remove("show");
+  },
+
+  toggleTheme() {
+    this.darkMode = !this.darkMode;
+    document.body.classList.toggle("light", !this.darkMode);
+    localStorage.setItem("whc_theme", this.darkMode ? "dark" : "light");
+    document.getElementById("theme-btn").innerHTML = this.darkMode ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+  },
+
+  updateClock() {
+    const now = new Date();
+    const el = document.getElementById("topbar-date");
+    if (el) el.textContent = now.toLocaleDateString("en-GB", { weekday:"short", day:"2-digit", month:"short", year:"numeric" });
+  }
+};
+
+function showApp() {
+  document.getElementById("page-login").classList.add("hidden");
+  document.getElementById("app-shell").classList.remove("hidden");
+  const p = currentUser;
+  document.getElementById("sb-name").textContent = p.name || "User";
+  document.getElementById("sb-role").textContent = p.role === "principal" ? "Principal (Admin)" : "Teacher";
+  document.getElementById("sb-avatar").textContent = (p.name || "U")[0].toUpperCase();
+  if (!MARKS.darkMode) document.body.classList.add("light");
+  const periodEl = document.getElementById("topbar-period");
+  if (periodEl && currentPeriod) {
+    periodEl.innerHTML = `<i class="fas fa-calendar-alt"></i> ${currentPeriod.year} · ${MARKS.termLabel(currentPeriod.term)}`;
+  }
+  MARKS.updateClock();
+  setInterval(() => MARKS.updateClock(), 60000);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  INIT — load from Firestore
+// ════════════════════════════════════════════════════════════════
+let CLASS_MAP = {}; // raw Firestore "classes" docs, cid -> {name, subjects, ...}
+
+// ════════════════════════════════════════════════════════════════
+//  YEAR-BASED PROMOTION
+//  Each student has a home `classId` valid as of their `baseYear`
+//  (defaults to 2026 for existing records). For any later year we
+//  auto-promote them one grade per year — Grade 6 in 2026 becomes
+//  Grade 7 in 2027, etc. Past Grade 11 they graduate and no longer
+//  appear. A per-year override (`classOverride_<year>`) lets the
+//  principal move an individual student for one year only (e.g. a
+//  repeater) without disturbing the auto-promotion for everyone else.
+// ════════════════════════════════════════════════════════════════
+const BASE_YEAR = 2026;
+
+function parseGradeNum(name) {
+  const m = String(name || "").match(/grade\s*(\d+)/i);
+  return m ? parseInt(m[1], 10) : null;
+}
+function parseGradeSuffix(name) {
+  const m = String(name || "").match(/grade\s*\d+\s*(.*)$/i);
+  return m ? m[1].trim().toLowerCase() : "";
+}
+
+// Returns the classId a student effectively belongs to for the given
+// year, or null if they've graduated (promoted past Grade 11).
+function effectiveClassId(s, year) {
+  year = Number(year);
+  const override = s["classOverride_" + year];
+  if (override) return override;
+
+  const homeCid = s.classId;
+  const homeClass = CLASS_MAP[homeCid];
+  const baseGrade = homeClass ? parseGradeNum(homeClass.name) : null;
+  const baseYear = s.baseYear != null ? Number(s.baseYear) : BASE_YEAR;
+  if (baseGrade == null) return homeCid; // ungraded class (e.g. a special group) — never promoted
+
+  const targetGrade = baseGrade + (year - baseYear);
+  if (targetGrade > 11) return null;      // graduated — disappears from this and later years
+  if (targetGrade === baseGrade) return homeCid;
+  if (targetGrade < 1) return homeCid;    // guard against years before the student existed
+
+  const suffix = parseGradeSuffix(homeClass.name);
+  let match = Object.keys(CLASS_MAP).find(cid =>
+    parseGradeNum(CLASS_MAP[cid].name) === targetGrade && parseGradeSuffix(CLASS_MAP[cid].name) === suffix);
+  if (!match) match = Object.keys(CLASS_MAP).find(cid => parseGradeNum(CLASS_MAP[cid].name) === targetGrade);
+  return match || homeCid; // no class exists yet for that grade — keep them visible in their home class
+}
+
+// Natural ascending sort for grade names: numeric grade first, then trailing
+// letter/section (e.g. "Grade 05" < "Grade 06" < "Grade 06E" < "Grade 07A" < ... < "Grade 11").
+function gradeNameCompare(a, b) {
+  const parse = (s) => {
+    const m = String(s).match(/(\d+)\s*([A-Za-z]*)\s*$/);
+    return m ? { num: parseInt(m[1], 10), suffix: m[2].toUpperCase() } : { num: Infinity, suffix: String(s).toUpperCase() };
+  };
+  const pa = parse(a), pb = parse(b);
+  if (pa.num !== pb.num) return pa.num - pb.num;
+  if (pa.suffix !== pb.suffix) return pa.suffix.localeCompare(pb.suffix);
+  return String(a).localeCompare(String(b));
+}
+
+async function initMarks() {
+  document.getElementById("page-content").innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;padding:4rem;gap:1rem;color:var(--text-muted);">
+      <div class="loader-ring" style="width:32px;height:32px;border-width:3px;"></div>
+      <span>Loading students from Firestore…</span>
+    </div>`;
+  try {
+    const { db, collection, getDocs } = window.FB;
+    const [classSnap, studentSnap] = await Promise.all([
+      getDocs(collection(db, "classes")),
+      getDocs(collection(db, "students"))
+    ]);
+    const classMap = {};
+    classSnap.forEach(d => { classMap[d.id] = { ...d.data(), id: d.id }; });
+    CLASS_MAP = classMap;
+    const year = currentPeriod?.year || String(BASE_YEAR);
+    const studentsByClass = {};
+    studentSnap.forEach(d => {
+      const s = { id: d.id, ...d.data() };
+      const cid = effectiveClassId(s, year);
+      if (cid == null) return; // graduated — not shown for this year
+      if (!studentsByClass[cid]) studentsByClass[cid] = [];
+      studentsByClass[cid].push(s);
+    });
+    // Sort by this year's registerOrder (falls back to the legacy shared
+    // field, then name) — order is edited per year and never bleeds across.
+    const roKey = "registerOrder_" + year;
+    Object.keys(studentsByClass).forEach(cid => studentsByClass[cid].sort((a,b) => {
+      const aro = a[roKey] != null ? a[roKey] : a.registerOrder;
+      const bro = b[roKey] != null ? b[roKey] : b.registerOrder;
+      if (aro != null && bro != null) return aro - bro;
+      if (aro != null) return -1;
+      if (bro != null) return 1;
+      return (a.name||"").localeCompare(b.name||"");
+    }));
+
+    GRADES = {};
+    Object.keys(classMap).sort((a,b) => gradeNameCompare(classMap[a].name||a, classMap[b].name||b)).forEach(cid => {
+      if (!canAccess(cid) && !(studentsByClass[cid]?.length)) return;
+      GRADES[cid] = { name: classMap[cid].name || cid, id: cid, students: studentsByClass[cid] || [], subjects: loadSubjectsForClass(cid) };
+    });
+    await Promise.all(Object.keys(GRADES).map(cid => loadMarks(cid)));
+    buildSidebarNav();
+    const accessible = Object.keys(GRADES).filter(cid => canAccess(cid));
+    if (accessible.length > 0) showGrade(accessible[0]);
+    else {
+      document.getElementById("page-content").innerHTML = `<div class="empty-state"><i class="fas fa-lock"></i><p>No classes assigned to your account.</p></div>`;
+    }
+  } catch(e) {
+    document.getElementById("page-content").innerHTML = `
+      <div class="glass card" style="text-align:center;padding:3rem;margin-top:2rem;">
+        <i class="fas fa-database" style="font-size:2.5rem;color:var(--warning);opacity:.7;display:block;margin-bottom:1rem;"></i>
+        <p style="font-weight:800;font-size:1rem;margin-bottom:.5rem;">Firestore not connected</p>
+        <p style="color:var(--text-muted);font-size:.85rem;">Paste your Firebase config at the top of this file, then reload.</p>
+      </div>`;
+  }
+}
+
+// Subject names must line up between what's typed in Teacher Management and what's
+// configured for a class (via Edit Subjects). Compare loosely (trim + case-insensitive)
+// so things like "Maths " vs "maths" still match instead of silently locking editing.
+function subjectsMatch(a, b) {
+  return !!a && !!b && String(a).trim().toLowerCase() === String(b).trim().toLowerCase();
+}
+
+// Is this account assigned to this class as its class teacher?
+// A class teacher gets FULL rights (every subject) in that one class —
+// this is independent of any subject also set on their record.
+function isAssignedToClass(cid) {
+  if (!currentUser) return false;
+  const className = GRADES[cid]?.name || CLASS_MAP[cid]?.name || cid;
+  const ac = currentUser.assignedClasses || [];
+  return ac.includes(className) || ac.includes(cid);
+}
+function isClassTeacherOf(cid) {
+  return isAssignedToClass(cid);
+}
+
+function canAccess(cid) {
+  if (!currentUser) return false;
+  if (currentUser.role === "principal") return true;
+  if (isAssignedToClass(cid)) return true;   // their own class (full class teacher)
+  const hasSubject = !!(currentUser.subject && currentUser.subject.trim());
+  if (hasSubject) return true;               // subject teacher: can view every class to mark their subject
+  const hasClass = !!(currentUser.assignedClasses && currentUser.assignedClasses.length);
+  if (!hasClass && !hasSubject) return true; // no assignment at all (legacy/unrestricted account)
+  return false;
+}
+
+// Can this user edit the given subject's marks in this class?
+// Class assignment and subject assignment stack: a "Grade 11 + Maths" teacher gets
+// full edit rights in Grade 11 (every subject) AND can edit Maths in every other class too.
+function canEditSubject(cid, subject) {
+  if (!currentUser) return false;
+  if (currentUser.role === "principal") return true;
+  if (isClassTeacherOf(cid)) return true;    // full class teacher: every subject in their own class
+  const hasSubject = !!(currentUser.subject && currentUser.subject.trim());
+  if (hasSubject && subjectsMatch(currentUser.subject, subject)) return true; // their subject, in any class
+  const hasClass = !!(currentUser.assignedClasses && currentUser.assignedClasses.length);
+  if (!hasClass && !hasSubject) return true; // unrestricted account
+  return false;
+}
+
+// Does this user have edit rights to at least one subject in this class? (controls class-level actions)
+function hasAnyEditRights(cid) {
+  if (!currentUser) return false;
+  if (currentUser.role === "principal") return true;
+  if (isClassTeacherOf(cid)) return true;
+  const hasSubject = !!(currentUser.subject && currentUser.subject.trim());
+  if (!hasSubject) return false;
+  const subs = GRADES[cid]?.subjects || [];
+  return subs.some(s => subjectsMatch(s, currentUser.subject));
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SIDEBAR NAV
+// ════════════════════════════════════════════════════════════════
+function buildSidebarNav() {
+  const accessible = Object.keys(GRADES).filter(cid => canAccess(cid))
+    .sort((a,b) => gradeNameCompare(GRADES[a].name, GRADES[b].name));
+  const classNav   = document.getElementById("class-nav-items");
+  const sumNav     = document.getElementById("summary-nav-items");
+  classNav.innerHTML = ""; sumNav.innerHTML = "";
+
+  accessible.forEach(cid => {
+    const g = GRADES[cid];
+    const el = document.createElement("div");
+    el.className = "nav-item"; el.id = "nav-" + cid;
+    el.innerHTML = `<i class="fas fa-table"></i><span>${g.name}</span>`;
+    el.onclick = () => showGrade(cid);
+    classNav.appendChild(el);
+  });
+  accessible.forEach(cid => {
+    const g = GRADES[cid];
+    const el = document.createElement("div");
+    el.className = "nav-item"; el.id = "snav-" + cid;
+    el.innerHTML = `<i class="fas fa-chart-bar" style="color:var(--warning);"></i><span style="color:var(--warning);">${g.name}</span>`;
+    el.onclick = () => showSummary(cid);
+    sumNav.appendChild(el);
+  });
+
+  const isPrincipal = currentUser && currentUser.role === "principal";
+  document.getElementById("manage-nav-title").style.display = isPrincipal ? "" : "none";
+  document.getElementById("manage-classes-btn").style.display = isPrincipal ? "" : "none";
+  document.getElementById("school-summary-btn").style.display = isPrincipal ? "" : "none";
+}
+
+function setActiveNav(cid, isSummary) {
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  const el = document.getElementById(isSummary ? "snav-"+cid : "nav-"+cid);
+  if (el) el.classList.add("active");
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SUBJECTS
+// ════════════════════════════════════════════════════════════════
+const DEFAULT_SUBJECTS_9_11 = ["Religion","Tamil","English","Maths","Science","History","B1","B2","B3"];
+const DEFAULT_SUBJECTS_6_8  = ["Religion","Tamil","Maths","Science","English","History","Civics","Art/Dance","PTS","Sinhala","ICT","Health","Geography"];
+
+function defaultSubjects(cid) {
+  const name = (GRADES[cid]?.name || cid).toLowerCase();
+  if (name.includes("11")||name.includes("10")||name.includes("9")||name.includes("09")) return DEFAULT_SUBJECTS_9_11;
+  return DEFAULT_SUBJECTS_6_8;
+}
+function loadSubjectsForClass(cid) {
+  const stored = CLASS_MAP[cid]?.subjects;
+  if (Array.isArray(stored) && stored.length) return stored;
+  return defaultSubjects(cid);
+}
+async function saveSubjectsForClass(cid, subs) {
+  const { db, doc, updateDoc } = window.FB;
+  await updateDoc(doc(db, "classes", cid), { subjects: subs });
+  if (CLASS_MAP[cid]) CLASS_MAP[cid].subjects = subs;
+  GRADES[cid].subjects = subs;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  MARKS PERSISTENCE
+// ════════════════════════════════════════════════════════════════
+// Marks now live in Firestore (whc_marks collection — one doc per class
+// per year/term) so every device/teacher/principal sees the same Total,
+// Avg and Rank instead of only whoever typed them on that browser.
+const MARKS_COL = "whc_marks";
+function marksDocId(cid) {
+  const y = currentPeriod?.year || "2026";
+  const t = currentPeriod?.term || "1";
+  return `${cid}_${y}_t${t}`;
+}
+// Legacy per-cell localStorage key, kept only as a one-time migration
+// source for data entered before this fix.
+function mkey(cid, sid, sub) {
+  const y = currentPeriod?.year || "2026";
+  const t = currentPeriod?.term || "1";
+  return `marks_${y}_t${t}_${cid}_${sid}_${sub}`;
+}
+
+async function loadMarks(cid) {
+  const g = GRADES[cid];
+  if (!marksData[cid]) marksData[cid] = {};
+  g.students.forEach(s => { if (!marksData[cid][s.id]) marksData[cid][s.id] = {}; });
+
+  try {
+    const { db, doc, getDoc } = window.FB;
+    const snap = await getDoc(doc(db, MARKS_COL, marksDocId(cid)));
+    const remote = snap.exists() ? (snap.data().marks || {}) : {};
+    g.students.forEach(s => {
+      g.subjects.forEach(sub => {
+        const remoteVal = remote[s.id]?.[sub];
+        if (remoteVal !== undefined) {
+          marksData[cid][s.id][sub] = remoteVal;
+        } else {
+          // Fall back to any older localStorage-only entry so nobody's
+          // previously-typed marks appear to vanish.
+          const local = localStorage.getItem(mkey(cid, s.id, sub));
+          marksData[cid][s.id][sub] = local !== null ? local : "";
+        }
+      });
+    });
+  } catch (e) {
+    console.error("loadMarks error:", e);
+    g.students.forEach(s => {
+      g.subjects.forEach(sub => {
+        const local = localStorage.getItem(mkey(cid, s.id, sub));
+        marksData[cid][s.id][sub] = local !== null ? local : "";
+      });
+    });
+    toast("Couldn't reach the marks database — showing locally saved marks only.", "warning");
+  }
+
+  if (cid === currentGrade) renderTable(cid);
+}
+
+async function saveData() {
+  const saveBtn = document.getElementById("saveBtn");
+  const originalHtml = saveBtn ? saveBtn.innerHTML : "";
+  if (saveBtn) saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving…`;
+  try {
+    const { db, doc, setDoc, serverTimestamp } = window.FB;
+    const cids = Object.keys(marksData);
+    await Promise.all(cids.map(cid =>
+      setDoc(doc(db, MARKS_COL, marksDocId(cid)), {
+        classId: cid,
+        marks: marksData[cid],
+        updatedAt: serverTimestamp()
+      }, { merge: true })
+    ));
+    hasUnsaved = false;
+    if (saveBtn) saveBtn.style.display = "none";
+    showStatus("✅ Saved!", "ok");
+  } catch (e) {
+    console.error("saveData error:", e);
+    if (saveBtn) saveBtn.innerHTML = originalHtml;
+    toast("Save failed — check your connection and try again.", "error");
+  }
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById("saveStatus");
+  el.textContent = msg; el.className = "save-status show " + type;
+  setTimeout(() => el.className = "save-status", 2800);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  MARKS TABLE
+// ════════════════════════════════════════════════════════════════
+function showGrade(cid) {
+  currentGrade = cid;
+  setActiveNav(cid, false);
+  document.getElementById("page-title").innerHTML = `<i class="fas fa-table" style="color:var(--blue-accent);margin-right:.5rem;"></i>${GRADES[cid].name} — Marks Entry`;
+  renderTable(cid);
+}
+
+function esc(s) { return String(s).replace(/'/g, "\\'"); }
+function isAbsentMark(v) { return String(v).trim().toLowerCase() === "ab"; }
+function getScoreClass(v) {
+  if (isAbsentMark(v)) return "score-absent";
+  const n = parseFloat(v);
+  if (isNaN(n)||v==="") return "empty";
+  if (n>=75) return "score-a";
+  if (n>=60) return "score-b";
+  if (n>=45) return "score-c";
+  if (n>35) return "score-s";
+  return "score-f";
+}
+function getScoreLetter(v) {
+  if (isAbsentMark(v)) return "Ab";
+  const n = parseFloat(v);
+  if (isNaN(n)||v==="") return "";
+  if (n>=75) return "A";
+  if (n>=60) return "B";
+  if (n>=45) return "C";
+  if (n>35) return "S";
+  return "W";
+}
+
+function renderTable(cid) {
+  const g = GRADES[cid];
+  const editable = hasAnyEditRights(cid);
+  const isManager = currentUser.role === "principal" || isClassTeacherOf(cid);
+  const pc = document.getElementById("page-content");
+
+  const hasSubjectAssigned = !!(currentUser.role!=="principal" && !isClassTeacherOf(cid) && currentUser.subject && currentUser.subject.trim());
+  const subjectExistsHere = hasSubjectAssigned && g.subjects.some(s => subjectsMatch(s, currentUser.subject));
+  const subjectMismatch = hasSubjectAssigned && !subjectExistsHere;
+
+  const boys  = g.students.filter(s => s.gender === "Male");
+  const girls = g.students.filter(s => s.gender !== "Male");
+  const showGroups = boys.length > 0 && girls.length > 0;
+  const groups = showGroups
+    ? [{ label:"👦 Boys", students:boys }, { label:"👧 Girls", students:girls }]
+    : [{ label:"", students:g.students }];
+
+  let html = `
+    <div class="section-header">
+      <h2><i class="fas fa-table" style="color:var(--blue-accent);margin-right:.5rem;"></i>${g.name} <span style="color:var(--text-muted);font-weight:600;font-size:1rem;">(${g.students.length} students)</span></h2>
+      <div class="flex gap-3 items-center" style="flex-wrap:wrap;">
+        <div style="position:relative;">
+          <i class="fas fa-search" style="position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:.75rem;pointer-events:none;"></i>
+          <input type="text" id="marks-search" placeholder="Search student…" oninput="filterMarksTable()"
+            style="background:rgba(255,255,255,.06);border:1px solid var(--glass-border);color:var(--text-main);border-radius:8px;padding:.38rem .75rem .38rem 2rem;font-family:'Nunito',sans-serif;font-size:.82rem;width:160px;outline:none;"/>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="exportMarksCSV('${esc(cid)}')"><i class="fas fa-download"></i> CSV</button>
+        ${isManager ? `<button class="btn btn-outline btn-sm" onclick="manageSubjects('${esc(cid)}')"><i class="fas fa-book"></i> Edit Subjects</button>` : ""}
+        ${isManager ? `<button class="btn btn-outline btn-sm" onclick="openReorderStudents('${esc(cid)}')"><i class="fas fa-arrows-alt-v"></i> Student Order</button>` : ""}
+        <button class="btn btn-warning btn-sm" onclick="showSummary('${esc(cid)}')"><i class="fas fa-chart-bar"></i> Summary & Print</button>
+      </div>
+    </div>
+
+    ${subjectMismatch ? `
+    <div class="glass card" style="margin-bottom:1rem;padding:.7rem 1rem;border:1px solid rgba(239,68,68,.4);background:rgba(239,68,68,.08);">
+      <span style="font-size:.8rem;color:var(--danger);"><i class="fas fa-triangle-exclamation"></i>
+        Your assigned subject "<strong>${esc(currentUser.subject)}</strong>" isn't in ${esc(g.name)}'s subject list
+        (${g.subjects.map(s=>esc(s)).join(", ") || "none set"}), so no column here is editable for you yet.
+        Ask the principal to either add "${esc(currentUser.subject)}" via <strong>Edit Subjects</strong> for this class,
+        or fix the subject name on your account in Teacher Management so it matches exactly.
+      </span>
+    </div>` : ""}
+
+    <div class="glass card" style="margin-bottom:1rem;padding:.7rem 1rem;display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;">
+      <span style="font-size:.78rem;color:var(--text-muted);">Score colours:</span>
+      <span class="score-val score-a">≥75 A</span>
+      <span class="score-val score-b">≥60 B</span>
+      <span class="score-val score-c">≥45 C</span>
+      <span class="score-val score-s">&gt;35 S</span>
+      <span class="score-val score-f">&lt;35 W</span>
+      <span class="score-val score-absent">Ab = Absent</span>
+      ${editable ? `<span style="font-size:.78rem;color:var(--text-muted);margin-left:auto;"><i class="fas fa-mouse-pointer"></i> Click any score to edit · <kbd style="background:rgba(255,255,255,.1);border:1px solid var(--glass-border);border-radius:4px;padding:.1rem .35rem;font-size:.72rem;">Tab</kbd> next cell</span>` : ""}
+      ${(!isManager && currentUser.role!=="principal" && currentUser.subject) ? `<span style="font-size:.78rem;color:var(--sky);margin-left:auto;"><i class="fas fa-lock"></i> You can only edit <strong>${currentUser.subject}</strong> marks here</span>` : ""}
+    </div>
+
+    <div class="glass card" style="padding:0;">
+      <div class="table-wrapper"><table>
+        <thead><tr>
+          <th>#</th><th>Index</th><th>Name</th>`;
+  g.subjects.forEach(s => html += `<th style="font-size:.7rem;${currentUser.role!=="principal" && !isClassTeacherOf(cid) && subjectsMatch(currentUser.subject,s) ? 'color:var(--sky);' : ''}">${s}</th>`);
+  html += `<th>Total</th><th>Avg</th><th>Rank</th></tr></thead><tbody>`;
+
+  let rowNo = 1;
+  groups.forEach(grp => {
+    if (grp.label) {
+      html += `<tr class="sep-label-row"><td colspan="${3+g.subjects.length+3}">${grp.label}</td></tr>`;
+    }
+    grp.students.forEach(s => {
+      html += renderStudentRow(s, cid, rowNo++, g.subjects);
+    });
+  });
+
+  html += `</tbody></table></div></div>`;
+  pc.innerHTML = html;
+  computeRanks(cid);
+}
+
+function renderStudentRow(s, cid, rowNo, subjects) {
+  const marks = marksData[cid]?.[s.id] || {};
+  let total = 0, cnt = 0;
+  subjects.forEach(sub => { const v = parseFloat(marks[sub]); if (!isNaN(v)){ total+=v; cnt++; } });
+  const avg = cnt > 0 ? (total/subjects.length).toFixed(1) : "";
+  const passed = cnt > 0 && parseFloat(avg) >= 35;
+  const isMale = s.gender === "Male";
+  const gColor = isMale ? "#38bdf8" : "#f472b6";
+  const rSafe = cid.replace(/[^a-z0-9]/gi,"_");
+
+  let html = `<tr id="row_${rSafe}_${s.id}">
+    <td style="color:var(--text-muted);font-size:.75rem;">${rowNo}</td>
+    <td style="font-size:.78rem;color:var(--text-muted);">${s.indexNo||"—"}</td>
+    <td>
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        <div style="width:28px;height:28px;border-radius:8px;background:${isMale?'linear-gradient(135deg,#0ea5e9,#38bdf8)':'linear-gradient(135deg,#ec4899,#f472b6)'};display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:#fff;flex-shrink:0;">${(s.name||"?")[0].toUpperCase()}</div>
+        <strong style="font-size:.88rem;">${s.name||"—"}</strong>
+      </div>
+    </td>`;
+  subjects.forEach(sub => {
+    const v = marks[sub]||""; const sc = getScoreClass(v);
+    const display = isAbsentMark(v) ? "Ab" : (v||"—");
+    if (canEditSubject(cid, sub)) {
+      html += `<td class="editable" onclick="editCell(this,'${esc(cid)}','${esc(s.id)}','${esc(sub)}')">
+        <span class="score-val ${sc}">${display}</span></td>`;
+    } else {
+      html += `<td><span class="score-val ${sc}">${display}</span></td>`;
+    }
+  });
+  const avgNum = parseFloat(avg);
+  const avgColor = avgNum>=75?"#10b981":avgNum>=60?"#38bdf8":avgNum>=45?"#f59e0b":avgNum>35?"#f97316":"#ef4444";
+  html += `<td class="total-cell" id="tot_${rSafe}_${s.id}">${cnt>0?total:"—"}</td>
+    <td class="avg-cell" id="avg_${rSafe}_${s.id}">
+      ${avg ? `<span style="color:${avgColor};font-weight:800;">${avg}</span>
+        <div style="background:rgba(255,255,255,.08);border-radius:999px;height:4px;margin-top:3px;overflow:hidden;width:50px;">
+          <div style="height:100%;width:${Math.min(avgNum,100)}%;background:${avgColor};border-radius:999px;"></div>
+        </div>` : "—"}
+    </td>
+    <td class="rank-num" id="rk_${rSafe}_${s.id}">—</td></tr>`;
+  return html;
+}
+
+function editCell(td, cid, sid, subject) {
+  if (td.querySelector("input")) return;
+  const cur = marksData[cid]?.[sid]?.[subject] || "";
+  td.innerHTML = `<input type="text" inputmode="decimal" placeholder="0-100 or Ab" value="${esc(cur)}"
+    onblur="commitCell(this,'${esc(cid)}','${esc(sid)}','${esc(subject)}')"
+    onkeydown="cellKey(event,this,'${esc(cid)}','${esc(sid)}','${esc(subject)}')" />`;
+  const inp = td.querySelector("input"); inp.focus(); inp.select();
+}
+function commitCell(input, cid, sid, subject) {
+  let val = input.value.trim();
+  if (isAbsentMark(val)) {
+    val = "Ab";
+  } else if (val !== "") {
+    const n = parseFloat(val);
+    if (isNaN(n)) {
+      toast(`Enter a number (0-100) or "Ab" for absent`, "warning");
+      val = marksData[cid]?.[sid]?.[subject] || "";
+    } else {
+      val = String(Math.max(0, Math.min(100, n)));
+    }
+  }
+  if (!marksData[cid]) marksData[cid] = {};
+  if (!marksData[cid][sid]) marksData[cid][sid] = {};
+  marksData[cid][sid][subject] = val;
+  hasUnsaved = true;
+  document.getElementById("saveBtn").style.display = "flex";
+  const td = input.parentElement;
+  const display = isAbsentMark(val) ? "Ab" : (val||"—");
+  td.innerHTML = `<span class="score-val ${getScoreClass(val)}">${display}</span>`;
+  td.onclick = () => editCell(td, cid, sid, subject);
+  updateRowTotals(cid, sid);
+  computeRanks(cid);
+}
+function updateRowTotals(cid, sid) {
+  const g = GRADES[cid];
+  const marks = marksData[cid]?.[sid] || {};
+  let total = 0, cnt = 0;
+  g.subjects.forEach(sub => { const v = parseFloat(marks[sub]); if (!isNaN(v)){ total+=v; cnt++; } });
+  const avg = cnt > 0 ? (total/g.subjects.length).toFixed(1) : "";
+  const avgNum = parseFloat(avg);
+  const avgColor = avgNum>=75?"#10b981":avgNum>=60?"#38bdf8":avgNum>=45?"#f59e0b":avgNum>35?"#f97316":"#ef4444";
+  const rSafe = cid.replace(/[^a-z0-9]/gi,"_");
+  const totEl = document.getElementById(`tot_${rSafe}_${sid}`);
+  const avgEl = document.getElementById(`avg_${rSafe}_${sid}`);
+  if (totEl) totEl.textContent = cnt>0 ? total : "—";
+  if (avgEl) {
+    avgEl.innerHTML = avg ? `<span style="color:${avgColor};font-weight:800;">${avg}</span>
+      <div style="background:rgba(255,255,255,.08);border-radius:999px;height:4px;margin-top:3px;overflow:hidden;width:50px;">
+        <div style="height:100%;width:${Math.min(avgNum,100)}%;background:${avgColor};border-radius:999px;"></div>
+      </div>` : "—";
+  }
+}
+function cellKey(e, input, cid, sid, subject) {
+  if (e.key==="Enter"||e.key==="Tab"){ e.preventDefault(); commitCell(input,cid,sid,subject); }
+  else if (e.key==="Escape") commitCell(input,cid,sid,subject);
+}
+function computeRanks(cid) {
+  const g = GRADES[cid];
+  const scores = g.students.map(s => {
+    const marks = marksData[cid]?.[s.id] || {};
+    let total=0,cnt=0;
+    g.subjects.forEach(sub => { const v=parseFloat(marks[sub]); if(!isNaN(v)){total+=v;cnt++;} });
+    return { id:s.id, total:cnt>0?total:-1 };
+  });
+  const sorted = [...scores].filter(x=>x.total>=0).sort((a,b)=>b.total-a.total);
+  scores.forEach(s => {
+    const safe = cid.replace(/[^a-z0-9]/gi,"_");
+    const el = document.getElementById(`rk_${safe}_${s.id}`);
+    if (!el) return;
+    if (s.total<0){ el.textContent="—"; el.className="rank-num"; return; }
+    const rank = sorted.findIndex(x=>x.id===s.id)+1;
+    el.textContent = rank===1?"🥇 1":rank===2?"🥈 2":rank===3?"🥉 3":rank;
+    el.className = `rank-num rank-${rank<=3?rank:""}`;
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  MANAGE SUBJECTS MODAL
+// ════════════════════════════════════════════════════════════════
+function manageSubjects(cid) {
+  const g = GRADES[cid];
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.innerHTML = `
+    <div class="glass modal">
+      <div class="modal-header">
+        <h3><i class="fas fa-book" style="color:var(--cyan);margin-right:.5rem;"></i>Edit Subjects — ${g.name}</h3>
+        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-times"></i></button>
+      </div>
+      <p style="font-size:.83rem;color:var(--text-muted);margin-bottom:1rem;">One subject per line. Changes apply immediately.</p>
+      <textarea id="subj-ta" class="form-control" rows="12" style="resize:vertical;line-height:1.9;">${g.subjects.join("\n")}</textarea>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveSubjects('${esc(cid)}')"><i class="fas fa-save"></i> Save Subjects</button>
+      </div>
+    </div>`;
+  overlay.addEventListener("click", e => { if (e.target===overlay) overlay.remove(); });
+  document.getElementById("modal-container").appendChild(overlay);
+  setTimeout(() => document.getElementById("subj-ta")?.focus(), 100);
+}
+async function saveSubjects(cid) {
+  const ta = document.getElementById("subj-ta");
+  const subs = ta.value.split("\n").map(s=>s.trim()).filter(Boolean);
+  if (!subs.length) { toast("Please enter at least one subject","warning"); return; }
+  try {
+    await saveSubjectsForClass(cid, subs);
+    await loadMarks(cid);
+    document.querySelector(".modal-overlay")?.remove();
+    renderTable(cid);
+    showStatus("✅ Subjects updated!", "ok");
+  } catch(e) {
+    toast("Failed to save subjects: " + e.message, "error");
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  MANAGE CLASSES (Principal only) — adds to Firestore "classes"
+//  New classes instantly appear in the Teacher Management dropdown too.
+// ════════════════════════════════════════════════════════════════
+function slugifyClassName(name) {
+  return name.trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"") || ("class_" + Date.now());
+}
+
+function openManageClasses() {
+  if (!currentUser || currentUser.role !== "principal") return;
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  const rows = Object.keys(CLASS_MAP).sort().map(cid => {
+    const c = CLASS_MAP[cid];
+    const subCount = Array.isArray(c.subjects) && c.subjects.length ? c.subjects.length : (defaultSubjects(cid).length);
+    return `<div class="glass" style="padding:.6rem .9rem;display:flex;align-items:center;justify-content:between;gap:.6rem;margin-bottom:.5rem;border-radius:10px;">
+      <div style="flex:1;"><strong style="font-size:.88rem;">${c.name||cid}</strong>
+        <div style="font-size:.72rem;color:var(--text-muted);">${subCount} subjects · ${GRADES[cid]?.students.length||0} students</div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="this.closest('.modal-overlay').remove(); manageSubjects('${esc(cid)}')"><i class="fas fa-book"></i> Subjects</button>
+    </div>`;
+  }).join("") || `<p style="color:var(--text-muted);font-size:.85rem;">No classes yet. Add your first class below.</p>`;
+
+  overlay.innerHTML = `
+    <div class="glass modal">
+      <div class="modal-header">
+        <h3><i class="fas fa-school" style="color:var(--sky);margin-right:.5rem;"></i>Manage Classes</h3>
+        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-times"></i></button>
+      </div>
+      <div style="max-height:280px;overflow-y:auto;margin-bottom:1rem;">${rows}</div>
+      <div class="input-group">
+        <label><i class="fas fa-plus"></i> New Class Name</label>
+        <input type="text" id="new-class-name" class="form-control" placeholder="e.g. Grade 10 B"/>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">Close</button>
+        <button class="btn btn-primary" onclick="addNewClass()"><i class="fas fa-save"></i> Add Class</button>
+      </div>
+    </div>`;
+  overlay.addEventListener("click", e => { if (e.target===overlay) overlay.remove(); });
+  document.getElementById("modal-container").appendChild(overlay);
+  setTimeout(() => document.getElementById("new-class-name")?.focus(), 100);
+}
+
+async function addNewClass() {
+  const nameInput = document.getElementById("new-class-name");
+  const name = nameInput.value.trim();
+  if (!name) { toast("Please enter a class name", "warning"); return; }
+  const cid = slugifyClassName(name);
+  try {
+    const { db, doc, setDoc, getDoc } = window.FB;
+    const existing = await getDoc(doc(db, "classes", cid));
+    if (existing.exists()) { toast("A class with this name already exists", "error"); return; }
+    await setDoc(doc(db, "classes", cid), { name, subjects: defaultSubjects(cid) });
+    toast("Class added: " + name, "success");
+    document.querySelector(".modal-overlay")?.remove();
+    await initMarks();
+  } catch(e) {
+    toast("Failed to add class: " + e.message, "error");
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  STUDENT ORDER (Principal only) — updates registerOrder in Firestore
+// ════════════════════════════════════════════════════════════════
+let reorderCid = null;
+let reorderList = [];
+
+function canManageOrder(cid) {
+  if (!currentUser) return false;
+  if (currentUser.role === "principal") return true;
+  if (cid) return isClassTeacherOf(cid);
+  return Object.keys(GRADES).some(c => isClassTeacherOf(c));
+}
+
+function openReorderStudents(cidPreset) {
+  if (!canManageOrder(cidPreset)) { toast("You don't have permission to manage student order for this class", "error"); return; }
+  const classIds = currentUser.role === "principal"
+    ? Object.keys(GRADES).sort((a,b) => gradeNameCompare(GRADES[a].name, GRADES[b].name))
+    : Object.keys(GRADES).filter(cid => isClassTeacherOf(cid)).sort((a,b) => gradeNameCompare(GRADES[a].name, GRADES[b].name));
+  if (!classIds.length) { toast("No classes available yet", "warning"); return; }
+  reorderCid = (cidPreset && classIds.includes(cidPreset)) ? cidPreset : classIds[0];
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.id = "reorder-overlay";
+  overlay.innerHTML = `
+    <div class="glass modal" style="max-width:480px;">
+      <div class="modal-header">
+        <h3><i class="fas fa-arrows-alt-v" style="color:var(--sky);margin-right:.5rem;"></i>Student Order</h3>
+        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-times"></i></button>
+      </div>
+      ${classIds.length > 1 ? `
+      <div class="input-group">
+        <label>Class</label>
+        <select id="reorder-class-select" class="form-control" onchange="switchReorderClass(this.value)">
+          ${classIds.map(cid => `<option value="${cid}" ${cid===reorderCid?"selected":""}>${GRADES[cid].name}</option>`).join("")}
+        </select>
+      </div>` : ""}
+      <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:.6rem;"><i class="fas fa-info-circle"></i> Boys and Girls are ordered separately. Use the up/down arrows any time, or auto-align by index number. Order changes apply only to <strong>${esc(currentPeriod?.year || BASE_YEAR)}</strong> — other years keep their own order.</p>
+      <div class="flex gap-2" style="margin-bottom:.7rem;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="autoAlignThisClass()"><i class="fas fa-sort-numeric-down"></i> Auto-Align by Index (This Class)</button>
+        ${currentUser.role === "principal" ? `<button class="btn btn-outline btn-sm" onclick="autoAlignAllClasses()"><i class="fas fa-magic"></i> Auto-Align All Classes</button>` : ""}
+      </div>
+      <div id="reorder-list" style="max-height:320px;overflow-y:auto;margin-bottom:.9rem;"></div>
+      <div class="glass" style="padding:.7rem .8rem;border-radius:10px;margin-bottom:.5rem;">
+        <label style="font-size:.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.5rem;"><i class="fas fa-user-plus"></i> Add Student</label>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+          <input type="text" id="new-student-index" class="form-control" placeholder="Index No." style="max-width:110px;"/>
+          <input type="text" id="new-student-name" class="form-control" placeholder="Student Name" style="flex:1;min-width:140px;"/>
+          <button class="btn btn-primary btn-sm" onclick="addStudentToClass()"><i class="fas fa-plus"></i> Add</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveReorder()"><i class="fas fa-save"></i> Save Order</button>
+      </div>
+    </div>`;
+  overlay.addEventListener("click", e => { if (e.target===overlay) overlay.remove(); });
+  document.getElementById("modal-container").appendChild(overlay);
+  initReorderList();
+}
+
+function switchReorderClass(cid) {
+  if (!canManageOrder(cid)) return;
+  reorderCid = cid;
+  initReorderList();
+}
+
+// Loads the working copy of the student list for the current class.
+// Only called when the modal opens or the class changes — NOT on every render,
+// so in-progress moves/edits aren't clobbered.
+function initReorderList() {
+  reorderList = [...(GRADES[reorderCid]?.students || [])];
+  renderReorderList();
+}
+
+function genderKey(s) { return s.gender === "Male" ? "M" : (s.gender ? "F" : "U"); }
+
+function groupByGender(list) {
+  const boys  = list.filter(s => genderKey(s) === "M");
+  const girls = list.filter(s => genderKey(s) === "F");
+  const rest  = list.filter(s => genderKey(s) === "U");
+  const groups = [];
+  if (boys.length)  groups.push({ label: "👦 Boys",  items: boys });
+  if (girls.length) groups.push({ label: "👧 Girls", items: girls });
+  if (rest.length)  groups.push({ label: (boys.length||girls.length) ? "Other" : "", items: rest });
+  return groups;
+}
+
+function sortByIndexNo(arr) {
+  return [...arr].sort((a, b) => {
+    const an = parseFloat(a.indexNo), bn = parseFloat(b.indexNo);
+    const aValid = !isNaN(an), bValid = !isNaN(bn);
+    if (aValid && bValid) return an - bn;
+    if (aValid) return -1;
+    if (bValid) return 1;
+    return String(a.indexNo||"").localeCompare(String(b.indexNo||""));
+  });
+}
+
+// Re-orders a student list: Boys and Girls kept as separate blocks,
+// each block sorted internally by index number ascending.
+function autoAlignList(list) {
+  const groups = groupByGender(list);
+  const out = [];
+  groups.forEach(g => out.push(...sortByIndexNo(g.items)));
+  return out;
+}
+
+function autoAlignThisClass() {
+  reorderList = autoAlignList(reorderList);
+  renderReorderList();
+  toast("Aligned by index number (Boys/Girls kept separate) — click Save Order to apply", "info");
+}
+
+async function autoAlignAllClasses() {
+  if (!currentUser || currentUser.role !== "principal") return;
+  if (!confirm("Auto-align every class by index number (Boys/Girls kept separate) and save immediately?")) return;
+  try {
+    const { db, doc, updateDoc } = window.FB;
+    const writes = [];
+    const roField = "registerOrder_" + (currentPeriod?.year || BASE_YEAR);
+    Object.keys(GRADES).forEach(cid => {
+      const aligned = autoAlignList(GRADES[cid].students || []);
+      GRADES[cid].students = aligned;
+      aligned.forEach((s, i) => writes.push(updateDoc(doc(db, "students", s.id), { [roField]: i })));
+    });
+    await Promise.all(writes);
+    if (reorderCid) reorderList = [...(GRADES[reorderCid].students || [])];
+    renderReorderList();
+    toast("All classes aligned by index number", "success");
+    if (currentGrade) renderTable(currentGrade);
+  } catch(e) {
+    toast("Failed to auto-align: " + e.message, "error");
+  }
+}
+
+// Renders from the current in-memory reorderList — does NOT reload from
+// GRADES, so moves/adds/removes made in this session are preserved.
+function renderReorderList() {
+  const el = document.getElementById("reorder-list");
+  if (!el) return;
+  if (!reorderList.length) {
+    el.innerHTML = `<p style="color:var(--text-muted);font-size:.85rem;">No students in this class.</p>`;
+    return;
+  }
+  const groups = groupByGender(reorderList);
+  let html = "";
+  groups.forEach(grp => {
+    if (grp.label) html += `<div style="font-size:.7rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;padding:.4rem .2rem .3rem;">${grp.label}</div>`;
+    grp.items.forEach((s, gi) => {
+      const globalIndex = reorderList.indexOf(s);
+      html += `
+      <div class="glass" style="display:flex;align-items:center;gap:.6rem;padding:.5rem .75rem;margin-bottom:.4rem;border-radius:8px;">
+        <span style="color:var(--text-muted);font-size:.78rem;width:56px;">${s.indexNo||"—"}</span>
+        <span style="flex:1;font-size:.85rem;">${s.name||"—"}</span>
+        <button class="btn btn-outline btn-sm" style="padding:.25rem .55rem;" onclick="moveStudent(${globalIndex},-1)" ${gi===0?"disabled":""}><i class="fas fa-chevron-up"></i></button>
+        <button class="btn btn-outline btn-sm" style="padding:.25rem .55rem;" onclick="moveStudent(${globalIndex},1)" ${gi===grp.items.length-1?"disabled":""}><i class="fas fa-chevron-down"></i></button>
+        <button class="btn btn-danger btn-sm" style="padding:.25rem .55rem;" title="Remove student" onclick="removeStudentFromClass('${esc(s.id)}','${esc(s.name||"")}')"><i class="fas fa-trash"></i></button>
+      </div>`;
+    });
+  });
+  el.innerHTML = html;
+}
+
+async function addStudentToClass() {
+  if (!reorderCid || !canManageOrder(reorderCid)) return;
+  const idxInput = document.getElementById("new-student-index");
+  const nameInput = document.getElementById("new-student-name");
+  const indexNo = idxInput.value.trim();
+  const name = nameInput.value.trim();
+  if (!name) { toast("Please enter the student's name", "warning"); return; }
+  try {
+    const { db, collection, doc, setDoc, serverTimestamp } = window.FB;
+    const newRef = doc(collection(db, "students"));
+    const registerOrder = reorderList.length;
+    const year = Number(currentPeriod?.year || BASE_YEAR);
+    const roField = "registerOrder_" + year;
+    await setDoc(newRef, {
+      name, indexNo, classId: reorderCid, registerOrder, baseYear: year,
+      [roField]: registerOrder,
+      createdAt: serverTimestamp ? serverTimestamp() : new Date()
+    });
+    const newStudent = { id: newRef.id, name, indexNo, classId: reorderCid, registerOrder, baseYear: year, [roField]: registerOrder };
+    reorderList.push(newStudent);
+    GRADES[reorderCid].students = [...reorderList];
+    idxInput.value = ""; nameInput.value = "";
+    renderReorderList();
+    toast("Student added: " + name, "success");
+    if (currentGrade === reorderCid) renderTable(reorderCid);
+  } catch(e) {
+    toast("Failed to add student: " + e.message, "error");
+  }
+}
+
+async function removeStudentFromClass(sid, name) {
+  if (!canManageOrder(reorderCid)) return;
+  if (!confirm(`Remove ${name || "this student"}? This cannot be undone.`)) return;
+  try {
+    const { db, doc, deleteDoc } = window.FB;
+    await deleteDoc(doc(db, "students", sid));
+    reorderList = reorderList.filter(s => s.id !== sid);
+    GRADES[reorderCid].students = [...reorderList];
+    renderReorderList();
+    toast(`Removed ${name || "student"}`, "success");
+    if (currentGrade === reorderCid) renderTable(reorderCid);
+  } catch(e) {
+    toast("Failed to remove student: " + e.message, "error");
+  }
+}
+
+// Swaps a student with its neighbour, but only within the same
+// gender group so Boys/Girls blocks never mix.
+function moveStudent(index, dir) {
+  const target = index + dir;
+  if (target < 0 || target >= reorderList.length) return;
+  const a = reorderList[index], b = reorderList[target];
+  if (genderKey(a) !== genderKey(b)) return;
+  [reorderList[index], reorderList[target]] = [b, a];
+  renderReorderList();
+}
+
+async function saveReorder() {
+  if (!canManageOrder(reorderCid)) return;
+  try {
+    const { db, doc, updateDoc } = window.FB;
+    const roField = "registerOrder_" + (currentPeriod?.year || BASE_YEAR);
+    await Promise.all(reorderList.map((s, i) => updateDoc(doc(db, "students", s.id), { [roField]: i })));
+    GRADES[reorderCid].students = reorderList;
+    toast("Student order saved", "success");
+    document.getElementById("reorder-overlay")?.remove();
+    if (currentGrade === reorderCid) renderTable(reorderCid);
+  } catch(e) {
+    toast("Failed to save order: " + e.message, "error");
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SCHOOL-WIDE SUMMARY (Principal only)
+// ════════════════════════════════════════════════════════════════
+function showSchoolSummary() {
+  if (!currentUser || currentUser.role !== "principal") return;
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  const activeEl = document.getElementById("school-summary-btn");
+  if (activeEl) activeEl.classList.add("active");
+  document.getElementById("page-title").innerHTML = `<i class="fas fa-globe" style="color:var(--blue-accent);margin-right:.5rem;"></i>Whole School Summary`;
+  document.getElementById("page-content").innerHTML = buildSchoolSummaryHTML();
+}
+
+function buildSchoolSummaryHTML() {
+  const cids = Object.keys(GRADES).sort((a,b) => gradeNameCompare(GRADES[a].name, GRADES[b].name));
+
+  let totalStudents = 0, totalPassing = 0;
+  const failedStudents = [];
+  const perClassRows = cids.map(cid => {
+    const g = GRADES[cid];
+    let cnt = 0, passing = 0;
+    g.students.forEach(s => {
+      const m = marksData[cid]?.[s.id] || {};
+      let total = 0, subCnt = 0;
+      g.subjects.forEach(sub => { const v = parseFloat(m[sub]); if (!isNaN(v)) { total += v; subCnt++; } });
+      if (subCnt === 0) return;
+      cnt++;
+      const avg = total / g.subjects.length;
+      if (avg > 35) { passing++; }
+      else { failedStudents.push({ class: g.name, name: s.name || "—", indexNo: s.indexNo || "—", avg: avg.toFixed(1) }); }
+    });
+    totalStudents += cnt; totalPassing += passing;
+    const classAvgVals = g.students.map(s => {
+      const m = marksData[cid]?.[s.id] || {};
+      let total = 0, subCnt = 0;
+      g.subjects.forEach(sub => { const v = parseFloat(m[sub]); if (!isNaN(v)) { total += v; subCnt++; } });
+      return subCnt > 0 ? total / g.subjects.length : null;
+    }).filter(v => v !== null);
+    const classAvg = classAvgVals.length ? (classAvgVals.reduce((a,b)=>a+b,0)/classAvgVals.length).toFixed(1) : "—";
+    return { name: g.name, cid, cnt, passing, failed: cnt - passing, classAvg };
+  });
+
+  const totalFailed = totalStudents - totalPassing;
+
+  let html = `
+    <div class="section-header">
+      <h2 class="summary-print-title"><i class="fas fa-globe" style="color:var(--blue-accent);margin-right:.5rem;"></i>Whole School Summary</h2>
+    </div>
+
+    <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:1.25rem;">
+      <div class="stat-card glass stat-blue"><div class="stat-icon"><i class="fas fa-school"></i></div><div class="stat-value">${cids.length}</div><div class="stat-label">Classes</div></div>
+      <div class="stat-card glass stat-blue"><div class="stat-icon"><i class="fas fa-user-graduate"></i></div><div class="stat-value">${totalStudents}</div><div class="stat-label">Total Students</div></div>
+      <div class="stat-card glass stat-green"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-value">${totalPassing}</div><div class="stat-label">Passed</div></div>
+      <div class="stat-card glass" style="border:1px solid rgba(239,68,68,.25);background:rgba(239,68,68,.08);"><div class="stat-icon" style="background:rgba(239,68,68,.2);color:var(--danger);"><i class="fas fa-times-circle"></i></div><div class="stat-value" style="color:var(--danger);">${totalFailed}</div><div class="stat-label">Failed</div></div>
+    </div>
+
+    <div class="glass card" style="padding:0;margin-bottom:1.25rem;">
+      <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--glass-border);">
+        <h3 style="font-size:.95rem;font-weight:800;"><i class="fas fa-table" style="color:var(--blue-accent);margin-right:.5rem;"></i>Per-Class Breakdown</h3>
+      </div>
+      <div class="sum-table-wrap"><table class="sum-table"><thead><tr>
+        <th>Class</th><th>Students</th><th>Passed</th><th>Failed</th><th>Class Avg</th><th></th>
+      </tr></thead><tbody>
+      ${perClassRows.map(r => `<tr>
+        <td><strong style="font-size:.85rem;">${r.name}</strong></td>
+        <td>${r.cnt}</td>
+        <td style="color:var(--success);font-weight:700;">${r.passing}</td>
+        <td style="color:var(--danger);font-weight:700;">${r.failed}</td>
+        <td class="savg">${r.classAvg}${r.classAvg!=="—"?"%":""}</td>
+        <td><button class="btn btn-outline btn-sm" onclick="showSummary('${esc(r.cid)}')"><i class="fas fa-arrow-right"></i> View</button></td>
+      </tr>`).join("")}
+      </tbody></table></div>
+    </div>
+
+    <div class="glass card" style="padding:0;">
+      <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--glass-border);">
+        <h3 style="font-size:.95rem;font-weight:800;color:var(--danger);"><i class="fas fa-exclamation-triangle" style="margin-right:.5rem;"></i>Failed Students (School-Wide)</h3>
+        <span style="font-size:.78rem;color:var(--text-muted);">${failedStudents.length} student(s) below pass mark — visible to Principal only</span>
+      </div>
+      <div class="sum-table-wrap"><table class="sum-table"><thead><tr>
+        <th>#</th><th>Class</th><th>Index</th><th>Name</th><th>Avg</th>
+      </tr></thead><tbody>
+      ${failedStudents.length ? failedStudents.map((s,i) => `<tr>
+        <td style="color:var(--text-muted);font-size:.78rem;">${i+1}</td>
+        <td>${s.class}</td>
+        <td style="font-size:.78rem;color:var(--text-muted);">${s.indexNo}</td>
+        <td><strong style="font-size:.85rem;">${s.name}</strong></td>
+        <td class="savg" style="color:var(--danger);">${s.avg}</td>
+      </tr>`).join("") : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:1rem;">No failing students 🎉</td></tr>`}
+      </tbody></table></div>
+    </div>`;
+
+  return html;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SUMMARY & PRINT
+// ════════════════════════════════════════════════════════════════
+function showSummary(cid) {
+  currentGrade = cid;
+  setActiveNav(cid, true);
+  document.getElementById("page-title").innerHTML = `<i class="fas fa-chart-bar" style="color:var(--warning);margin-right:.5rem;"></i>${GRADES[cid].name} — Summary`;
+  const pc = document.getElementById("page-content");
+  pc.innerHTML = buildSummaryHTML(cid);
+  // Initialize subject avg chart
+  setTimeout(() => {
+    const ctx = document.getElementById("subj-avg-chart");
+    if (!ctx || !window.Chart) return;
+    const g = GRADES[cid];
+    const subjectAvgs = g.subjects.map(sub => {
+      const vals = g.students.map(s => parseFloat(marksData[cid]?.[s.id]?.[sub])).filter(v => !isNaN(v));
+      return vals.length > 0 ? parseFloat((vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1)) : null;
+    });
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: g.subjects,
+        datasets: [{
+          data: subjectAvgs,
+          backgroundColor: subjectAvgs.map(v => v==null?"rgba(255,255,255,.1)":v>=75?"rgba(16,185,129,.6)":v>=60?"rgba(56,189,248,.6)":v>=45?"rgba(245,158,11,.6)":v>35?"rgba(249,115,22,.6)":"rgba(239,68,68,.6)"),
+          borderRadius: 6, borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` Avg: ${ctx.raw}%` } } },
+        scales: {
+          x: { ticks: { color: "#94a3b8", font: { family:"Nunito", size:11 } }, grid: { display:false } },
+          y: { min:0, max:100, ticks: { color:"#94a3b8" }, grid: { color:"rgba(255,255,255,.05)" } }
+        }
+      }
+    });
+  }, 100);
+}
+
+function buildSummaryHTML(cid) {
+  const g = GRADES[cid];
+  const today = new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"2-digit",year:"numeric"});
+  const rawList = g.students.map(s => {
+    const m = marksData[cid]?.[s.id] || {};
+    let total=0,cnt=0;
+    g.subjects.forEach(sub => { const v=parseFloat(m[sub]); if(!isNaN(v)){total+=v;cnt++;} });
+    return { ...s, total:cnt>0?total:-1, avg:cnt>0?(total/g.subjects.length).toFixed(1):"" };
+  });
+  const sorted = [...rawList].filter(x=>x.total>=0).sort((a,b)=>b.total-a.total);
+  const withRank = rawList.map(s => ({ ...s, rank: sorted.findIndex(x=>x.id===s.id)>=0?sorted.findIndex(x=>x.id===s.id)+1:"—" }));
+  const cnt = sorted.length;
+  const passing = sorted.filter(s=>parseFloat(s.avg)>35).length;
+  const topStudent = sorted[0] || {};
+  const classAvg = sorted.length>0?(sorted.reduce((a,b)=>a+b.total,0)/sorted.length/g.subjects.length).toFixed(1):"—";
+
+  const boys  = withRank.filter(s=>s.gender==="Male");
+  const girls = withRank.filter(s=>s.gender!=="Male");
+  const groups = (boys.length&&girls.length) ? [{label:"👦 Boys",students:boys},{label:"👧 Girls",students:girls}] : [{label:"",students:withRank}];
+
+  // Grade distribution counts
+  const gradeA = sorted.filter(s=>parseFloat(s.avg)>=75).length;
+  const gradeB = sorted.filter(s=>parseFloat(s.avg)>=60&&parseFloat(s.avg)<75).length;
+  const gradeC = sorted.filter(s=>parseFloat(s.avg)>=45&&parseFloat(s.avg)<60).length;
+  const gradeS = sorted.filter(s=>parseFloat(s.avg)>35&&parseFloat(s.avg)<45).length;
+  const gradeF = sorted.filter(s=>parseFloat(s.avg)<=35).length;
+
+  // Stats
+  let html = `
+    <div class="section-header">
+      <h2 class="summary-print-title"><i class="fas fa-chart-bar" style="color:var(--warning);margin-right:.5rem;"></i>${g.name} — Summary</h2>
+      <div class="flex gap-3 items-center no-print" style="flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="exportMarksCSV('${esc(cid)}')"><i class="fas fa-download"></i> CSV</button>
+        <button class="btn btn-success btn-sm" onclick="openPrintSettings('${esc(cid)}')"><i class="fas fa-print"></i> Print</button>
+        <button class="btn btn-outline btn-sm" onclick="showGrade('${esc(cid)}')"><i class="fas fa-arrow-left"></i> Back to Marks</button>
+      </div>
+    </div>
+
+    <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:1.25rem;">
+      <div class="stat-card glass stat-blue"><div class="stat-icon"><i class="fas fa-user-graduate"></i></div><div class="stat-value">${cnt}</div><div class="stat-label">Total Students</div></div>
+      <div class="stat-card glass stat-green"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-value">${passing}</div><div class="stat-label">Passed</div></div>
+      <div class="stat-card glass" style="border:1px solid rgba(239,68,68,.25);background:rgba(239,68,68,.08);"><div class="stat-icon" style="background:rgba(239,68,68,.2);color:var(--danger);"><i class="fas fa-times-circle"></i></div><div class="stat-value" style="color:var(--danger);">${cnt-passing}</div><div class="stat-label">Failed</div></div>
+      <div class="stat-card glass stat-cyan"><div class="stat-icon"><i class="fas fa-percentage"></i></div><div class="stat-value">${classAvg}%</div><div class="stat-label">Class Avg</div></div>
+      <div class="stat-card glass stat-orange"><div class="stat-icon"><i class="fas fa-trophy"></i></div><div class="stat-value" style="font-size:1rem;line-height:1.3;margin-top:.25rem;">${topStudent.name||"—"}</div><div class="stat-label">Rank 1</div></div>
+    </div>
+
+    <!-- Grade Distribution -->
+    <div class="glass card grade-dist-card" style="margin-bottom:1.25rem;padding:1rem 1.25rem;">
+      <h3 style="font-size:.88rem;font-weight:800;margin-bottom:.9rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;"><i class="fas fa-chart-bar" style="color:var(--cyan);margin-right:.4rem;"></i>Grade Distribution</h3>
+      <div style="display:flex;gap:.75rem;align-items:flex-end;height:64px;">
+        ${[{label:"A ≥75",val:gradeA,color:"#10b981"},{label:"B ≥60",val:gradeB,color:"#38bdf8"},{label:"C ≥45",val:gradeC,color:"#f59e0b"},{label:"S >35",val:gradeS,color:"#f97316"},{label:"W <35",val:gradeF,color:"#ef4444"}].map(g2 => {
+          const pct = cnt > 0 ? Math.round(g2.val/cnt*100) : 0;
+          return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;">
+            <span style="font-size:.72rem;font-weight:800;color:${g2.color};">${g2.val}</span>
+            <div style="width:100%;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden;height:${Math.max(pct*0.38,4)}px;min-height:4px;">
+              <div style="height:100%;background:${g2.color};border-radius:6px;"></div>
+            </div>
+            <span style="font-size:.68rem;color:var(--text-muted);">${g2.label}</span>
+          </div>`;
+        }).join("")}
+      </div>
+    </div>`;
+
+  // Subject averages chart data
+  const subjectAvgs = g.subjects.map(sub => {
+    const vals = g.students.map(s => parseFloat(marksData[cid]?.[s.id]?.[sub])).filter(v => !isNaN(v));
+    return vals.length > 0 ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : null;
+  });
+
+  html += `
+    <div class="glass card" style="margin-bottom:1.25rem;padding:1rem 1.25rem;">
+      <h3 style="font-size:.88rem;font-weight:800;margin-bottom:.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;"><i class="fas fa-chart-line" style="color:var(--warning);margin-right:.4rem;"></i>Subject Averages</h3>
+      <div style="position:relative;height:200px;"><canvas id="subj-avg-chart"></canvas></div>
+    </div>
+
+    <div class="glass card" style="padding:0;margin-bottom:1.25rem;">
+      <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+        <h3 style="font-size:.95rem;font-weight:800;"><i class="fas fa-table" style="color:var(--blue-accent);margin-right:.5rem;"></i>Results Table</h3>
+        <span style="font-size:.78rem;color:var(--text-muted);">${cnt} students · ${g.subjects.length} subjects</span>
+      </div>
+      <div class="sum-table-wrap"><table class="sum-table"><thead><tr>
+        <th>#</th><th>Index</th><th>Name</th>`;
+  g.subjects.forEach(s => html += `<th style="font-size:.65rem;">${s}</th>`);
+  html += `<th>Total</th><th>Avg</th><th>Rank</th></tr></thead><tbody>`;
+
+  let no = 1;
+  groups.forEach(grp => {
+    if (grp.label) {
+      html += `<tr class="sep-sum-row"><td colspan="${4+g.subjects.length+2}" style="padding:4px 1rem;font-size:.7rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">${grp.label}</td></tr>`;
+    }
+    grp.students.forEach(s => {
+      const m = marksData[cid]?.[s.id] || {};
+      const rn = s.rank;
+      const rcls = rn===1?"r1":rn===2?"r2":rn===3?"r3":"";
+      const medal = rn===1?"🥇":rn===2?"🥈":rn===3?"🥉":"";
+      html += `<tr>
+        <td style="color:var(--text-muted);font-size:.78rem;">${no++}</td>
+        <td style="font-size:.78rem;color:var(--text-muted);">${s.indexNo||"—"}</td>
+        <td><strong style="font-size:.85rem;">${s.name||"—"}</strong></td>`;
+      g.subjects.forEach(sub => {
+        const v = m[sub]||""; const sc = getScoreClass(v);
+        html += `<td><span class="score-val ${sc}" style="font-size:.78rem;">${v||"—"}</span></td>`;
+      });
+      html += `<td class="stotal">${s.total>=0?s.total:"—"}</td>
+        <td class="savg">${s.avg||"—"}</td>
+        <td class="srank ${rcls}">${medal} ${rn}</td></tr>`;
+    });
+  });
+  html += `</tbody></table></div>`;
+
+  // Signatures
+  html += `<div class="sig-section">
+    <div>
+      <div class="sig-label">✍️ Class Teacher</div>
+      <input class="sig-name-input" type="text" placeholder="Name of Class Teacher"/>
+      <div class="sig-space"></div>
+      <div class="sig-caption">Signature of Class Teacher</div>
+      <div class="sig-date-row"><span class="sig-date-label">Date :</span><input class="sig-date-input" type="text" value="${today}"/></div>
+    </div>
+    <div>
+      <div class="sig-label">✍️ Sectional Head</div>
+      <input class="sig-name-input" type="text" placeholder="Name of Sectional Head"/>
+      <div class="sig-space"></div>
+      <div class="sig-caption">Signature of Sectional Head</div>
+      <div class="sig-date-row"><span class="sig-date-label">Date :</span><input class="sig-date-input" type="text" value="${today}"/></div>
+    </div>
+    <div>
+      <div class="sig-label">✍️ Principal</div>
+      <input class="sig-name-input" type="text" placeholder="Name of Principal"/>
+      <div class="sig-space"></div>
+      <div class="sig-caption">Signature of Principal</div>
+      <div class="sig-date-row"><span class="sig-date-label">Date :</span><input class="sig-date-input" type="text" value="${today}"/></div>
+    </div>
+  </div></div>`;
+
+  return html;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  PRINT SETTINGS — user-customizable margin / border / font size /
+//  signature placement, remembered per-browser via localStorage.
+// ════════════════════════════════════════════════════════════════
+const PRINT_SETTINGS_KEY = "whc_print_settings";
+function getPrintSettings() {
+  const defaults = {
+    marginV: 8,           // top/bottom page margin, mm
+    marginH: 9,            // left/right page margin, mm
+    borderOn: false,        // show a frame border around the printed sheet
+    borderWidth: 1,          // px
+    borderColor: "#1a3a8f",
+    fontScale: 100,           // overall print size, %
+    sigAlign: "justify",       // justify | left | center | right
+    sigSpacing: 0,               // extra space above signature block, px
+    nameSubjectGap: 3,            // space between Name column and first subject column, px
+    colName: 0,             // Name column width, px (0 = auto/default)
+    colSubject: 0,           // each Subject column width, px (0 = auto/default)
+    colAvg: 0,                // Avg column width, px (0 = auto/default)
+    colRank: 0                  // Rank column width, px (0 = auto/default)
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem(PRINT_SETTINGS_KEY) || "{}");
+    return { ...defaults, ...saved };
+  } catch(e) { return defaults; }
+}
+function savePrintSettings(s) {
+  try { localStorage.setItem(PRINT_SETTINGS_KEY, JSON.stringify(s)); } catch(e) {}
+}
+
+function openPrintSettings(cid) {
+  const s = getPrintSettings();
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.innerHTML = `
+    <div class="glass modal" style="max-width:480px;">
+      <div class="modal-header">
+        <h3><i class="fas fa-print" style="color:var(--cyan);margin-right:.5rem;"></i>Print Settings</h3>
+        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="input-group">
+        <label>Page Margin — Top/Bottom (mm)</label>
+        <input type="number" id="ps-marginV" class="form-control" min="3" max="25" step="1" value="${s.marginV}"/>
+      </div>
+      <div class="input-group">
+        <label>Page Margin — Left/Right (mm)</label>
+        <input type="number" id="ps-marginH" class="form-control" min="3" max="25" step="1" value="${s.marginH}"/>
+      </div>
+
+      <div class="input-group">
+        <label style="display:flex;align-items:center;gap:.5rem;text-transform:none;font-size:.85rem;">
+          <input type="checkbox" id="ps-borderOn" ${s.borderOn?"checked":""} style="width:auto;"/> Show border around the sheet
+        </label>
+      </div>
+      <div class="flex gap-3" style="align-items:flex-end;">
+        <div class="input-group" style="flex:1;">
+          <label>Border Width (px)</label>
+          <input type="number" id="ps-borderWidth" class="form-control" min="1" max="8" step="1" value="${s.borderWidth}"/>
+        </div>
+        <div class="input-group" style="flex:1;">
+          <label>Border Colour</label>
+          <input type="color" id="ps-borderColor" class="form-control" style="padding:.25rem;height:42px;" value="${s.borderColor}"/>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Overall Font / Content Size (%)</label>
+        <input type="range" id="ps-fontScale" min="70" max="140" step="5" value="${s.fontScale}" style="width:100%;"/>
+        <span id="ps-fontScale-val" style="font-size:.8rem;color:var(--text-muted);">${s.fontScale}%</span>
+      </div>
+
+      <div class="input-group">
+        <label>Signature Placement</label>
+        <select id="ps-sigAlign" class="form-control">
+          <option value="justify" ${s.sigAlign==="justify"?"selected":""}>Spread Evenly (default)</option>
+          <option value="left" ${s.sigAlign==="left"?"selected":""}>Left Aligned</option>
+          <option value="center" ${s.sigAlign==="center"?"selected":""}>Centered</option>
+          <option value="right" ${s.sigAlign==="right"?"selected":""}>Right Aligned</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Extra Space Above Signatures (px)</label>
+        <input type="number" id="ps-sigSpacing" class="form-control" min="0" max="60" step="2" value="${s.sigSpacing}"/>
+      </div>
+
+      <div class="input-group">
+        <label>Space Between Name &amp; Subject Columns (px)</label>
+        <input type="number" id="ps-nameSubjectGap" class="form-control" min="0" max="20" step="1" value="${s.nameSubjectGap}"/>
+      </div>
+
+      <div class="input-group" style="margin-bottom:.5rem;">
+        <label style="margin-bottom:0;">Column Widths (print only)</label>
+        <p style="font-size:.75rem;color:var(--text-muted);margin-top:.15rem;">Drag a slider to size that column. Leave at "Auto" to use the default width.</p>
+      </div>
+      <div class="flex gap-3" style="align-items:flex-end;flex-wrap:wrap;">
+        <div class="input-group" style="flex:1;min-width:130px;">
+          <label>Name Column</label>
+          <input type="range" id="ps-colName" min="0" max="260" step="5" value="${s.colName}" style="width:100%;"/>
+          <span id="ps-colName-val" style="font-size:.78rem;color:var(--text-muted);">${s.colName?s.colName+"px":"Auto"}</span>
+        </div>
+        <div class="input-group" style="flex:1;min-width:130px;">
+          <label>Subject Columns</label>
+          <input type="range" id="ps-colSubject" min="0" max="90" step="2" value="${s.colSubject}" style="width:100%;"/>
+          <span id="ps-colSubject-val" style="font-size:.78rem;color:var(--text-muted);">${s.colSubject?s.colSubject+"px":"Auto"}</span>
+        </div>
+        <div class="input-group" style="flex:1;min-width:130px;">
+          <label>Average Column</label>
+          <input type="range" id="ps-colAvg" min="0" max="80" step="2" value="${s.colAvg}" style="width:100%;"/>
+          <span id="ps-colAvg-val" style="font-size:.78rem;color:var(--text-muted);">${s.colAvg?s.colAvg+"px":"Auto"}</span>
+        </div>
+        <div class="input-group" style="flex:1;min-width:130px;">
+          <label>Rank Column</label>
+          <input type="range" id="ps-colRank" min="0" max="80" step="2" value="${s.colRank}" style="width:100%;"/>
+          <span id="ps-colRank-val" style="font-size:.78rem;color:var(--text-muted);">${s.colRank?s.colRank+"px":"Auto"}</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+        <button class="btn btn-primary" onclick="applyPrintSettingsAndPrint('${esc(cid)}')"><i class="fas fa-print"></i> Apply &amp; Print</button>
+      </div>
+    </div>`;
+  overlay.addEventListener("click", e => { if (e.target===overlay) overlay.remove(); });
+  document.getElementById("modal-container").appendChild(overlay);
+  const fsRange = overlay.querySelector("#ps-fontScale");
+  fsRange.addEventListener("input", () => {
+    overlay.querySelector("#ps-fontScale-val").textContent = fsRange.value + "%";
+  });
+
+  ["colName","colSubject","colAvg","colRank"].forEach(key => {
+    const range = overlay.querySelector(`#ps-${key}`);
+    const label = overlay.querySelector(`#ps-${key}-val`);
+    range.addEventListener("input", () => {
+      label.textContent = (parseFloat(range.value) > 0) ? range.value + "px" : "Auto";
+    });
+  });
+}
+
+function applyPrintSettingsAndPrint(cid) {
+  const overlay = document.querySelector(".modal-overlay");
+  const s = {
+    marginV: Math.max(3, Math.min(25, parseFloat(document.getElementById("ps-marginV").value) || 8)),
+    marginH: Math.max(3, Math.min(25, parseFloat(document.getElementById("ps-marginH").value) || 9)),
+    borderOn: document.getElementById("ps-borderOn").checked,
+    borderWidth: Math.max(1, Math.min(8, parseFloat(document.getElementById("ps-borderWidth").value) || 1)),
+    borderColor: document.getElementById("ps-borderColor").value || "#1a3a8f",
+    fontScale: Math.max(70, Math.min(140, parseFloat(document.getElementById("ps-fontScale").value) || 100)),
+    sigAlign: document.getElementById("ps-sigAlign").value,
+    sigSpacing: Math.max(0, Math.min(60, parseFloat(document.getElementById("ps-sigSpacing").value) || 0)),
+    nameSubjectGap: Math.max(0, Math.min(20, parseFloat(document.getElementById("ps-nameSubjectGap").value) ?? 3)),
+    colName: Math.max(0, Math.min(260, parseFloat(document.getElementById("ps-colName").value) || 0)),
+    colSubject: Math.max(0, Math.min(90, parseFloat(document.getElementById("ps-colSubject").value) || 0)),
+    colAvg: Math.max(0, Math.min(80, parseFloat(document.getElementById("ps-colAvg").value) || 0)),
+    colRank: Math.max(0, Math.min(80, parseFloat(document.getElementById("ps-colRank").value) || 0))
+  };
+  savePrintSettings(s);
+  if (overlay) overlay.remove();
+  doPrint(cid, s);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  GLOBAL PRINT TIER — every class must print with IDENTICAL table
+//  font-size / cell padding / avg-rank size, so the compaction level
+//  is decided ONCE using the school's LARGEST class (the one most
+//  likely to overflow), then reused for every class's printout —
+//  never re-measured per class. This guarantees the header, name/
+//  subject gap, and AVG/RANK columns look pixel-identical on every
+//  class sheet, exactly like the reference sheets.
+// ════════════════════════════════════════════════════════════════
+let cachedPrintTier = null; // "" | "print-compact" | "print-compact-2" | "print-compact-3"
+
+function computeGlobalPrintTier(printContent, printSheet, budget) {
+  if (cachedPrintTier !== null) return cachedPrintTier;
+
+  // Find the class with the most rows (students) — the one most likely
+  // to need the deepest compaction — and use IT to decide the tier
+  // that every class will then share.
+  let biggestCid = null, biggestCount = -1;
+  Object.keys(GRADES).forEach(cid => {
+    const cnt = (GRADES[cid].students || []).length;
+    if (cnt > biggestCount) { biggestCount = cnt; biggestCid = cid; }
+  });
+
+  const savedHTML = printContent.innerHTML;
+  const savedClass = printContent.className;
+
+  if (biggestCid) {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = buildSummaryHTML(biggestCid);
+    tmp.querySelectorAll(".no-print").forEach(el => el.remove());
+    tmp.querySelectorAll(".stats-grid").forEach(el => el.remove());
+    tmp.querySelectorAll(".grade-dist-card").forEach(el => el.remove());
+    const subjChart = tmp.querySelector("#subj-avg-chart");
+    if (subjChart) { const chartCard = subjChart.closest(".glass.card"); if (chartCard) chartCard.remove(); }
+    printContent.innerHTML = tmp.innerHTML;
+  }
+
+  printContent.className = savedClass.replace(/\bprint-compact(-2|-3)?\b/g, "").trim();
+  void printSheet.offsetHeight;
+  let tier = "";
+  if (printSheet.scrollHeight > budget) {
+    printContent.classList.add("print-compact");
+    void printSheet.offsetHeight;
+    tier = "print-compact";
+  }
+  if (printSheet.scrollHeight > budget) {
+    printContent.classList.remove("print-compact");
+    printContent.classList.add("print-compact-2");
+    void printSheet.offsetHeight;
+    tier = "print-compact-2";
+  }
+  if (printSheet.scrollHeight > budget) {
+    printContent.classList.remove("print-compact-2");
+    printContent.classList.add("print-compact-3");
+    void printSheet.offsetHeight;
+    tier = "print-compact-3";
+  }
+
+  // Restore whatever was actually being printed before we borrowed
+  // the print area to measure the biggest class.
+  printContent.innerHTML = savedHTML;
+  printContent.className = savedClass;
+
+  cachedPrintTier = tier;
+  return tier;
+}
+
+function doPrint(cid, printOpts) {
+  const s = printOpts || getPrintSettings();
+  const g = GRADES[cid];
+  const now = new Date();
+  const periodStr = currentPeriod ? `${currentPeriod.year} — ${MARKS.termLabel(currentPeriod.term)}` : "";
+  document.getElementById("print-class-line").textContent = g.name + (periodStr ? " · " + periodStr : "");
+  document.getElementById("print-date-line").textContent =
+    "Printed: " + now.toLocaleDateString("en-GB",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+  // Clone summary into print area
+  const summaryHTML = buildSummaryHTML(cid);
+  const tmp = document.createElement("div");
+  tmp.innerHTML = summaryHTML;
+  // Remove the action buttons (CSV / Print / Back)
+  tmp.querySelectorAll(".no-print").forEach(el => el.remove());
+  // Print sheet should only contain: Results Table, Signature panel.
+  // Strip out the top stat cards, Grade Distribution card, and Subject Averages chart card.
+  tmp.querySelectorAll(".stats-grid").forEach(el => el.remove());
+  tmp.querySelectorAll(".grade-dist-card").forEach(el => el.remove());
+  const subjChart = tmp.querySelector("#subj-avg-chart");
+  if (subjChart) { const chartCard = subjChart.closest(".glass.card"); if (chartCard) chartCard.remove(); }
+  const printContent = document.getElementById("print-content");
+  printContent.className = ""; // reset any compaction classes from a previous print
+  printContent.innerHTML = tmp.innerHTML;
+
+  // The Print/Summary buttons live on the SAME on-screen summary panel where the
+  // user types the signature names/dates — but buildSummaryHTML() above just
+  // generated a brand-new (blank) copy for the print area. Carry over whatever
+  // the user actually typed on screen, in order, so it shows up on paper.
+  const liveNameInputs = document.querySelectorAll("#page-content .sig-name-input");
+  const liveDateInputs = document.querySelectorAll("#page-content .sig-date-input");
+  const printNameInputs = printContent.querySelectorAll(".sig-name-input");
+  const printDateInputs = printContent.querySelectorAll(".sig-date-input");
+  printNameInputs.forEach((el, i) => { if (liveNameInputs[i]) el.value = liveNameInputs[i].value; });
+  printDateInputs.forEach((el, i) => { if (liveDateInputs[i]) el.value = liveDateInputs[i].value; });
+
+  // Apply user-chosen signature placement + extra spacing.
+  printContent.classList.add("sig-align-" + (s.sigAlign || "justify"));
+  const sigSection = printContent.querySelector(".sig-section");
+  if (sigSection && s.sigSpacing) {
+    sigSection.style.setProperty("margin-top", `calc(1.1rem + ${s.sigSpacing}px)`, "important");
+  }
+
+  // Apply user-chosen page margins: inject/refresh a dynamic @page rule so it
+  // overrides the default one (it's added later in the document, so it wins).
+  const marginV = Math.max(3, Math.min(25, s.marginV || 8));
+  const marginH = Math.max(3, Math.min(25, s.marginH || 9));
+  let pageStyle = document.getElementById("dynamic-print-page-style");
+  if (!pageStyle) {
+    pageStyle = document.createElement("style");
+    pageStyle.id = "dynamic-print-page-style";
+    document.head.appendChild(pageStyle);
+  }
+  // Column-width overrides: Name is column 3, subjects fill columns 4..(3+n),
+  // then Total, Avg, Rank follow — computed from THIS class's subject count
+  // so the widths land on the right columns regardless of how many subjects
+  // this particular class has.
+  const subjCount  = (g.subjects || []).length;
+  const avgCol     = 5 + subjCount;
+  const rankCol    = 6 + subjCount;
+  let colWidthCSS = "";
+  if (s.colName)    colWidthCSS += `#print-area .sum-table th:nth-child(3),#print-area .sum-table td:nth-child(3){width:${s.colName}px!important;max-width:${s.colName}px!important}`;
+  if (s.colSubject) colWidthCSS += `#print-area .sum-table th:nth-child(n+4):nth-child(-n+${3+subjCount}),#print-area .sum-table td:nth-child(n+4):nth-child(-n+${3+subjCount}){width:${s.colSubject}px!important;max-width:${s.colSubject}px!important}`;
+  if (s.colAvg)     colWidthCSS += `#print-area .sum-table th:nth-child(${avgCol}),#print-area .sum-table td:nth-child(${avgCol}){width:${s.colAvg}px!important;max-width:${s.colAvg}px!important}`;
+  if (s.colRank)    colWidthCSS += `#print-area .sum-table th:nth-child(${rankCol}),#print-area .sum-table td:nth-child(${rankCol}){width:${s.colRank}px!important;max-width:${s.colRank}px!important}`;
+  if (colWidthCSS) colWidthCSS = `#print-area .sum-table{table-layout:fixed!important}
+    #print-area .sum-table th{white-space:normal!important;word-break:break-word!important;line-height:1.15!important}
+    #print-area .sum-table td{white-space:normal!important;word-break:break-word!important}
+    ` + colWidthCSS;
+
+  pageStyle.textContent = `@media print { @page { size:A4 landscape; margin:${marginV}mm ${marginH}mm; } }
+    #print-area .sum-table th:nth-child(3),#print-area .sum-table td:nth-child(3){padding-right:${s.nameSubjectGap ?? 3}px!important}
+    #print-area .sum-table th:nth-child(4),#print-area .sum-table td:nth-child(4){padding-left:${s.nameSubjectGap ?? 3}px!important}
+    ${colWidthCSS}`;
+
+  // Force the whole sheet to fit exactly on ONE A4-landscape page, sized to
+  // match the usable area for the CURRENT margins (297x210mm page).
+  const printArea  = document.getElementById("print-area");
+  const printSheet = document.getElementById("print-sheet");
+  printArea.style.display = "block";
+
+  const mmToPx = mm => mm / 25.4 * 96;
+  const sheetWidthPx  = mmToPx(297 - marginH * 2);
+  const budget        = mmToPx(210 - marginV * 2);
+  printSheet.style.width = sheetWidthPx + "px";
+
+  // User-chosen border around the printed sheet.
+  printSheet.style.border = s.borderOn
+    ? `${Math.max(1, s.borderWidth || 1)}px solid ${s.borderColor || "#1a3a8f"}`
+    : "none";
+
+  // User-chosen overall font/content size — zoom scales layout + text together
+  // so the fit-to-page measurement below stays accurate (Chrome/Edge support
+  // `zoom` fully; it's the simplest way to scale everything uniformly).
+  printSheet.style.zoom = Math.max(70, Math.min(140, s.fontScale || 100)) / 100;
+
+  // Every class prints at the SAME compaction tier — decided once from the
+  // school's largest class — so the table font-size, name/subject gap, and
+  // AVG/RANK column sizing are pixel-identical across every class's sheet,
+  // instead of drifting smaller/larger depending on how many students that
+  // particular class happens to have.
+  void printSheet.offsetHeight; // reflow
+  const tier = computeGlobalPrintTier(printContent, printSheet, budget);
+  if (tier) printContent.classList.add(tier);
+  void printSheet.offsetHeight;
+  // If even the shared max-compaction tier overflows for THIS class (should
+  // only happen for a class bigger than the one used to decide the tier),
+  // it flows naturally onto a correctly-positioned 2nd page instead of being
+  // squeezed/clipped — the table header row repeats and rows never split
+  // across the page break (see thead/tbody rules above).
+
+  setTimeout(() => { window.print(); }, 50);
+  window.onafterprint = () => {
+    printArea.style.display = "";
+    printContent.className = "";
+    printSheet.style.width = "";
+    printSheet.style.border = "";
+    printSheet.style.zoom = "";
+  };
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SECRET — click the school name/logo 18 times (anywhere it
+//  appears — login screen, period screen, or sidebar) to reveal it.
+// ════════════════════════════════════════════════════════════════
+let secretClickCount = 0;
+function secretClick() {
+  secretClickCount++;
+  if (secretClickCount >= 18) {
+    secretClickCount = 0;
+    showSecretCredit();
+  }
+}
+function showSecretCredit() {
+  const overlay = document.createElement("div");
+  overlay.id = "secret-credit-overlay";
+  overlay.style.cssText = "position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(10,22,40,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);cursor:pointer;animation:slideIn .35s ease;";
+  overlay.innerHTML = `
+    <div style="text-align:center;padding:2rem;">
+      <div style="font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.8rem,6vw,4rem);line-height:1.3;background:linear-gradient(135deg,#fff,var(--sky),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 60px rgba(56,189,248,.5);">
+        Project By :- R.Rizwinth
+      </div>
+      <p style="color:var(--text-muted);margin-top:1.5rem;font-size:.9rem;">Tap anywhere to close</p>
+    </div>`;
+  overlay.addEventListener("click", () => overlay.remove());
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 6000);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════════════════════════
+function toast(msg, type="info") {
+  const icons = { success:"check-circle", error:"times-circle", warning:"exclamation-triangle", info:"info-circle" };
+  const t = document.createElement("div");
+  t.className = `toast ${type}`;
+  t.innerHTML = `<i class="fas fa-${icons[type]||"info-circle"}" style="color:var(--${type==="success"?"success":type==="error"?"danger":type==="warning"?"warning":"blue-accent"});"></i>${msg}`;
+  document.getElementById("toast-container").appendChild(t);
+  setTimeout(() => { t.style.animation="slideOut .35s ease forwards"; setTimeout(()=>t.remove(),350); }, 3000);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SEARCH / FILTER TABLE
+// ════════════════════════════════════════════════════════════════
+function filterMarksTable() {
+  const q = (document.getElementById("marks-search")?.value || "").toLowerCase();
+  document.querySelectorAll("tbody tr:not(.sep-label-row)").forEach(tr => {
+    const name = tr.querySelector("td:nth-child(3)")?.textContent.toLowerCase() || "";
+    tr.style.display = !q || name.includes(q) ? "" : "none";
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  CSV EXPORT
+// ════════════════════════════════════════════════════════════════
+function exportMarksCSV(cid) {
+  const g = GRADES[cid];
+  if (!g) return;
+  const rows = [["#","Index","Name","Gender", ...g.subjects, "Total","Avg"]];
+  let i = 1;
+  g.students.forEach(s => {
+    const marks = marksData[cid]?.[s.id] || {};
+    let total=0, cnt=0;
+    const subVals = g.subjects.map(sub => {
+      const v = parseFloat(marks[sub]);
+      if (!isNaN(v)) { total+=v; cnt++; }
+      return isNaN(v) ? "" : marks[sub];
+    });
+    const avg = cnt>0 ? (total/g.subjects.length).toFixed(1) : "";
+    rows.push([i++, s.indexNo||"", s.name||"", s.gender||"", ...subVals, cnt>0?total:"", avg]);
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+  a.download = `${g.name.replace(/[^a-z0-9]/gi,"_")}_marks.csv`;
+  a.click();
+  toast("CSV downloaded!", "success");
+}
+
+// ════════════════════════════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ════════════════════════════════════════════════════════════════
+document.addEventListener("keydown", e => {
+  if (e.key==="Enter" && !document.getElementById("page-login").classList.contains("hidden")) MARKS.login();
+  if (e.key==="Enter" && !document.getElementById("page-period").classList.contains("hidden")) MARKS.confirmPeriod();
+  if ((e.ctrlKey||e.metaKey) && e.key==="s" && !document.getElementById("app-shell").classList.contains("hidden")) {
+    e.preventDefault(); if (hasUnsaved) saveData();
+  }
+});
+</script>
+
+
+<!-- RizKa AI Assistant Embed -->
+<style id="rizka-ai-embed-style">
+  #rizka-ai-launcher{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    width:58px;
+    height:58px;
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:50%;
+    background:linear-gradient(135deg,#2563eb,#06b6d4);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:100001;
+    box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 0 4px rgba(59,130,246,.12);
+    transition:transform .2s ease, box-shadow .2s ease;
+    font:700 24px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  #rizka-ai-launcher:hover{
+    transform:translateY(-2px) scale(1.04);
+    box-shadow:0 14px 34px rgba(0,0,0,.4),0 0 0 5px rgba(59,130,246,.16);
+  }
+  #rizka-ai-launcher:focus-visible{
+    outline:3px solid rgba(125,211,252,.9);
+    outline-offset:3px;
+  }
+  #rizka-ai-launcher .rizka-ai-icon{
+    width:28px;height:28px;display:grid;place-items:center;
+    border-radius:10px;background:rgba(255,255,255,.15);
+    font-size:18px;
+  }
+
+  #rizka-ai-panel{
+    position:fixed;
+    right:18px;
+    bottom:88px;
+    width:min(390px,calc(100vw - 28px));
+    height:min(620px,calc(100vh - 120px));
+    min-height:420px;
+    background:#0b1220;
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:18px;
+    overflow:hidden;
+    z-index:100000;
+    box-shadow:0 22px 70px rgba(0,0,0,.48);
+    display:none;
+    opacity:0;
+    transform:translateY(12px) scale(.98);
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  #rizka-ai-panel.rizka-ai-open{
+    display:block;
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+  #rizka-ai-panel .rizka-ai-bar{
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 10px 0 14px;
+    background:linear-gradient(135deg,rgba(15,23,42,.96),rgba(30,64,175,.9));
+    color:#fff;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    font:700 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  #rizka-ai-panel .rizka-ai-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-width:0;
+  }
+  #rizka-ai-panel .rizka-ai-title-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:#22c55e;
+    box-shadow:0 0 10px rgba(34,197,94,.7);
+    flex:none;
+  }
+  #rizka-ai-panel .rizka-ai-close{
+    width:30px;height:30px;
+    border:0;
+    border-radius:8px;
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    cursor:pointer;
+    font-size:17px;
+  }
+  #rizka-ai-panel .rizka-ai-close:hover{background:rgba(255,255,255,.16)}
+  #rizka-ai-frame{
+    width:100%;
+    height:calc(100% - 42px);
+    border:0;
+    display:block;
+    background:#0b1220;
+  }
+
+  @media (max-width:600px){
+    #rizka-ai-launcher{
+      right:14px; bottom:14px; width:54px; height:54px;
+    }
+    #rizka-ai-panel{
+      right:10px; left:10px; bottom:78px;
+      width:auto; height:min(76vh,620px);
+      min-height:400px; border-radius:16px;
+    }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    #rizka-ai-launcher,#rizka-ai-panel{transition:none}
+  }
+</style>
+
+<button id="rizka-ai-launcher" type="button" aria-label="Open AI Assistant" aria-expanded="false" title="Open AI Assistant">
+  <span class="rizka-ai-icon">✨</span>
+</button>
+
+<section id="rizka-ai-panel" aria-label="AI Assistant">
+  <div class="rizka-ai-bar">
+    <div class="rizka-ai-title">
+      <span class="rizka-ai-title-dot"></span>
+      <span>AI Assistant</span>
+    </div>
+    <button class="rizka-ai-close" type="button" aria-label="Close AI Assistant" title="Close">×</button>
+  </div>
+  <iframe
+    id="rizka-ai-frame"
+    title="Embedded AI Assistant"
+    src="Ai%20Assitant/Ai%20Assitant.html"
+    loading="lazy"
+    referrerpolicy="same-origin">
+  </iframe>
+</section>
+
+<script id="rizka-ai-embed-script">
+(function(){
+  const launcher = document.getElementById("rizka-ai-launcher");
+  const panel = document.getElementById("rizka-ai-panel");
+  const closeBtn = panel && panel.querySelector(".rizka-ai-close");
+  const frame = document.getElementById("rizka-ai-frame");
+  if(!launcher || !panel || !closeBtn) return;
+
+  function setOpen(open){
+    panel.classList.toggle("rizka-ai-open", open);
+    launcher.setAttribute("aria-expanded", String(open));
+    launcher.title = open ? "Close AI Assistant" : "Open AI Assistant";
+    launcher.querySelector(".rizka-ai-icon").textContent = open ? "×" : "✨";
+    if(open && frame){
+      try { frame.focus(); } catch(e){}
+    }
+  }
+
+  launcher.addEventListener("click", function(){
+    setOpen(!panel.classList.contains("rizka-ai-open"));
+  });
+
+  closeBtn.addEventListener("click", function(){
+    setOpen(false);
+    launcher.focus();
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && panel.classList.contains("rizka-ai-open")){
+      setOpen(false);
+      launcher.focus();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
