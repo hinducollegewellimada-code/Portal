@@ -1,0 +1,211 @@
+
+Grade 6 - 13 Subject Techer Details
+
+Grade 6
+Subjects        -| Teachers
+Tamil           -|
+Maths           -|
+Science         -| Mrs. Dharshini
+English         -|
+Art/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma
+ICT 	        -|
+PTS 		-|
+Health Science  -|
+History  	-|
+Religion        -|
+Geography       -|
+Shinhala        -| Mr. Rameshraja
+Civics          -|
+Library         -|
+
+Grade 6E
+Subjects        -| Teachers
+Tamil           -|
+Maths           -|
+Science         -| Mrs. Fazmila
+English         -|
+Art/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma
+ICT 	        -|
+PTS 		-|
+Health Science  -|
+History  	-|
+Religion        -|
+Geography       -|
+Shinhala        -| Mr. Rameshraja
+Civics          -|
+Library         -|
+
+Grade 7A
+Subjects        -| Teachers
+Tamil           -|
+Maths           -|
+Science         -| Mrs. Dharshini
+English         -| 
+Art/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma
+ICT 	        -|
+PTS 		-|
+Health Science  -|
+History  	-|
+Religion        -|
+Geography       -|
+Shinhala        -| Mr. Rameshraja
+Civics          -|
+Library         -|
+
+Grade 7B
+Subjects        -| Teachers
+Tamil           -|
+Maths           -|
+Science         -| Mrs. Dharshini
+English         -|
+Art/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma
+ICT 	        -|
+PTS 		-|
+Health Science  -|
+History  	-|
+Religion        -|
+Geography       -|
+Shinhala        -| Mr. Rameshraja
+Civics          -|
+Library         -|
+
+Grade 7E
+Subjects        -| Teachers
+Tamil           -|
+Maths           -|
+Science         -| Mrs. Fazmila
+English         -| Mrs. Sanjeevani
+Art/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma
+ICT 	        -|
+PTS 		-|
+Health Science  -|
+History  	-|
+Religion        -|
+Geography       -|
+Shinhala        -| Mr. Rameshraja
+Civics          -|
+Library         -|
+
+Grade 8A
+Subjects        -| Teachers
+Tamil           -|
+Maths           -|
+Science         -| Mrs. Dharshini
+English         -|
+Art/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma
+ICT 	        -|
+PTS 		-|
+Health Science  -|
+History  	-|
+Religion        -|
+Geography       -|
+Shinhala        -| Mr. Rameshraja
+Civics          -|
+Library         -|
+
+Grade 8B
+Subjects        -| Teachers
+Tamil           -|
+Maths           -|
+Science         -| Mrs. Fazmila
+English         -|
+Art/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma
+ICT 	        -|
+PTS 		-|
+Health Science  -|
+History  	-|
+Religion        -|
+Geography       -|
+Shinhala        -| Mr. Rameshraja
+Civics          -|
+Library         -|
+
+Grade 9A
+Subjects        -| Teachers
+Tamil           -| Mrs. Jeyalatha
+Maths           -| Mrs. Pushparani
+Science         -| Mrs. Dharshini
+English         -| Mrs. Sivaranjani
+Art/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma
+ICT 	        -| Mrs. Jeyalatha
+PTS 		-| Mrs. Manohara
+Health Science  -| Mrs. Sathiyakanthi
+History  	-| Mr. Sudharshan
+Religion        -| Mrs. Shobika
+Geography       -| Mr. Rameshraja
+Shinhala        -| Mr. Rameshraja
+Civics          -| Mrs. Silmy
+Library         -| Mrs. Jeyalatha
+
+Grade 9B
+Subjects        -| Teachers
+Tamil           -| Mrs. Manohara
+Maths           -| Mrs. Vinopriya
+Science         -| Mrs. Dharshini
+English         -| Mrs. Sivaranjani
+Art/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma
+ICT 	        -| Mrs. Jeyalatha
+PTS 		-| Mrs. Sathiyakanthi
+Health Science  -| Mrs. Sathiyakanthi
+History  	-| Mr. Sudharshan
+Religion        -| Mrs. Shobika
+Geography       -| Mrs. Nadhiya
+Shinhala        -| Mr. Rameshraja
+Civics          -| Mrs. Silmy
+Library         -|
+
+Grade 10A
+Subjects        -| Teachers
+Tamil           -| Mrs. Subhashini
+Maths           -| Mrs. Vinopriya
+Science         -| Mrs. Dharshini
+English         -| Mr. Stanly Thilagarthnam
+Religion        -| Mrs. Shobika
+History         -| Mrs. Nadhiya
+B1              -|
+B2              -|
+B3              -|
+
+Grade 10B
+Subjects        -| Teachers
+Tamil           -| Mrs. Subhashini
+Maths           -| Mrs. Vinopriya
+Science         -| Mrs. Fazmila
+English         -| Mr. Stanly Thilagarthnam
+Religion        -| Mrs. Shobika
+History         -| Mrs. Nadhiya
+B1              -|
+B2              -|
+B3              -|
+
+Grade 11
+Subjects        -| Teachers
+Tamil           -| Mrs. Subhashini
+Maths           -| Mrs. Pushparani
+Science         -| Mrs. Fazmila
+English         -| Mr. Stanly Thilagarthnam
+Religion        -| Mrs. Shobika
+History         -| Mr. Sudharshan
+B1              -|
+B2              -|
+B3              -|
+
+Teacher Names
+
+Mrs. Dharshini
+Mrs. Vinopriya
+Mrs. Hasriya
+Mrs. Shobika
+Mr. Stanly Thilagarthnam
+Mrs. Sanjeevani
+Mrs. Fazmila
+Mr. Rameshraja
+Mrs. Manohara
+Mr. Bernad
+Mrs. Silmy
+Mrs. Pushparani
+Mrs. Sivaranjani
+Mrs. Subhashini
+Mrs. Sathiyakanthi
+Mr. Sudharshan
+Mrs. Nadhiya

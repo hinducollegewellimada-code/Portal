@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b2447">
+<title>Hindu College Attendance</title>
+<link rel="icon" href="Ai%20Assitant/school-logo.png">
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap");
+:root{--navy:#0b2447;--navy-2:#163a6b;--blue:#1a73d9;--blue-d:#1259ad;--sky:#e8f1fc;--paper:#f4f7fb;--card:#fff;--line:#dde5f0;--ink:#0b2447;--muted:#5b6b85;--green:#14874f;--green-bg:#e3f6ec;--red:#c93a3a;--red-bg:#fdeaea;--r-lg:18px;--r-md:12px;--shadow:0 1px 2px rgba(11,36,71,.06),0 6px 20px -8px rgba(11,36,71,.14);--font:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--serif:"Fraunces",Georgia,"Times New Roman",serif}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font:400 15px/1.5 var(--font);color:var(--ink);background:var(--paper)}
+h1,h2,h3{margin:0;line-height:1.2}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--blue-d)}
+:focus-visible{outline:3px solid rgba(26,115,217,.45);outline-offset:2px}
+.ic{flex:none}
+.num{text-align:right;font-variant-numeric:tabular-nums lining-nums}
+.muted{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 18px;border-radius:var(--r-md);border:1px solid var(--line);background:#fff;font-weight:600;cursor:pointer;text-decoration:none;color:var(--navy);transition:background .15s,border-color .15s}
+.btn:hover{background:var(--sky);border-color:#b9d0ee}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blue-d);border-color:var(--blue-d)}
+.btn.navy{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.navy:hover{background:var(--navy-2)}
+.btn.sm{min-height:34px;padding:0 12px;font-size:13px;border-radius:9px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.icon-btn{display:inline-grid;place-items:center;width:40px;height:40px;border:1px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--navy)}
+.spin{width:16px;height:16px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+label.field{display:block;font-weight:600;font-size:13px;color:var(--muted)}
+.input,select.input{width:100%;min-height:44px;padding:0 14px;border:1.5px solid var(--line);border-radius:var(--r-md);background:#fff;margin-top:6px}
+.input:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px rgba(26,115,217,.15)}
+.input.invalid{border-color:var(--red);background:#fffafa}
+.field-err{color:var(--red);font-size:13px;margin-top:6px;min-height:0;font-weight:500}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:var(--r-md);font-weight:500}
+.banner.err{background:var(--red-bg);color:#8f2323}
+.banner.ok{background:var(--green-bg);color:#0d6b3c}
+.banner.info{background:var(--sky);color:var(--navy-2)}
+.banner .ic{margin-top:2px}
+#app{display:grid;grid-template-columns:264px 1fr;min-height:100vh}
+#sidebar{background:var(--navy);color:#d6e3f7;padding:20px 14px;display:flex;flex-direction:column;gap:18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{display:flex;gap:12px;align-items:center;text-decoration:none;color:#fff;padding:4px 6px 16px;border-bottom:1px solid rgba(255,255,255,.12)}
+.brand img{background:#fff;border-radius:12px;padding:3px}
+.brand strong{display:block;font-size:14px;line-height:1.25}
+.brand small{display:block;font-size:11.5px;color:#9db6da;line-height:1.3;margin-top:2px}
+#sidebar nav{display:grid;gap:4px}
+#sidebar nav a,.nav-logout{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:#c5d6f0;text-decoration:none;font-weight:500;border:0;background:none;cursor:pointer;width:100%;text-align:left}
+#sidebar nav a:hover,.nav-logout:hover{background:rgba(255,255,255,.08);color:#fff}
+#sidebar nav a.active{background:#fff;color:var(--navy);font-weight:700}
+.nav-logout{margin-top:auto}
+.main{min-width:0}
+#topbar{display:flex;align-items:center;gap:14px;padding:16px 28px;background:rgba(244,247,251,.92);backdrop-filter:blur(8px);position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line)}
+.topbar-title{flex:1;min-width:0}
+.topbar-title h1{font:700 24px/1.15 var(--serif)}
+.topbar-title p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.menu-btn{display:none}
+.user-chip{display:flex;align-items:center;gap:10px}
+.user-chip strong{display:block;font-size:13.5px;line-height:1.2}
+.user-chip small{color:var(--muted);font-size:12px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:700}
+#content{padding:24px 28px 60px;max-width:1280px}
+#scrim{display:none}
+.card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:20px;border:1px solid rgba(221,229,240,.6)}
+.card h2{font:700 18px/1.2 var(--serif)}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px}
+.toolbar .grow{flex:1}
+.seg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:none;padding:7px 14px;border-radius:9px;font-weight:600;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--navy);color:#fff}
+.search{position:relative}
+.search .ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search .input{margin:0;padding-left:38px;min-width:220px}
+.date-nav{display:inline-flex;align-items:center;gap:6px}
+.date-nav .input{margin:0;width:auto}
+.live{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--green)}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(20,135,79,.5);animation:pulse 2s infinite}
+.live.off{color:var(--red)}.live.off i{background:var(--red);animation:none}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(20,135,79,0)}100%{box-shadow:0 0 0 0 rgba(20,135,79,0)}}
+.summary{display:grid;grid-template-columns:1.5fr repeat(2,1fr);gap:16px;margin-bottom:18px}
+.summary .hero{grid-row:span 2;background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;border-radius:var(--r-lg);padding:26px;display:flex;flex-direction:column;justify-content:space-between;min-height:240px;box-shadow:var(--shadow)}
+.hero .label{font-weight:600;color:#a9c2e6;font-size:14px}
+.hero .big{font:700 clamp(56px,7vw,92px)/1 var(--serif);font-variant-numeric:lining-nums tabular-nums;margin:8px 0 14px}
+.split{height:10px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden;display:flex}
+.split i{display:block;height:100%;transition:width .5s ease}
+.split .b{background:#63a8f5}.split .g{background:#f3c15e}
+.legend{display:flex;gap:18px;margin-top:10px;font-size:13px;color:#cfe0f7}
+.legend b{color:#fff;font-family:var(--serif);font-size:16px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.stat{background:var(--card);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow);border:1px solid rgba(221,229,240,.6)}
+.stat .label{color:var(--muted);font-weight:600;font-size:13.5px}
+.stat .val{font:700 38px/1.1 var(--serif);margin-top:6px;font-variant-numeric:lining-nums tabular-nums}
+.stat .val small{font:500 18px var(--font);color:var(--muted)}
+.stat.good .val{color:var(--green)}.stat.bad .val{color:var(--red)}
+.charts{display:grid;grid-template-columns:1fr 1.6fr 1fr;gap:16px;margin-bottom:18px}
+.chart-box{position:relative;height:240px}
+.table-wrap{overflow-x:auto;margin:0 -4px}
+table.tbl{width:100%;border-collapse:collapse;min-width:560px}
+.tbl th{text-align:left;font-size:12.5px;color:var(--muted);font-weight:600;padding:10px 12px;border-bottom:2px solid var(--line);white-space:nowrap}
+.tbl th.num{text-align:right}
+.tbl td{padding:12px;border-bottom:1px solid var(--line)}
+.tbl tbody tr:hover{background:#f8fbff}
+.tbl tfoot td{font-weight:700;border-top:2px solid var(--navy);border-bottom:0;background:#fafcff}
+.tbl a.rowlink{color:var(--navy);font-weight:700;text-decoration:none}
+.tbl a.rowlink:hover{color:var(--blue);text-decoration:underline}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 11px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.pill.ok{background:var(--green-bg);color:var(--green)}
+.pill.no{background:var(--red-bg);color:var(--red)}
+.pill.role{background:var(--sky);color:var(--navy-2)}
+.empty{text-align:center;padding:40px 16px;color:var(--muted)}
+.empty strong{display:block;color:var(--navy);font-size:16px;margin-bottom:4px}
+.loading{display:flex;align-items:center;justify-content:center;gap:12px;padding:36px;color:var(--muted);font-weight:500}
+.loading .spin{color:var(--blue)}
+.modal-wrap{position:fixed;inset:0;background:rgba(11,36,71,.5);display:grid;place-items:center;z-index:100;padding:16px}
+.modal{background:#fff;border-radius:var(--r-lg);width:min(440px,100%);padding:24px;box-shadow:0 24px 60px -12px rgba(0,0,0,.4);max-height:92vh;overflow:auto}
+.modal h2{font:700 20px var(--serif);margin-bottom:4px}
+.modal .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.modal .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+#toasts{position:fixed;right:16px;bottom:16px;display:grid;gap:8px;z-index:200}
+.toast{display:flex;gap:10px;align-items:center;background:var(--navy);color:#fff;padding:12px 16px;border-radius:12px;box-shadow:var(--shadow);max-width:340px}
+.toast.err{background:#8f2323}
+.netbar{background:var(--red);color:#fff;text-align:center;padding:8px 12px;font-weight:600;font-size:14px;position:sticky;top:0;z-index:300}
+.center-page{min-height:100vh;display:grid;place-items:start center;padding:24px 16px 40px;background:radial-gradient(1200px 500px at 50% -10%,#dbe9fb 0%,transparent 70%),var(--paper)}
+.sheet{width:min(480px,100%)}
+.sheet .crest{display:block;margin:8px auto 10px}
+.sheet .school{text-align:center;font:700 20px/1.2 var(--serif)}
+.sheet .system{text-align:center;color:var(--muted);font-weight:600;margin-top:4px}
+.sheet .panel{background:#fff;border-radius:22px;box-shadow:var(--shadow);padding:24px;margin-top:18px;border:1px solid rgba(221,229,240,.6)}
+.class-badge{text-align:center;margin:2px 0 4px}
+.class-badge b{display:block;font:700 44px/1.05 var(--serif)}
+.class-badge span{color:var(--muted);font-weight:600}
+.datebar{text-align:center;background:var(--sky);color:var(--navy-2);font-weight:600;padding:9px 12px;border-radius:12px;margin:14px 0 18px}
+.count-input{font:700 34px var(--serif);text-align:center;min-height:68px;border-radius:16px;letter-spacing:.02em}
+.total-box{display:flex;justify-content:space-between;align-items:baseline;padding:14px 18px;border-radius:16px;background:var(--navy);color:#fff;margin:16px 0}
+.total-box b{font:700 40px/1 var(--serif);font-variant-numeric:lining-nums}
+.btn.huge{min-height:60px;font-size:17px;border-radius:16px;letter-spacing:.02em}
+.submitted-card .ok-mark{width:56px;height:56px;border-radius:50%;background:var(--green-bg);color:var(--green);display:grid;place-items:center;margin:0 auto 10px}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0;text-align:center}
+.kv div{background:var(--paper);border-radius:14px;padding:12px 6px}
+.kv b{display:block;font:700 30px/1.1 var(--serif)}
+.kv span{font-size:12.5px;color:var(--muted);font-weight:600}
+.link-row{text-align:center;margin-top:14px;font-size:14px}
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.qr-tile{text-align:center}
+.qr-tile h3{font:700 20px var(--serif)}
+.qr-tile .qr{display:grid;place-items:center;margin:12px auto;padding:10px;background:#fff;border:1px solid var(--line);border-radius:14px;width:fit-content}
+.qr-tile .qr img,.qr-tile .qr canvas{display:block}
+.qr-tile code{background:var(--sky);padding:2px 10px;border-radius:8px;font-weight:700}
+.qr-tile p{margin:8px 0 12px;color:var(--muted);font-size:13.5px}
+.qr-tile .btns{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;padding:11px 16px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--navy);border-color:var(--blue)}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end;margin-bottom:16px}
+.class-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.class-picker a{display:block;text-align:center;padding:16px 8px;border-radius:14px;background:#fff;border:1px solid var(--line);text-decoration:none;color:var(--navy);font:700 18px var(--serif);box-shadow:var(--shadow)}
+.class-picker a:hover{border-color:var(--blue);background:var(--sky)}
+.report-sheet{font-family:var(--font);color:#000;background:#fff;max-width:780px;margin:0 auto}
+.report-head{display:flex;align-items:center;gap:16px;border-bottom:3px solid var(--navy);padding-bottom:12px;margin-bottom:14px}
+.report-head h1{font:700 22px var(--serif)}.report-head h2{font:600 16px var(--font);margin-top:2px}.report-head p{margin:2px 0 0}
+.report-table,.report-totals{width:100%;border-collapse:collapse}
+.report-table th,.report-table td{border:1px solid #b7c3d6;padding:6px 10px;font-size:13px}
+.report-table th{background:#e8f1fc;text-align:left}.report-table th.num,.report-table td.num{text-align:right}
+.report-totals{margin-top:16px;width:60%}.report-totals th{text-align:left;padding:5px 10px;font-size:13.5px}
+.report-totals td{text-align:right;font-weight:700;padding:5px 10px;border-bottom:1px solid #b7c3d6}
+.report-foot{color:#555;font-size:11px;margin-top:18px}
+.period-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:18px}
+.period-bar .pbtn{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:99px;font-weight:600;font-size:13.5px;color:var(--muted);cursor:pointer}
+.period-bar .pbtn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.period-bar .custom-range{display:inline-flex;gap:8px;align-items:center}
+.period-bar .custom-range .input{margin:0;width:auto}
+.acard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:20px}
+.acard{background:var(--card);border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--shadow);border:1px solid rgba(221,229,240,.6)}
+.acard-top{display:flex;align-items:center;gap:8px;color:var(--muted);font-weight:600;font-size:13px}
+.acard-val{font:700 28px/1.15 var(--serif);margin-top:6px;font-variant-numeric:lining-nums tabular-nums;color:var(--navy)}
+.acard-cmp{font-size:12px;font-weight:700;margin-top:4px}
+.acard-cmp.up{color:var(--green)}.acard-cmp.down{color:var(--red)}.acard-cmp.flat{color:var(--muted)}
+.class-compare-picker{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.class-compare-picker button{border:1px solid var(--line);background:#fff;padding:7px 13px;border-radius:99px;font-weight:600;font-size:13px;color:var(--navy);cursor:pointer}
+.class-compare-picker button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.mini-note{color:var(--muted);font-size:13px;margin:-4px 0 14px}
+#printArea{display:none}
+@page{size:A4;margin:12mm}
+@media print{
+ body.printing{background:#fff}
+ body.printing>*:not(#printArea){display:none!important}
+ body.printing #printArea{display:block!important}
+ .qr-page{display:grid;grid-template-columns:1fr 1fr;gap:8mm;break-after:page}
+ .qr-page:last-child{break-after:auto}
+ .print-card{border:2px solid #0b2447;border-radius:6mm;padding:6mm;text-align:center;break-inside:avoid;height:82mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between}
+ .print-card img.logo{width:12mm;height:12mm}
+ .print-card .sn{font:700 11pt var(--serif)}
+ .print-card .gr{font:700 26pt var(--serif);line-height:1}
+ .print-card .qrimg{width:42mm;height:42mm}
+ .print-card .cap{font:600 11pt var(--font)}
+ .print-card .url{font:400 7pt var(--font);color:#555;word-break:break-all}
+}
+@media (max-width:1100px){.charts{grid-template-columns:1fr 1fr}.charts .card:nth-child(2){grid-column:span 2;order:3}.summary{grid-template-columns:1fr 1fr}.summary .hero{grid-column:span 2;grid-row:auto;min-height:0}}
+@media (max-width:860px){
+ #app{display:block}
+ #sidebar{position:fixed;z-index:60;left:0;top:0;width:280px;transform:translateX(-102%);transition:transform .25s;bottom:0}
+ #app.nav-open #sidebar{transform:none}
+ #app.nav-open #scrim{display:block;position:fixed;inset:0;background:rgba(11,36,71,.5);z-index:50}
+ .menu-btn{display:inline-grid}
+ #topbar{padding:12px 16px}#content{padding:16px 14px 60px}
+ .topbar-title h1{font-size:20px}
+ .user-chip span:last-child{display:none}
+ .charts{grid-template-columns:1fr}.charts .card:nth-child(2){grid-column:auto;order:0}
+ .search .input{min-width:0;width:100%}.search{flex:1 1 100%}
+}
+@media (max-width:520px){.summary{grid-template-columns:1fr 1fr;gap:10px}.stat .val{font-size:30px}.hero .big{font-size:64px}.modal .row{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== WHC shared login screen (identical in Attendance, Schedule and Teacher Management) ===== */
+.whc-lg-page,.whc-lg-page *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.whc-lg-page{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));overflow-y:auto;color:#10213a;-webkit-text-size-adjust:100%;
+  background:radial-gradient(circle at 12% 8%,rgba(45,145,240,.16),transparent 32%),radial-gradient(circle at 92% 16%,rgba(32,160,90,.13),transparent 28%),linear-gradient(145deg,#f6fbff 0%,#eaf2ff 48%,#f4fff9 100%)}
+.whc-lg-page.hidden,.whc-lg-page[hidden]{display:none!important}
+.whc-lg-card{width:100%;max-width:420px;margin:auto;padding:36px 30px 28px;text-align:center;background:#fff;border:1px solid rgba(17,52,91,.08);border-radius:24px;box-shadow:0 18px 50px rgba(24,55,95,.14);animation:whcLgUp .5s ease both}
+@keyframes whcLgUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.whc-lg-logo{display:block;width:96px;height:96px;margin:0 auto 16px;object-fit:contain;padding:8px;background:#fff;border:1px solid rgba(11,79,156,.10);border-radius:24px;box-shadow:0 10px 26px rgba(11,79,156,.14)}
+.whc-lg-title{margin:0;padding:0;font-size:1.3rem;line-height:1.25;font-weight:800;letter-spacing:-.02em;color:#10213a;background:none;-webkit-text-fill-color:currentColor}
+.whc-lg-sub{margin:6px 0 22px;padding:0;font-size:.92rem;line-height:1.4;font-weight:600;color:#63738a}
+.whc-lg-alert{margin:0 0 16px;padding:11px 14px;text-align:left;font-size:.86rem;line-height:1.45;font-weight:500;color:#8f2323;background:#fdeaea;border:1px solid #f5c2c2;border-radius:12px}
+.whc-lg-alert[hidden]{display:none!important}
+.whc-lg-form{margin:0;text-align:left}
+.whc-lg-label{display:block;margin:0 0 6px;font-size:.8rem;font-weight:700;letter-spacing:.01em;color:#63738a}
+.whc-lg-input{display:block;width:100%;height:48px;margin:0 0 16px;padding:0 14px;font-size:16px;line-height:1.2;color:#10213a;background:#fff;border:1.5px solid #d5dfec;border-radius:12px;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s,box-shadow .15s}
+select.whc-lg-input{background-image:linear-gradient(45deg,transparent 50%,#63738a 50%),linear-gradient(135deg,#63738a 50%,transparent 50%);background-position:calc(100% - 20px) 21px,calc(100% - 14px) 21px;background-size:6px 6px;background-repeat:no-repeat;padding-right:36px}
+.whc-lg-input::placeholder{color:#9aa8bb}
+.whc-lg-input:focus{border-color:#0b4f9c;box-shadow:0 0 0 4px rgba(11,79,156,.14)}
+.whc-lg-pass{position:relative}
+.whc-lg-pass .whc-lg-input{padding-right:66px}
+.whc-lg-eye{position:absolute;top:0;right:4px;height:48px;padding:0 12px;font-size:.78rem;font-weight:800;color:#0b4f9c;background:none;border:0;cursor:pointer}
+.whc-lg-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;height:50px;margin:6px 0 0;padding:0 16px;font-size:1rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#0b4f9c,#0e69c4);border:0;border-radius:14px;box-shadow:0 10px 25px rgba(11,79,156,.22);cursor:pointer;transition:filter .2s,transform .2s}
+.whc-lg-btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.whc-lg-btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.whc-lg-spin{width:16px;height:16px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:whcLgSpin .7s linear infinite}
+@keyframes whcLgSpin{to{transform:rotate(360deg)}}
+.whc-lg-foot{margin:20px 0 0;text-align:center;font-size:.84rem}
+.whc-lg-foot a,.whc-lg-foot button{color:#0b4f9c;font-weight:700;text-decoration:none;background:none;border:0;padding:0;font-size:inherit;cursor:pointer}
+.whc-lg-foot a:hover,.whc-lg-foot button:hover{text-decoration:underline}
+@media (max-width:480px){.whc-lg-card{padding:28px 20px 22px;border-radius:20px}.whc-lg-logo{width:84px;height:84px}.whc-lg-title{font-size:1.15rem}}
+@media (prefers-reduced-motion:reduce){.whc-lg-card{animation:none}.whc-lg-btn{transition:none}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="module">
+/* ==========================================================================
+   WHC Student Daily Count Management System — single-file build.
+   Everything (Firebase config, utils, auth, UI, and every page) lives in
+   this one file, routed with a hash-based router (#/dashboard, #/class/9A…)
+   so the whole app can be hosted or shared as one .html file.
+   ========================================================================== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc,
+  onSnapshot, query, where, orderBy, limit, serverTimestamp,
+  writeBatch, runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getAuth, setPersistence, browserSessionPersistence, signInAnonymously,
+  signInWithEmailAndPassword, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* ---------------- Firebase (same project as your other WHC apps) ---------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyBh5PYhost31YBNWmr4G3sVCPxcaD2yNEY",
+  authDomain: "whc-full-data.firebaseapp.com",
+  projectId: "whc-full-data",
+  storageBucket: "whc-full-data.firebasestorage.app",
+  messagingSenderId: "600680727409",
+  appId: "1:600680727409:web:ffedf16d56098282bfecd0",
+  measurementId: "G-YSQCY0FHP0"
+};
+const SCHOOL_NAME = "B/Hindu College Welimada";
+const TIMEZONE = "Asia/Colombo";
+const LOGO = "Ai%20Assitant/school-logo.png";
+const COL = { staff: "whc_staff", classes: "count_classes", counts: "daily_counts", settings: "count_settings" };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+/* ---------- Firebase Authentication (Firestore rules need a signed-in client) ----------
+   Everyone is signed in anonymously in the background. "WHC@Admin" signs in to a real
+   Firebase Email/Password account (see README) so it can manage protected data. */
+const ADMIN_USERNAME = "WHC@Admin";
+const ADMIN_EMAIL = "whc.admin@hinducollege.lk";
+const AUTH_MSG = {'empty': 'Please enter your username and password.', 'bad': 'Incorrect username or password.', 'net': "Can't reach the school database right now. Please check your connection and try again.", 'setup': 'Database sign-in is not set up yet. The administrator must enable Anonymous sign-in in Firebase Authentication.', 'adminsetup': 'The WHC@Admin account is not set up yet. The administrator must create it in Firebase Authentication (Email/Password).', 'perm': 'The school database refused the request. The administrator must publish the latest FireStore.rules.'};
+const persistReady = setPersistence(auth, browserSessionPersistence).catch(e=>console.warn("persistence",e));
+function firstAuthState(){ return new Promise(res=>{ const un=onAuthStateChanged(auth,u=>{ un(); res(u); }); }); }
+async function ensureFirebaseAuth(){
+  await persistReady;
+  if(auth.currentUser) return auth.currentUser;
+  const existing=await firstAuthState();
+  if(existing) return existing;
+  return (await signInAnonymously(auth)).user;
+}
+async function firebaseAdminSignIn(password){ await persistReady; return (await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password)).user; }
+async function resetFirebaseAuth(){ try{ await signOut(auth); await signInAnonymously(auth); }catch(e){ console.warn("auth reset",e); } }
+function whcLgAlert(el,msg){ if(!el) return; if(!msg){ el.hidden=true; el.textContent=""; return; } el.hidden=false; el.textContent=msg; }
+function whcLgBusy(btn,busy,label){ if(!btn) return; if(busy){ if(!btn.dataset.label) btn.dataset.label=btn.textContent; btn.disabled=true; btn.innerHTML='<span class="whc-lg-spin"></span>'+(label||"Signing in\u2026"); } else { btn.disabled=false; btn.textContent=btn.dataset.label||"Sign in"; } }
+
+/* ================================ utils ================================ */
+const MAX_PER_CLASS = 500;
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DEFAULT_CLASSES = ["1","2","3","4","5","6","6E","7A","7B","7E","8A","8B","9A","9B","10A","10B","11","12","13"].map((id,i)=>({classId:id,name:"Grade "+id,active:true,sortOrder:i+1}));
+function todayISO(now=new Date()){ return new Intl.DateTimeFormat("en-CA",{timeZone:TIMEZONE}).format(now); }
+function addDays(iso,n){ const [y,m,d]=iso.split("-").map(Number); return new Date(Date.UTC(y,m-1,d+n)).toISOString().slice(0,10); }
+function isISODate(s){ return /^\d{4}-\d{2}-\d{2}$/.test(s||""); }
+function fmtDateLong(iso){ if(!isISODate(iso)) return "—"; const [y,m,d]=iso.split("-").map(Number); return `${d} ${MONTHS[m-1]} ${y}`; }
+function fmtDateShort(iso){ if(!isISODate(iso)) return "—"; const [y,m,d]=iso.split("-"); return `${d}/${m}/${y}`; }
+function fmtTime(ts){ if(!ts) return "Just now"; const dt=typeof ts.toDate==="function"?ts.toDate():new Date(ts); if(isNaN(dt)) return "—"; return dt.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:TIMEZONE}); }
+const docId = (classId,date) => `${classId}_${date}`;
+function parseOne(raw,label){ const s=String(raw??"").trim(); if(s==="") return {error:`Please enter the number of ${label}.`}; if(/^-/.test(s)) return {error:`${label[0].toUpperCase()+label.slice(1)} cannot be negative.`}; if(!/^\d+$/.test(s)) return {error:`Please enter ${label} as a whole number (0, 1, 2 …).`}; const n=parseInt(s,10); if(n>MAX_PER_CLASS) return {error:`That number looks too large. Please check the ${label} count.`}; return {value:n}; }
+function validateCounts(boysRaw,girlsRaw){ const b=parseOne(boysRaw,"boys"),g=parseOne(girlsRaw,"girls"); const errors={}; if(b.error) errors.boys=b.error; if(g.error) errors.girls=g.error; const ok=!b.error&&!g.error; return {ok,errors,boys:b.value,girls:g.value,total:ok?b.value+g.value:null}; }
+function liveTotal(boysRaw,girlsRaw){ const v=validateCounts(boysRaw,girlsRaw); return v.ok?v.total:null; }
+function normKey(s){ return String(s??"").toLowerCase().replace(/grade|class/g,"").replace(/[^a-z0-9]/g,""); }
+function buildRows(classes,counts){ const byClass=new Map(counts.map(c=>[c.classId,c])); return classes.filter(c=>c.active!==false).slice().sort((a,b)=>(a.sortOrder??999)-(b.sortOrder??999)).map(c=>{ const r=byClass.get(c.classId); return {classId:c.classId,className:c.name||"Grade "+c.classId,submitted:!!r,boys:r?r.boys:null,girls:r?r.girls:null,total:r?r.total:null,submittedAt:r?r.submittedAt:null,submittedBy:r?r.submittedBy:""}; }); }
+function totalsFrom(rows){ const sub=rows.filter(r=>r.submitted); const boys=sub.reduce((s,r)=>s+r.boys,0); const girls=sub.reduce((s,r)=>s+r.girls,0); return {boys,girls,total:boys+girls,classCount:rows.length,submitted:sub.length,missing:rows.length-sub.length}; }
+function escapeHtml(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+const csvCell = v => { const s=String(v??""); return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+function toCSV(rows2d){ return "\uFEFF"+rows2d.map(r=>r.map(csvCell).join(",")).join("\r\n"); }
+function dailyReportCSV(date,rows,t){ const out=[[SCHOOL_NAME],["Daily Student Count Report"],["Date",fmtDateLong(date)],[],["Class","Boys","Girls","Total","Status"]]; rows.forEach(r=>out.push([r.className,r.submitted?r.boys:"",r.submitted?r.girls:"",r.submitted?r.total:"",r.submitted?"Submitted":"Not Submitted"])); out.push([],["Total Boys",t.boys],["Total Girls",t.girls],["Total Students",t.total],["Classes Submitted",t.submitted],["Classes Not Submitted",t.missing]); return toCSV(out); }
+function dailyReportHTML(date,rows,t,logoSrc=LOGO){ const body=rows.map(r=>`<tr><td>${escapeHtml(r.className)}</td><td class="num">${r.submitted?r.boys:"–"}</td><td class="num">${r.submitted?r.girls:"–"}</td><td class="num">${r.submitted?r.total:"–"}</td><td>${r.submitted?"Submitted":"Not Submitted"}</td></tr>`).join(""); return `<div class="report-sheet"><div class="report-head"><img src="${logoSrc}" alt="" width="64" height="64"><div><h1>${SCHOOL_NAME}</h1><h2>Daily Student Count Report</h2><p>Date: ${fmtDateLong(date)}</p></div></div><table class="report-table"><thead><tr><th>Class</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th><th>Status</th></tr></thead><tbody>${body}</tbody></table><table class="report-totals"><tbody><tr><th>Total Boys</th><td>${t.boys}</td></tr><tr><th>Total Girls</th><td>${t.girls}</td></tr><tr><th>Total Students</th><td>${t.total}</td></tr><tr><th>Classes Submitted</th><td>${t.submitted} / ${t.classCount}</td></tr><tr><th>Classes Not Submitted</th><td>${t.missing}</td></tr></tbody></table><p class="report-foot">Generated ${new Date().toLocaleString("en-GB",{timeZone:TIMEZONE})} · WHC Student Daily Count Management System</p></div>`; }
+function friendlyError(e,fallback="Something went wrong. Please try again."){ if(typeof navigator!=="undefined"&&navigator.onLine===false) return "You appear to be offline. Check your internet connection and try again."; const code=(e&&(e.code||e.message))||""; if(/auth\/(operation-not-allowed|admin-restricted-operation|configuration-not-found)/.test(code)) return AUTH_MSG.setup; if(/permission-denied|insufficient permissions/i.test(code)) return "You don't have permission to do that. If this keeps happening, the administrator must publish the latest FireStore.rules."; if(/unavailable|network|failed-to-get|deadline/.test(code)) return "Can't reach the school database right now. Check your connection and try again."; if(/already-exists|DUPLICATE/.test(code)) return "Today's count has already been submitted."; if(/not-found/.test(code)) return "That record could not be found."; if(/resource-exhausted/.test(code)) return "The system is busy. Please try again in a few minutes."; return fallback; }
+
+/* ================================ auth ================================= */
+const KEY="whc_daily_session", LOCK_KEY="whc_daily_lock", SESSION_HOURS=8, MAX_FAILS=5, LOCK_SECONDS=60;
+const ADMIN_ROLES=["principal","deputy_principal","vice_principal","admin"];
+const ROLE_LABELS={principal:"Principal",deputy_principal:"Deputy Principal",vice_principal:"Vice Principal",admin:"Admin",sectional_head:"Sectional Head",teacher:"Teacher"};
+const cleanRole = r => String(r||"teacher").trim().toLowerCase().replace(/[\s-]+/g,"_");
+function getSession(){ try{ const s=JSON.parse(sessionStorage.getItem(KEY)||"null"); if(!s||Date.now()-s.at>SESSION_HOURS*3600e3){ sessionStorage.removeItem(KEY); return null; } return s; }catch{ return null; } }
+function logoutUser(){ sessionStorage.removeItem(KEY); resetFirebaseAuth(); }
+const isAdminUser = u => !!u && ADMIN_ROLES.includes(u.role);
+function canEditClass(u,classId,className=""){ if(!u) return false; if(isAdminUser(u)) return true; if(u.role!=="teacher"&&u.role!=="sectional_head") return false; const mine=normKey(u.className); return !!mine&&(mine===normKey(classId)||mine===normKey(className)); }
+function lockRemaining(){ const until=Number(sessionStorage.getItem(LOCK_KEY+"_until")||0); return Math.max(0,Math.ceil((until-Date.now())/1000)); }
+const userErr = m => Object.assign(new Error(m),{userMessage:m});
+async function login(username,password){
+  const wait=lockRemaining(); if(wait>0) throw userErr(`Too many attempts. Please wait ${wait} seconds and try again.`);
+  username=String(username||"").trim(); password=String(password||"").trim();
+  if(!username||!password) throw userErr(AUTH_MSG.empty);
+  if(navigator.onLine===false) throw userErr("You appear to be offline. Check your connection and try again.");
+  const bad=()=>{ const fails=Number(sessionStorage.getItem(LOCK_KEY)||0)+1; sessionStorage.setItem(LOCK_KEY,String(fails));
+    if(fails>=MAX_FAILS){ sessionStorage.setItem(LOCK_KEY,"0"); sessionStorage.setItem(LOCK_KEY+"_until",String(Date.now()+LOCK_SECONDS*1000)); }
+    return userErr(AUTH_MSG.bad); };
+  let user;
+  if(username.toLowerCase()===ADMIN_USERNAME.toLowerCase()){
+    try{ await firebaseAdminSignIn(password); }
+    catch(e){ console.error("admin sign-in failed",e); const c=String(e&&e.code||"");
+      if(/network|unavailable/.test(c)) throw userErr(AUTH_MSG.net);
+      if(/operation-not-allowed/.test(c)) throw userErr(AUTH_MSG.adminsetup);
+      throw bad(); }
+    user={ id:"whc-admin", name:"WHC Admin", username:ADMIN_USERNAME, role:"admin", className:"", at:Date.now() };
+  } else {
+    try{ await ensureFirebaseAuth(); }catch(e){ console.error("anonymous sign-in failed",e); throw userErr(AUTH_MSG.setup); }
+    let snap;
+    try{ snap=await getDocs(query(collection(db,COL.staff),where("username","==",username),where("password","==",password),limit(1))); }
+    catch(e){ console.error("login query failed",e); throw userErr(/permission-denied/.test(String(e&&e.code))?AUTH_MSG.perm:AUTH_MSG.net); }
+    if(snap.empty) throw bad();
+    const d=snap.docs[0].data();
+    user={ id:snap.docs[0].id, name:d.name||username, username, role:cleanRole(d.role), className:d.className||"", at:Date.now() };
+  }
+  sessionStorage.setItem(LOCK_KEY,"0");
+  sessionStorage.setItem(KEY,JSON.stringify(user));
+  return user;
+}
+function requireAdmin(){
+  const u=getSession();
+  if(!isAdminUser(u)){ nav("login", { next: location.hash.slice(1) || "#/dashboard" }); return null; }
+  return u;
+}
+
+/* ============================== router =============================== */
+function parseHash(){
+  const h=(location.hash||"#/").replace(/^#\/?/,"");
+  const [pathPart,queryPart]=h.split("?");
+  const segs=pathPart.split("/").filter(Boolean);
+  const q=Object.fromEntries(new URLSearchParams(queryPart||""));
+  return { page: segs[0]||"home", seg1: segs[1]||"", q };
+}
+function hashFor(page, params={}){
+  const qs=new URLSearchParams(params).toString();
+  return "#/"+page+(qs?("?"+qs):"");
+}
+function nav(page, params={}){ location.hash = hashFor(page, params); }
+let currentUnsub=null;
+function stopLive(){ if(currentUnsub){ currentUnsub(); currentUnsub=null; } }
+
+/* =============================== icons ================================ */
+const P={home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',classes:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',file:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',qr:'<path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3z"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h3M20 17v4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3-6 6.5-6s6 2 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2 .7 3.3 2.6 3.5 6"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',logout:'<path d="M9 21H4V3h5M16 17l5-5-5-5M21 12H9"/>',menu:'<path d="M3 6h18M3 12h18M3 18h18"/>',print:'<path d="M6 9V3h12v6"/><path d="M6 18H4v-7h16v7h-2"/><path d="M6 14h12v7H6z"/>',download:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',check:'<path d="M4 12l5 5L20 6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',alert:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.01"/>',edit:'<path d="M4 20h4L20 8l-4-4L4 16z"/>',left:'<path d="M15 5l-7 7 7 7"/>',right:'<path d="M9 5l7 7-7 7"/>',chart:'<path d="M4 20V10M12 20V4M20 20v-7"/>'};
+const icon=(n,s=18)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]||""}</svg>`;
+
+/* ============================ small dom utils ========================== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const debounce=(fn,ms=200)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; };
+const root=$("#root");
+
+function toast(msg,type="ok"){
+  let box=$("#toasts"); if(!box){ box=document.createElement("div"); box.id="toasts"; box.setAttribute("aria-live","polite"); document.body.append(box); }
+  const t=document.createElement("div"); t.className="toast "+type; t.innerHTML=`${icon(type==="ok"?"check":"alert")}<span>${escapeHtml(msg)}</span>`;
+  box.append(t); setTimeout(()=>t.remove(),4200);
+}
+function setBusy(btn,busy,labelBusy="Please wait…"){
+  if(!btn) return;
+  if(busy){ btn.dataset.label=btn.innerHTML; btn.disabled=true; btn.innerHTML=`<span class="spin"></span>${labelBusy}`; }
+  else{ btn.disabled=false; if(btn.dataset.label) btn.innerHTML=btn.dataset.label; }
+}
+function download(filename,content,mime="text/csv;charset=utf-8"){
+  const url=URL.createObjectURL(new Blob([content],{type:mime}));
+  const a=Object.assign(document.createElement("a"),{href:url,download:filename});
+  document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function printHTML(html,className=""){
+  let area=$("#printArea"); if(!area){ area=document.createElement("div"); area.id="printArea"; document.body.append(area); }
+  area.className=className; area.innerHTML=html;
+  const done=()=>{ document.body.classList.remove("printing"); area.innerHTML=""; removeEventListener("afterprint",done); };
+  addEventListener("afterprint",done);
+  document.body.classList.add("printing");
+  const imgs=[...area.querySelectorAll("img")].filter(i=>!i.complete);
+  Promise.all(imgs.map(i=>new Promise(r=>{ i.onload=i.onerror=r; }))).then(()=>setTimeout(()=>window.print(),80));
+}
+function openModal(html,{onClose}={}){
+  const wrap=document.createElement("div"); wrap.className="modal-wrap";
+  wrap.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
+  document.body.append(wrap);
+  const close=()=>{ wrap.remove(); document.removeEventListener("keydown",esc); onClose?.(); };
+  const esc=e=>{ if(e.key==="Escape") close(); };
+  document.addEventListener("keydown",esc);
+  wrap.addEventListener("mousedown",e=>{ if(e.target===wrap) close(); });
+  wrap.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",close));
+  return { el:wrap.firstElementChild, close };
+}
+function banner(el,msg,type="err"){
+  if(!el) return;
+  if(!msg){ el.hidden=true; el.textContent=""; return; }
+  el.hidden=false; el.className="banner "+type; el.innerHTML=`${icon(type==="ok"?"check":"alert")}<span>${escapeHtml(msg)}</span>`;
+}
+function watchConnection(){
+  let bar=$("#netbar");
+  if(!bar){ bar=document.createElement("div"); bar.id="netbar"; bar.className="netbar"; bar.textContent="You are offline. Changes will not save until the connection returns."; bar.hidden=true; document.body.prepend(bar); }
+  const sync=()=>{ bar.hidden=navigator.onLine!==false; };
+  addEventListener("online",sync); addEventListener("offline",sync); sync();
+}
+watchConnection();
+
+let chartsLoaded=false, qrLoaded=false;
+async function ensureCharts(){ if(window.Chart||chartsLoaded) return; chartsLoaded=true; await new Promise((res,rej)=>{ const s=document.createElement("script"); s.src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"; s.onload=res; s.onerror=rej; document.head.append(s); }); }
+async function ensureQR(){ if(window.QRCode||qrLoaded) return; qrLoaded=true; await new Promise((res,rej)=>{ const s=document.createElement("script"); s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"; s.onload=res; s.onerror=rej; document.head.append(s); }); }
+
+/* ============================= app shell =============================== */
+const NAV=[["dashboard","Dashboard","home"],["reports","Reports","file"],["analytics","Analytics","chart"],["classes","Classes","classes"],["qr","QR Codes","qr"],["users","Users","users"],["settings","Settings","gear"]];
+function shellHTML(active){
+  const u=getSession();
+  return `<div id="app">
+    <aside id="sidebar">
+      <a class="brand" href="${hashFor('dashboard')}">
+        <img src="${LOGO}" alt="" width="46" height="46">
+        <span><strong>${SCHOOL_NAME}</strong><small>Student Daily Count Management System</small></span>
+      </a>
+      <nav aria-label="Main">
+        ${NAV.map(([k,label,ic])=>`<a href="${hashFor(k)}" class="${k===active?"active":""}" ${k===active?'aria-current="page"':""}>${icon(ic)}<span>${label}</span></a>`).join("")}
+      </nav>
+      <button class="nav-logout" id="logoutBtn" type="button">${icon("logout")}<span>Logout</span></button>
+    </aside>
+    <div id="scrim"></div>
+    <div class="main">
+      <header id="topbar">
+        <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu">${icon("menu",22)}</button>
+        <div class="topbar-title" id="topbarTitle"></div>
+        <div class="user-chip">${u?`<span class="avatar">${escapeHtml((u.name||"?").trim().charAt(0).toUpperCase())}</span><span><strong>${escapeHtml(u.name)}</strong><small>${escapeHtml(ROLE_LABELS[u.role]||u.role)}</small></span>`:""}</div>
+      </header>
+      <main id="content"></main>
+    </div>
+  </div>`;
+}
+function mountShell(active,title,subtitle=""){
+  root.innerHTML=shellHTML(active);
+  $("#topbarTitle").innerHTML=`<h1>${escapeHtml(title)}</h1>${subtitle?`<p>${escapeHtml(subtitle)}</p>`:""}`;
+  $("#logoutBtn").onclick=()=>{ logoutUser(); nav("login"); };
+  const appEl=$("#app");
+  $("#menuBtn").onclick=()=>appEl.classList.toggle("nav-open");
+  $("#scrim")?.addEventListener("click",()=>appEl.classList.remove("nav-open"));
+  $$("#sidebar nav a").forEach(a=>a.addEventListener("click",()=>appEl.classList.remove("nav-open")));
+  return $("#content");
+}
+
+/* ============================ render: HOME ============================= */
+async function renderHome(){
+  stopLive();
+  root.innerHTML=`<div class="center-page"><div class="sheet">
+    <img class="crest" src="${LOGO}" width="96" height="96" alt="B/Hindu College Welimada crest">
+    <div class="school">${SCHOOL_NAME}</div>
+    <div class="system">Student Daily Count Management System</div>
+    <div class="panel"><h2 style="font:700 18px var(--serif)">Teachers: submit today's count</h2>
+      <p class="muted" style="margin:6px 0 14px">Choose your class to submit today's count.</p>
+      <div id="classes"><div class="loading"><span class="spin"></span>Loading classes...</div></div></div>
+    <div class="panel"><h2 style="font:700 18px var(--serif)">Principal &amp; administration</h2>
+      <p class="muted" style="margin:6px 0 14px">View live school totals, reports and QR codes.</p>
+      <a class="btn navy block" href="${hashFor('login')}">Administration login</a></div>
+  </div></div>`;
+  const box=$("#classes");
+  try{
+    const snap=await getDocs(collection(db,COL.classes));
+    const list=(snap.empty?DEFAULT_CLASSES:snap.docs.map(d=>({classId:d.id,...d.data()}))).filter(c=>c.active!==false).sort((a,b)=>(a.sortOrder??999)-(b.sortOrder??999));
+    box.innerHTML=list.length?`<div class="class-picker">${list.map(c=>`<a href="${hashFor('class',{id:c.classId})}">${escapeHtml(c.name||"Grade "+c.classId)}</a>`).join("")}</div>`
+      :`<div class="empty"><strong>No classes yet</strong>The school office needs to create the class list in Settings.</div>`;
+  }catch(e){ console.error(e); box.innerHTML=`<div class="banner err"><span>${escapeHtml(friendlyError(e,"Couldn't load the class list."))}</span></div>`; }
+}
+
+/* ============================ render: LOGIN ============================ */
+function renderLogin(q){
+  stopLive();
+  if(isAdminUser(getSession())){ location.hash = q.next && q.next!=="undefined" ? "#/"+q.next.replace(/^#\/?/,"") : hashFor("dashboard"); return; }
+  root.innerHTML=`<div class="whc-lg-page">
+  <div class="whc-lg-card">
+    <img class="whc-lg-logo" src="Ai%20Assitant/school-logo.png" alt="B/Hindu College Welimada logo" width="96" height="96">
+    <h1 class="whc-lg-title">B/Hindu College Welimada</h1>
+    <p class="whc-lg-sub">Attendance System</p>
+    <div class="whc-lg-alert" id="msg" role="alert" hidden></div>
+    <form class="whc-lg-form" id="f" novalidate>
+      <label class="whc-lg-label" for="u">Username</label>
+      <input class="whc-lg-input" id="u" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Enter your username">
+      <label class="whc-lg-label" for="p">Password</label>
+      <div class="whc-lg-pass"><input class="whc-lg-input" id="p" type="password" autocomplete="current-password" placeholder="Enter your password"><button class="whc-lg-eye" type="button" aria-label="Show password" onclick="var i=document.getElementById('p');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'Show':'Hide';this.setAttribute('aria-label',i.type==='password'?'Show password':'Hide password')">Show</button></div>
+      <button class="whc-lg-btn" id="go" type="submit">Sign in</button>
+    </form>
+    <div class="whc-lg-foot"><a href="index.html">&larr; Back to Portal</a></div>
+  </div>
+</div>`;
+  const msg=$("#msg");
+  $("#f").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const btn=$("#go"); whcLgAlert(msg,""); whcLgBusy(btn,true);
+    try{
+      const u=await login($("#u").value,$("#p").value);
+      if(!isAdminUser(u)){ logoutUser(); throw Object.assign(new Error("role"),{userMessage:"This account can't open the dashboard. Teachers can submit counts from the home page."}); }
+      nav(q.next && q.next!=="undefined" ? q.next.replace(/^#\/?/,"").split("?")[0] : "dashboard");
+    }catch(err){ whcLgBusy(btn,false); whcLgAlert(msg, err.userMessage || friendlyError(err,"Sign in failed. Please try again.")); }
+  });
+  $("#u").focus();
+}
+
+/* ============================ render: CLASS ============================ */
+async function renderClass(q){
+  stopLive();
+  const classId=(q.id||"").trim().toUpperCase();
+  root.innerHTML=`<div class="center-page"><div class="sheet">
+    <img class="crest" src="${LOGO}" width="84" height="84" alt="B/Hindu College Welimada crest">
+    <div class="school">${SCHOOL_NAME}</div>
+    <div class="system">Daily Student Count</div>
+    <div class="panel" id="panel"><div class="loading"><span class="spin"></span>Loading today's data...</div></div>
+    <div class="link-row"><a href="#" id="staffLink">Staff login</a> &nbsp;·&nbsp; <a href="${hashFor('home')}">Home</a></div>
+  </div></div>`;
+  $("#staffLink").addEventListener("click",e=>{ e.preventDefault(); openClassLogin(()=>go()); });
+  const panel=$("#panel");
+  let cls=null, today=todayISO(), existing=null;
+
+  function loading(text){ panel.innerHTML=`<div class="loading"><span class="spin"></span>${escapeHtml(text)}</div>`; }
+  function showProblem(title,msg,home=false,retry=false){
+    panel.innerHTML=`<div class="empty"><strong>${escapeHtml(title)}</strong>${escapeHtml(msg)}
+      <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        ${retry?'<button class="btn primary" id="retry">Try again</button>':""}
+        ${home?`<a class="btn" href="${hashFor('home')}">Choose your class</a>`:""}</div></div>`;
+    $("#retry")?.addEventListener("click",go);
+  }
+  const header=()=>`<div class="class-badge"><b>${escapeHtml(cls.name||"Grade "+classId)}</b><span>Daily Student Count</span></div><div class="datebar">${fmtDateLong(today)}</div>`;
+
+  async function loadToday(){ today=todayISO(); const s=await getDoc(doc(db,COL.counts,docId(classId,today))); existing=s.exists()?s.data():null; }
+
+  async function go(){
+    if(!/^\d{1,2}[A-Z]?$/.test(classId)) return showProblem("This QR code isn't valid","The link doesn't contain a class. Choose your class from the home page.",true);
+    loading("Loading today's data...");
+    try{
+      const snap=await getDoc(doc(db,COL.classes,classId));
+      if(!snap.exists()){
+        const any=await getDocs(query(collection(db,COL.classes),limit(1)));
+        return any.empty ? showProblem("Classes are not set up yet","Ask the school office to open Settings and create the class list.")
+                          : showProblem("Class not found",`There is no class "${classId}". Choose your class from the home page.`,true);
+      }
+      cls={classId,...snap.data()};
+      if(cls.active===false) return showProblem("This class is not active","Please contact the school office.");
+      await loadToday();
+      render();
+    }catch(e){ console.error("class load failed",e); showProblem("Couldn't load the class", friendlyError(e), false, true); }
+  }
+
+  function render(){
+    const u=getSession();
+    if(!existing) return renderForm(false);
+    const mayEdit=canEditClass(u,classId,cls.name);
+    panel.innerHTML=`${header()}<div class="submitted-card">
+      <div class="ok-mark">${icon("check",30)}</div>
+      <h2 style="text-align:center;font:700 19px var(--serif)">Today's count has already been submitted.</h2>
+      <div class="kv"><div><b>${existing.boys}</b><span>Boys</span></div><div><b>${existing.girls}</b><span>Girls</span></div><div><b>${existing.total}</b><span>Total</span></div></div>
+      <p class="muted" style="text-align:center;margin:0 0 16px">Submitted at ${fmtTime(existing.submittedAt)}${existing.submittedBy?" by "+escapeHtml(existing.submittedBy):""}${existing.updatedAt?`<br>Last edited at ${fmtTime(existing.updatedAt)}`:""}</p>
+      ${mayEdit?`<button class="btn primary block huge" id="editBtn">${icon("edit")} Edit Today's Count</button>`:`<button class="btn block" id="loginBtn">Staff login to edit</button>`}
+    </div>`;
+    $("#editBtn")?.addEventListener("click",()=>renderForm(true));
+    $("#loginBtn")?.addEventListener("click",()=>openClassLogin(render));
+  }
+
+  function renderForm(editing){
+    const u=getSession();
+    const NAME_KEY="whc_teacher_name";
+    const savedName=editing?"":(localStorage.getItem(NAME_KEY)||"");
+    panel.innerHTML=`${header()}<div id="msg" class="banner err" hidden></div>
+      <form id="f" novalidate>
+        ${editing?"":`<label class="field">Your name (optional)<input class="input" id="who" maxlength="60" autocomplete="name" value="${escapeHtml(savedName||(u?u.name:""))}" placeholder="Class teacher"></label><div style="height:14px"></div>`}
+        <label class="field" for="boys">BOYS</label>
+        <input class="input count-input" id="boys" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="3" placeholder="0" value="${editing?existing.boys:""}">
+        <div class="field-err" id="e-boys"></div>
+        <div style="height:12px"></div>
+        <label class="field" for="girls">GIRLS</label>
+        <input class="input count-input" id="girls" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="3" placeholder="0" value="${editing?existing.girls:""}">
+        <div class="field-err" id="e-girls"></div>
+        <div class="total-box"><span>TOTAL STUDENTS</span><b id="total">—</b></div>
+        <button class="btn primary block huge" id="go2" type="submit">${editing?"SAVE CHANGES":"SUBMIT TODAY'S COUNT"}</button>
+        ${editing?'<button class="btn block" id="cancel" type="button" style="margin-top:10px">Cancel</button>':""}
+      </form>`;
+    const boys=$("#boys"),girls=$("#girls"),total=$("#total");
+    const upd=()=>{ const t=liveTotal(boys.value,girls.value); total.textContent=t===null?"—":t;
+      boys.classList.remove("invalid"); girls.classList.remove("invalid");
+      $("#e-boys").textContent=""; $("#e-girls").textContent=""; banner($("#msg"),""); };
+    [boys,girls].forEach(i=>i.addEventListener("input",upd));
+    if(editing) upd();
+    $("#cancel")?.addEventListener("click",render);
+    $("#f").addEventListener("submit",e=>{ e.preventDefault(); save(editing); });
+    boys.focus({preventScroll:true});
+  }
+
+  async function save(editing){
+    const btn=$("#go2"), msg=$("#msg");
+    const v=validateCounts($("#boys").value,$("#girls").value);
+    if(!v.ok){
+      for(const k of ["boys","girls"]){ $("#e-"+k).textContent=v.errors[k]||""; $("#"+k).classList.toggle("invalid",!!v.errors[k]); }
+      return $(v.errors.boys?"#boys":"#girls").focus();
+    }
+    if(navigator.onLine===false) return banner(msg,"You appear to be offline. Check your connection and try again.");
+    if(todayISO()!==today){ banner(msg,"The date has changed. Reloading for today…"); return setTimeout(go,1200); }
+    const u=getSession();
+    const typed=($("#who")?.value||"").trim().slice(0,60);
+    const by=editing?(u?.name||"Staff"):(typed||u?.name||"Class teacher (QR)");
+    const ref=doc(db,COL.counts,docId(classId,today));
+    setBusy(btn,true,editing?"Saving…":"Submitting…");
+    try{
+      if(editing){ await updateDoc(ref,{boys:v.boys,girls:v.girls,total:v.total,updatedAt:serverTimestamp(),updatedBy:by}); }
+      else{
+        await runTransaction(db, async tx=>{
+          if((await tx.get(ref)).exists()) throw Object.assign(new Error("DUPLICATE"),{code:"already-exists"});
+          tx.set(ref,{classId,className:cls.name||"Grade "+classId,date:today,boys:v.boys,girls:v.girls,total:v.total,submittedAt:serverTimestamp(),submittedBy:by});
+        });
+        if(typed) localStorage.setItem("whc_teacher_name",typed);
+      }
+      await loadToday(); render();
+      const ok=document.createElement("div"); ok.className="banner ok"; ok.style.marginBottom="14px";
+      ok.innerHTML=`${icon("check")}<span>✓ ${editing?"Today's count updated successfully":"Today's count submitted successfully"}</span>`;
+      panel.prepend(ok);
+    }catch(e){
+      console.error("save failed",e);
+      if(e.code==="already-exists"){ await loadToday(); render(); return; }
+      setBusy(btn,false); banner(msg, friendlyError(e,"We couldn't save the count. Please try again."));
+    }
+  }
+
+  go();
+}
+function openClassLogin(onSuccess){
+  const wrap=document.createElement("div"); wrap.className="whc-lg-page";
+  wrap.innerHTML=`<div class="whc-lg-card">
+    <img class="whc-lg-logo" src="Ai%20Assitant/school-logo.png" alt="B/Hindu College Welimada logo" width="96" height="96">
+    <h1 class="whc-lg-title">B/Hindu College Welimada</h1>
+    <p class="whc-lg-sub">Attendance System</p>
+    <div class="whc-lg-alert" id="lmsg" role="alert" hidden></div>
+    <form class="whc-lg-form" id="lf" novalidate>
+      <label class="whc-lg-label" for="lu">Username</label>
+      <input class="whc-lg-input" id="lu" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Enter your username">
+      <label class="whc-lg-label" for="lp">Password</label>
+      <div class="whc-lg-pass"><input class="whc-lg-input" id="lp" type="password" autocomplete="current-password" placeholder="Enter your password"><button class="whc-lg-eye" type="button" aria-label="Show password" onclick="var i=document.getElementById('lp');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'Show':'Hide';this.setAttribute('aria-label',i.type==='password'?'Show password':'Hide password')">Show</button></div>
+      <button class="whc-lg-btn" id="lgo" type="submit">Sign in</button>
+    </form>
+    <div class="whc-lg-foot"><button type="button" id="lcancel">Cancel</button></div>
+  </div>`;
+  document.body.append(wrap);
+  const close=()=>{ wrap.remove(); document.removeEventListener("keydown",esc); };
+  const esc=e=>{ if(e.key==="Escape") close(); };
+  document.addEventListener("keydown",esc);
+  wrap.querySelector("#lcancel").onclick=close;
+  wrap.querySelector("#lf").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const b=wrap.querySelector("#lgo"), m=wrap.querySelector("#lmsg");
+    whcLgAlert(m,""); whcLgBusy(b,true);
+    try{ await login(wrap.querySelector("#lu").value,wrap.querySelector("#lp").value); close(); onSuccess(); }
+    catch(err){ whcLgBusy(b,false); whcLgAlert(m, err.userMessage || friendlyError(err)); }
+  });
+  wrap.querySelector("#lu").focus();
+}
+
+/* =========================== render: DASHBOARD ========================== */
+async function renderDashboard(){
+  const u=requireAdmin(); if(!u) return;
+  stopLive();
+  const content=mountShell("dashboard","Dashboard","Live school-wide student count");
+  let date=todayISO(), classes=[], counts=[], rows=[], filterText="", filterStatus="all", charts={};
+
+  content.innerHTML=`
+    <div class="toolbar">
+      <div class="date-nav">
+        <button class="icon-btn" id="prevDay" aria-label="Previous day">${icon("left")}</button>
+        <input class="input" type="date" id="datePick" style="width:170px">
+        <button class="icon-btn" id="nextDay" aria-label="Next day">${icon("right")}</button>
+        <button class="btn sm" id="todayBtn">Today</button>
+      </div>
+      <span class="live" id="liveDot"><i></i><span>Live</span></span>
+      <div class="grow"></div>
+      <div class="search"><span>${icon("search")}</span><input class="input" id="q" placeholder="Search class (e.g. 9A)"></div>
+      <div class="seg" id="statusSeg"><button data-v="all" class="on">All</button><button data-v="yes">Submitted</button><button data-v="no">Not Submitted</button></div>
+      <button class="btn" id="csvBtn">${icon("download")} CSV</button>
+      <button class="btn navy" id="printBtn">${icon("print")} Print</button>
+    </div>
+    <div id="warn" class="banner info" style="margin-bottom:16px" hidden></div>
+    <div class="summary">
+      <div class="hero"><div><span class="label">TOTAL STUDENTS</span><div class="big" id="hTotal">0</div>
+        <div class="split"><i class="b" id="splitB" style="width:50%"></i><i class="g" id="splitG" style="width:50%"></i></div>
+        <div class="legend"><span><span class="dot" style="background:#63a8f5"></span>Boys <b id="lBoys">0</b></span><span><span class="dot" style="background:#f3c15e"></span>Girls <b id="lGirls">0</b></span></div></div>
+        <div class="muted" style="color:#a9c2e6;font-size:13px" id="hDate"></div></div>
+      <div class="stat"><div class="label">TOTAL BOYS</div><div class="val" id="sBoys">0</div></div>
+      <div class="stat"><div class="label">TOTAL GIRLS</div><div class="val" id="sGirls">0</div></div>
+      <div class="stat good"><div class="label">CLASSES SUBMITTED</div><div class="val" id="sSub">0<small id="sSubOf">/0</small></div></div>
+      <div class="stat bad"><div class="label">CLASSES NOT SUBMITTED</div><div class="val" id="sMiss">0</div></div>
+    </div>
+    <div class="charts">
+      <div class="card"><h2 style="margin-bottom:12px">Student Distribution</h2><div class="chart-box"><canvas id="cDist"></canvas></div></div>
+      <div class="card"><h2 style="margin-bottom:12px">Class-wise Students</h2><div class="chart-box"><canvas id="cBar"></canvas></div></div>
+      <div class="card"><h2 style="margin-bottom:12px">Submission Status</h2><div class="chart-box"><canvas id="cStatus"></canvas></div></div>
+    </div>
+    <div class="card" id="counts">
+      <div class="card-head"><h2>Class-by-Class Counts</h2><span class="muted" id="rowCount"></span></div>
+      <div class="table-wrap"><table class="tbl">
+        <thead><tr><th>Class</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th><th>Status</th><th>Submitted Time</th></tr></thead>
+        <tbody id="tbody"><tr><td colspan="6"><div class="loading"><span class="spin"></span>Loading today's data...</div></td></tr></tbody>
+        <tfoot id="tfoot" hidden></tfoot></table></div>
+    </div>`;
+
+  const el=id=>content.querySelector("#"+id);
+  el("datePick").value=date; el("hDate").textContent=fmtDateLong(date);
+  el("prevDay").onclick=()=>goDate(addDays(date,-1));
+  el("nextDay").onclick=()=>goDate(addDays(date,1));
+  el("todayBtn").onclick=()=>goDate(todayISO());
+  el("datePick").onchange=e=>isISODate(e.target.value)&&goDate(e.target.value);
+  el("q").addEventListener("input",debounce(e=>{ filterText=e.target.value.trim(); draw(); },150));
+  $$("#statusSeg button",content).forEach(b=>b.onclick=()=>{ $$("#statusSeg button",content).forEach(x=>x.classList.remove("on")); b.classList.add("on"); filterStatus=b.dataset.v; draw(); });
+  el("csvBtn").onclick=()=>{ const t=totalsFrom(rows); download(`WHC-daily-count-${date}.csv`, dailyReportCSV(date,rows,t)); };
+  el("printBtn").onclick=()=>{ const t=totalsFrom(rows); printHTML(dailyReportHTML(date,rows,t,LOGO)); };
+
+  function goDate(d){ date=d; el("datePick").value=date; el("hDate").textContent=fmtDateLong(date); load(); }
+
+  async function ensureClasses(){
+    const snap=await getDocs(collection(db,COL.classes));
+    if(snap.empty){ el("warn").hidden=false; el("warn").innerHTML=`${icon("alert")}<span>No classes are set up yet. Go to <a href="${hashFor('settings')}">Settings</a> to create the 19 default classes.</span>`; return []; }
+    el("warn").hidden=true; return snap.docs.map(d=>({classId:d.id,...d.data()}));
+  }
+  function setLive(on){ const d=el("liveDot"); d.classList.toggle("off",!on); d.querySelector("span").textContent=on?"Live":(date===todayISO()?"Reconnecting…":"Snapshot"); }
+
+  async function load(){
+    stopLive();
+    el("tbody").innerHTML=`<tr><td colspan="6"><div class="loading"><span class="spin"></span>Loading ${escapeHtml(date)} data...</div></td></tr>`;
+    try{
+      classes=await ensureClasses();
+      const isToday=date===todayISO();
+      setLive(isToday);
+      const qy=query(collection(db,COL.counts),where("date","==",date));
+      if(isToday){
+        currentUnsub=onSnapshot(qy, snap=>{ counts=snap.docs.map(d=>d.data()); draw(); },
+          err=>{ console.error(err); setLive(false); toast(friendlyError(err,"Live updates paused."),"err"); });
+      }else{
+        const snap=await getDocs(qy); counts=snap.docs.map(d=>d.data()); draw();
+      }
+    }catch(e){ console.error(e); el("tbody").innerHTML=`<tr><td colspan="6"><div class="empty"><strong>Couldn't load data</strong>${escapeHtml(friendlyError(e))}</div></td></tr>`; }
+  }
+
+  async function draw(){
+    rows=buildRows(classes.length?classes:DEFAULT_CLASSES, counts);
+    const t=totalsFrom(rows);
+    el("hTotal").textContent=t.total; el("lBoys").textContent=t.boys; el("lGirls").textContent=t.girls;
+    const bp=t.total?Math.round(t.boys/t.total*100):50;
+    el("splitB").style.width=bp+"%"; el("splitG").style.width=(100-bp)+"%";
+    el("sBoys").textContent=t.boys; el("sGirls").textContent=t.girls;
+    el("sSub").firstChild.textContent=t.submitted; el("sSubOf").textContent="/"+t.classCount; el("sMiss").textContent=t.missing;
+
+    let view=rows;
+    if(filterStatus!=="all") view=view.filter(r=>(filterStatus==="yes")===r.submitted);
+    if(filterText){ const f=filterText.toLowerCase(); view=view.filter(r=>r.className.toLowerCase().includes(f)||r.classId.toLowerCase().includes(f)); }
+    el("rowCount").textContent=`${view.length} of ${rows.length} classes`;
+    el("tbody").innerHTML=view.length?view.map(r=>`<tr>
+        <td><a class="rowlink" href="${hashFor('classes',{id:r.classId})}">${escapeHtml(r.className)}</a></td>
+        <td class="num">${r.submitted?r.boys:"–"}</td><td class="num">${r.submitted?r.girls:"–"}</td><td class="num">${r.submitted?r.total:"–"}</td>
+        <td><span class="pill ${r.submitted?"ok":"no"}">${r.submitted?icon("check",13):icon("x",13)} ${r.submitted?"Submitted":"Not Submitted"}</span></td>
+        <td class="muted">${r.submitted?fmtTime(r.submittedAt):"—"}</td></tr>`).join("")
+      : `<tr><td colspan="6"><div class="empty"><strong>No matching classes</strong>Try a different search or filter.</div></td></tr>`;
+    el("tfoot").hidden=!rows.length;
+    el("tfoot").innerHTML=rows.length?`<tr><td>Total</td><td class="num">${t.boys}</td><td class="num">${t.girls}</td><td class="num">${t.total}</td><td colspan="2">${t.submitted}/${t.classCount} submitted</td></tr>`:"";
+
+    await ensureCharts();
+    const navy="#0b2447",blue="#1a73d9",amber="#f3c15e",green="#14874f",red="#c93a3a",grid="#e6edf6";
+    const mk=(id,cfg)=>{ charts[id]?.destroy(); charts[id]=new Chart(el(id),cfg); };
+    mk("cDist",{type:"doughnut",data:{labels:["Boys","Girls"],datasets:[{data:[t.boys,t.girls],backgroundColor:[blue,amber],borderWidth:0}]},options:{plugins:{legend:{position:"bottom"}},cutout:"68%",maintainAspectRatio:false}});
+    mk("cBar",{type:"bar",data:{labels:rows.map(r=>r.classId),datasets:[{label:"Students",data:rows.map(r=>r.total??0),backgroundColor:navy,borderRadius:5,maxBarThickness:26}]},options:{plugins:{legend:{display:false}},maintainAspectRatio:false,scales:{y:{beginAtZero:true,grid:{color:grid}},x:{grid:{display:false}}}}});
+    mk("cStatus",{type:"pie",data:{labels:["Submitted","Not Submitted"],datasets:[{data:[t.submitted,t.missing],backgroundColor:[green,red],borderWidth:0}]},options:{plugins:{legend:{position:"bottom"}},maintainAspectRatio:false}});
+  }
+  load();
+}
+
+/* ============================ render: REPORTS =========================== */
+async function renderReports(seg1){
+  const u=requireAdmin(); if(!u) return;
+  stopLive();
+  const content=mountShell("reports","Reports","Daily reports and submission history");
+  let tab=seg1==="history"?"history":"daily";
+  let classesCache=[];
+  content.innerHTML=`<div class="tabs"><button data-t="daily" class="${tab==="daily"?"on":""}">Daily Report</button><button data-t="history" class="${tab==="history"?"on":""}">History</button></div><div id="pane"></div>`;
+  $$(".tabs button",content).forEach(b=>b.onclick=()=>{ tab=b.dataset.t; nav("reports/"+(tab==="history"?"history":"")); $$(".tabs button",content).forEach(x=>x.classList.remove("on")); b.classList.add("on"); render(); });
+
+  async function getClasses(){ if(classesCache.length) return classesCache; const snap=await getDocs(collection(db,COL.classes)); classesCache=snap.empty?DEFAULT_CLASSES:snap.docs.map(d=>({classId:d.id,...d.data()})); return classesCache; }
+  function render(){ tab==="history"?renderHistory():renderDaily(); }
+  render();
+
+  async function renderDaily(){
+    const pane=$("#pane"); let date=todayISO(), text="", status="all", rows=[];
+    pane.innerHTML=`<div class="toolbar">
+      <div class="date-nav"><button class="icon-btn" id="p">${icon("left")}</button><input class="input" type="date" id="d" style="width:170px"><button class="icon-btn" id="n">${icon("right")}</button></div>
+      <div class="search"><span>${icon("search")}</span><input class="input" id="q" placeholder="Search class"></div>
+      <div class="seg" id="seg"><button data-v="all" class="on">All</button><button data-v="yes">Submitted</button><button data-v="no">Not Submitted</button></div>
+      <div class="grow"></div><button class="btn" id="csv">${icon("download")} CSV</button><button class="btn navy" id="pr">${icon("print")} Print</button></div>
+      <div class="card"><div class="table-wrap"><table class="tbl"><thead><tr><th>Class</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th><th>Status</th><th>Submitted Time</th></tr></thead>
+      <tbody id="tb"><tr><td colspan="6"><div class="loading"><span class="spin"></span>Loading...</div></td></tr></tbody><tfoot id="tf" hidden></tfoot></table></div></div>`;
+    const el=id=>pane.querySelector(id);
+    el("#d").value=date;
+    el("#p").onclick=()=>{ date=addDays(date,-1); el("#d").value=date; load(); };
+    el("#n").onclick=()=>{ date=addDays(date,1); el("#d").value=date; load(); };
+    el("#d").onchange=e=>{ if(isISODate(e.target.value)){ date=e.target.value; load(); } };
+    el("#q").addEventListener("input",debounce(e=>{ text=e.target.value.trim(); draw(); },150));
+    $$(".seg button",pane).forEach(b=>b.onclick=()=>{ $$(".seg button",pane).forEach(x=>x.classList.remove("on")); b.classList.add("on"); status=b.dataset.v; draw(); });
+    async function load(){
+      el("#tb").innerHTML=`<tr><td colspan="6"><div class="loading"><span class="spin"></span>Loading...</div></td></tr>`;
+      try{ const cls=await getClasses(); const snap=await getDocs(query(collection(db,COL.counts),where("date","==",date))); rows=buildRows(cls,snap.docs.map(d=>d.data())); draw(); }
+      catch(e){ console.error(e); el("#tb").innerHTML=`<tr><td colspan="6"><div class="empty"><strong>Couldn't load data</strong>${escapeHtml(friendlyError(e))}</div></td></tr>`; }
+    }
+    function draw(){
+      let view=rows;
+      if(status!=="all") view=view.filter(r=>(status==="yes")===r.submitted);
+      if(text){ const f=text.toLowerCase(); view=view.filter(r=>r.className.toLowerCase().includes(f)||r.classId.toLowerCase().includes(f)); }
+      const t=totalsFrom(rows);
+      el("#tb").innerHTML=view.length?view.map(r=>`<tr><td>${escapeHtml(r.className)}</td><td class="num">${r.submitted?r.boys:"–"}</td><td class="num">${r.submitted?r.girls:"–"}</td><td class="num">${r.submitted?r.total:"–"}</td><td><span class="pill ${r.submitted?"ok":"no"}">${r.submitted?"Submitted":"Not Submitted"}</span></td><td class="muted">${r.submitted?fmtTime(r.submittedAt):"—"}</td></tr>`).join("")
+        : `<tr><td colspan="6"><div class="empty"><strong>No matching classes</strong></div></td></tr>`;
+      el("#tf").hidden=!rows.length;
+      el("#tf").innerHTML=rows.length?`<tr><td>Total</td><td class="num">${t.boys}</td><td class="num">${t.girls}</td><td class="num">${t.total}</td><td colspan="2">${t.submitted}/${t.classCount} submitted</td></tr>`:"";
+      el("#csv").onclick=()=>download(`WHC-daily-report-${date}.csv`, dailyReportCSV(date,rows,t));
+      el("#pr").onclick=()=>printHTML(dailyReportHTML(date,rows,t,LOGO));
+    }
+    load();
+  }
+
+  async function renderHistory(){
+    const pane=$("#pane"); let from=addDays(todayISO(),-6), to=todayISO(), classId="all", rows=[];
+    const cls=await getClasses();
+    pane.innerHTML=`<div class="filters">
+      <label class="field">From<input class="input" type="date" id="from" value="${from}"></label>
+      <label class="field">To<input class="input" type="date" id="to" value="${to}"></label>
+      <label class="field">Class<select class="input" id="cls"><option value="all">All classes</option>${cls.slice().sort((a,b)=>(a.sortOrder??999)-(b.sortOrder??999)).map(c=>`<option value="${c.classId}">${escapeHtml(c.name||"Grade "+c.classId)}</option>`).join("")}</select></label>
+      <div class="search"><span>${icon("search")}</span><input class="input" id="q" placeholder="Search class"></div>
+      <button class="btn primary" id="go">Search</button></div>
+      <div class="card"><div class="card-head"><h2>Submission History</h2><div><button class="btn sm" id="csv">${icon("download")} CSV</button> <button class="btn sm navy" id="pr">${icon("print")} Print</button></div></div>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Class</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th><th>Submitted Time</th></tr></thead>
+      <tbody id="tb"><tr><td colspan="6"><div class="loading"><span class="spin"></span>Loading...</div></td></tr></tbody></table></div></div>`;
+    const el=id=>pane.querySelector(id);
+    el("#go").onclick=load;
+    el("#q").addEventListener("input",debounce(draw,150));
+    async function load(){
+      from=el("#from").value; to=el("#to").value; classId=el("#cls").value;
+      if(!isISODate(from)||!isISODate(to)||from>to){ el("#tb").innerHTML=`<tr><td colspan="6"><div class="empty"><strong>Pick a valid date range</strong>"From" must be on or before "To".</div></td></tr>`; return; }
+      if(addDays(from,62)<to){ el("#tb").innerHTML=`<tr><td colspan="6"><div class="empty"><strong>Range too wide</strong>Please choose 62 days or fewer.</div></td></tr>`; return; }
+      el("#tb").innerHTML=`<tr><td colspan="6"><div class="loading"><span class="spin"></span>Loading...</div></td></tr>`;
+      try{
+        const clauses=[where("date",">=",from),where("date","<=",to)];
+        if(classId!=="all") clauses.push(where("classId","==",classId));
+        const snap=await getDocs(query(collection(db,COL.counts),...clauses,orderBy("date","desc")));
+        rows=snap.docs.map(d=>d.data()); draw();
+      }catch(e){ console.error(e); el("#tb").innerHTML=`<tr><td colspan="6"><div class="empty"><strong>Couldn't load history</strong>${escapeHtml(friendlyError(e))}</div></td></tr>`; }
+    }
+    function draw(){
+      const text=el("#q").value.trim().toLowerCase();
+      const view=text?rows.filter(r=>(r.className||"").toLowerCase().includes(text)||(r.classId||"").toLowerCase().includes(text)):rows;
+      el("#tb").innerHTML=view.length?view.map(r=>`<tr><td>${fmtDateShort(r.date)}</td><td>${escapeHtml(r.className)}</td><td class="num">${r.boys}</td><td class="num">${r.girls}</td><td class="num">${r.total}</td><td class="muted">${fmtTime(r.submittedAt)}</td></tr>`).join("")
+        : `<tr><td colspan="6"><div class="empty"><strong>No records in this range</strong>Try a wider date range or different class.</div></td></tr>`;
+      el("#csv").onclick=()=>download(`WHC-history-${from}_to_${to}.csv`, toCSV([["Date","Class","Boys","Girls","Total","Submitted Time"],...view.map(r=>[fmtDateShort(r.date),r.className,r.boys,r.girls,r.total,fmtTime(r.submittedAt)])]));
+      el("#pr").onclick=()=>printHTML(`<div class="report-sheet"><div class="report-head"><img src="${LOGO}" width="64" height="64" alt=""><div><h1>${SCHOOL_NAME}</h1><h2>Submission History</h2><p>${fmtDateLong(from)} – ${fmtDateLong(to)}</p></div></div><table class="report-table"><thead><tr><th>Date</th><th>Class</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th><th>Time</th></tr></thead><tbody>${view.map(r=>`<tr><td>${fmtDateShort(r.date)}</td><td>${escapeHtml(r.className)}</td><td class="num">${r.boys}</td><td class="num">${r.girls}</td><td class="num">${r.total}</td><td>${fmtTime(r.submittedAt)}</td></tr>`).join("")}</tbody></table></div>`);
+    }
+    load();
+  }
+}
+
+/* ============================ render: CLASSES ============================ */
+async function renderClasses(seg1){
+  const u=requireAdmin(); if(!u) return;
+  stopLive();
+  const classId=(seg1||"").trim().toUpperCase();
+  const content=mountShell("classes", classId?`Grade ${classId}`:"Classes", classId?"Class history and trend":"All classes in the school");
+  if(!classId){
+    content.innerHTML=`<div class="loading"><span class="spin"></span>Loading classes...</div>`;
+    try{
+      const snap=await getDocs(collection(db,COL.classes));
+      const cls=(snap.empty?DEFAULT_CLASSES:snap.docs.map(d=>({classId:d.id,...d.data()}))).filter(c=>c.active!==false).sort((a,b)=>(a.sortOrder??999)-(b.sortOrder??999));
+      content.innerHTML=`<div class="card"><div class="class-picker">${cls.map(c=>`<a href="${hashFor('classes/'+c.classId)}">${escapeHtml(c.name||"Grade "+c.classId)}</a>`).join("")}</div></div>`;
+    }catch(e){ console.error(e); content.innerHTML=`<div class="empty"><strong>Couldn't load classes</strong>${escapeHtml(friendlyError(e))}</div>`; }
+    return;
+  }
+  content.innerHTML=`<a class="btn sm" href="${hashFor('classes')}" style="margin-bottom:14px;display:inline-flex">${icon("left",15)} All classes</a>
+    <div class="card"><div class="card-head"><h2>Grade ${escapeHtml(classId)} — Last 30 submissions</h2>
+      <div><button class="btn sm" id="csv">${icon("download")} CSV</button> <button class="btn sm navy" id="pr">${icon("print")} Print</button></div></div>
+      <div class="chart-box" style="height:220px;margin-bottom:18px"><canvas id="trend"></canvas></div>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>Date</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th><th>Submitted Time</th></tr></thead>
+      <tbody id="tb"><tr><td colspan="5"><div class="loading"><span class="spin"></span>Loading...</div></td></tr></tbody></table></div></div>`;
+  try{
+    const snap=await getDocs(query(collection(db,COL.counts),where("classId","==",classId),orderBy("date","desc"),limit(30)));
+    const rows=snap.docs.map(d=>d.data());
+    if(!rows.length){ $("#tb").innerHTML=`<tr><td colspan="5"><div class="empty"><strong>No submissions yet</strong>This class hasn't submitted a count.</div></td></tr>`; }
+    else{
+      $("#tb").innerHTML=rows.map(r=>`<tr><td>${fmtDateShort(r.date)}</td><td class="num">${r.boys}</td><td class="num">${r.girls}</td><td class="num">${r.total}</td><td class="muted">${fmtTime(r.submittedAt)}</td></tr>`).join("");
+      await ensureCharts();
+      const asc=rows.slice().reverse();
+      new Chart($("#trend"),{type:"line",data:{labels:asc.map(r=>fmtDateShort(r.date)),datasets:[{label:"Total",data:asc.map(r=>r.total),borderColor:"#1a73d9",backgroundColor:"rgba(26,115,217,.12)",fill:true,tension:.35,pointRadius:3}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+    }
+    $("#csv").onclick=()=>download(`WHC-grade-${classId}-history.csv`, toCSV([["Date","Boys","Girls","Total","Submitted Time"],...rows.map(r=>[fmtDateShort(r.date),r.boys,r.girls,r.total,fmtTime(r.submittedAt)])]));
+    $("#pr").onclick=()=>printHTML(`<div class="report-sheet"><div class="report-head"><img src="${LOGO}" width="64" height="64" alt=""><div><h1>${SCHOOL_NAME}</h1><h2>Grade ${escapeHtml(classId)} — History</h2></div></div><table class="report-table"><thead><tr><th>Date</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th><th>Time</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${fmtDateShort(r.date)}</td><td class="num">${r.boys}</td><td class="num">${r.girls}</td><td class="num">${r.total}</td><td>${fmtTime(r.submittedAt)}</td></tr>`).join("")}</tbody></table></div>`);
+  }catch(e){ console.error(e); $("#tb").innerHTML=`<tr><td colspan="5"><div class="empty"><strong>Couldn't load history</strong>${escapeHtml(friendlyError(e))}</div></td></tr>`; }
+}
+
+/* ============================ render: ANALYTICS ============================ */
+const PERIODS=[["today","Today"],["yesterday","Yesterday"],["thisWeek","This Week"],["lastWeek","Last Week"],["thisMonth","This Month"],["lastMonth","Last Month"],["thisYear","This Year"],["custom","Custom"]];
+function startOfWeekISO(iso){ const [y,m,d]=iso.split("-").map(Number); const dt=new Date(Date.UTC(y,m-1,d)); const day=dt.getUTCDay(); dt.setUTCDate(dt.getUTCDate()+(day===0?-6:1-day)); return dt.toISOString().slice(0,10); }
+function startOfMonthISO(iso){ return iso.slice(0,7)+"-01"; }
+function endOfMonthISO(iso){ const [y,m]=iso.split("-").map(Number); return `${y}-${String(m).padStart(2,"0")}-${String(new Date(Date.UTC(y,m,0)).getUTCDate()).padStart(2,"0")}`; }
+function periodRange(key,customFrom,customTo){
+  const t=todayISO();
+  if(key==="today") return {from:t,to:t};
+  if(key==="yesterday"){ const y=addDays(t,-1); return {from:y,to:y}; }
+  if(key==="thisWeek") return {from:startOfWeekISO(t),to:t};
+  if(key==="lastWeek"){ const s=addDays(startOfWeekISO(t),-7); return {from:s,to:addDays(s,6)}; }
+  if(key==="thisMonth") return {from:startOfMonthISO(t),to:t};
+  if(key==="lastMonth"){ const prevEnd=addDays(startOfMonthISO(t),-1); return {from:startOfMonthISO(prevEnd),to:endOfMonthISO(prevEnd)}; }
+  if(key==="thisYear") return {from:t.slice(0,4)+"-01-01",to:t};
+  return {from:customFrom||addDays(t,-29),to:customTo||t};
+}
+function priorPeriod(from,to){
+  const days=Math.round((new Date(to+"T00:00:00Z")-new Date(from+"T00:00:00Z"))/86400000)+1;
+  const prevTo=addDays(from,-1); return {from:addDays(prevTo,-(days-1)),to:prevTo};
+}
+function pctChange(cur,prev){ if(prev==null) return null; if(prev===0) return cur===0?0:null; return ((cur-prev)/prev)*100; }
+function groupByDate(rows){ const m=new Map(); for(const r of rows){ if(!m.has(r.date)) m.set(r.date,[]); m.get(r.date).push(r); } return m; }
+function computePeriodStats(rows,totalClasses){
+  const byDate=groupByDate(rows); const dates=[...byDate.keys()].sort();
+  if(!dates.length) return {hasData:false};
+  let sB=0,sG=0,sT=0,sS=0;
+  const dayList=dates.map(d=>{
+    const dr=byDate.get(d); const boys=dr.reduce((s,r)=>s+r.boys,0),girls=dr.reduce((s,r)=>s+r.girls,0),total=boys+girls,submitted=dr.length;
+    sB+=boys;sG+=girls;sT+=total;sS+=submitted;
+    return {date:d,boys,girls,total,submitted,missing:Math.max(0,totalClasses-submitted)};
+  });
+  const n=dayList.length;
+  const best=dayList.reduce((a,b)=>b.total>a.total?b:a,dayList[0]), worst=dayList.reduce((a,b)=>b.total<a.total?b:a,dayList[0]);
+  return {hasData:true,days:n,avgTotal:sT/n,avgBoys:sB/n,avgGirls:sG/n,avgSubmitted:sS/n,submissionRate:totalClasses?(sS/(n*totalClasses))*100:null,dayList,best,worst};
+}
+function acard(iconTxt,label,val,fmt,prevVal){
+  const diff=(prevVal!=null&&val!=null)?val-prevVal:null;
+  const pct=(prevVal!=null&&val!=null)?pctChange(val,prevVal):null;
+  const trend=diff==null?"":diff>0.0001?"up":diff<-0.0001?"down":"flat";
+  return `<div class="acard"><div class="acard-top"><span>${iconTxt}</span><span>${escapeHtml(label)}</span></div>
+    <div class="acard-val">${val==null?"—":fmt(val)}</div>
+    ${(prevVal!=null&&val!=null)?`<div class="acard-cmp ${trend}">${diff>=0?"+":""}${fmt(diff)} vs previous (${pct==null?"—":(pct>=0?"+":"")+pct.toFixed(1)+"%"})</div>`:'<div class="acard-cmp flat">No prior-period data</div>'}
+  </div>`;
+}
+async function renderAnalytics(seg1){
+  const u=requireAdmin(); if(!u) return;
+  stopLive();
+  const content=mountShell("analytics","Admin Analytics & Statistics","Daily, weekly, monthly and yearly count averages, trends and class comparisons");
+  let tab=["overview","classwise","compare"].includes(seg1)?seg1:"overview";
+  content.innerHTML=`<div class="tabs">
+      <button data-t="overview" class="${tab==="overview"?"on":""}">Overview</button>
+      <button data-t="classwise" class="${tab==="classwise"?"on":""}">Class-wise</button>
+      <button data-t="compare" class="${tab==="compare"?"on":""}">Compare Classes</button>
+    </div><div id="pane"></div>`;
+  $$(".tabs button",content).forEach(b=>b.onclick=()=>{ tab=b.dataset.t; nav("analytics/"+tab); $$(".tabs button",content).forEach(x=>x.classList.remove("on")); b.classList.add("on"); render(); });
+
+  let classesCache=[];
+  async function getClasses(){ if(classesCache.length) return classesCache; const snap=await getDocs(collection(db,COL.classes)); classesCache=(snap.empty?DEFAULT_CLASSES:snap.docs.map(d=>({classId:d.id,...d.data()}))).filter(c=>c.active!==false).sort((a,b)=>(a.sortOrder??999)-(b.sortOrder??999)); return classesCache; }
+
+  function render(){ tab==="classwise"?renderClasswise():tab==="compare"?renderCompare():renderOverview(); }
+  render();
+
+  function periodPickerHTML(state){
+    return `<div class="period-bar">
+      ${PERIODS.map(([k,l])=>`<button class="pbtn ${state.period===k?"on":""}" data-p="${k}" type="button">${l}</button>`).join("")}
+      ${state.period==="custom"?`<span class="custom-range"><input class="input" type="date" id="cfrom" value="${state.from}"><span>–</span><input class="input" type="date" id="cto" value="${state.to}"></span>`:""}
+    </div>`;
+  }
+  function wirePeriodPicker(container,state,onChange){
+    $$(".pbtn",container).forEach(b=>b.onclick=()=>{ state.period=b.dataset.p; if(state.period!=="custom"){ const r=periodRange(state.period); state.from=r.from; state.to=r.to; } onChange(); });
+    const cf=container.querySelector("#cfrom"), ct=container.querySelector("#cto");
+    if(cf) cf.onchange=()=>{ if(isISODate(cf.value)&&cf.value<=state.to){ state.from=cf.value; onChange(); } };
+    if(ct) ct.onchange=()=>{ if(isISODate(ct.value)&&ct.value>=state.from){ state.to=ct.value; onChange(); } };
+  }
+  function refreshPicker(container,state,onChange){ container.querySelector(".period-bar").outerHTML=periodPickerHTML(state); wirePeriodPicker(container,state,onChange); }
+
+  /* ---------------- Overview ---------------- */
+  async function renderOverview(){
+    const pane=$("#pane");
+    const state={period:"thisMonth",from:null,to:null};
+    const r0=periodRange(state.period); state.from=r0.from; state.to=r0.to;
+    pane.innerHTML=`${periodPickerHTML(state)}<div id="ov-body"><div class="loading"><span class="spin"></span>Loading analytics...</div></div>`;
+    wirePeriodPicker(pane,state,load);
+    async function load(){
+      refreshPicker(pane,state,load);
+      const body=$("#ov-body"); body.innerHTML=`<div class="loading"><span class="spin"></span>Loading analytics...</div>`;
+      try{
+        const cls=await getClasses(); const totalClasses=cls.length;
+        const {from,to}=state; const prev=priorPeriod(from,to);
+        const [curSnap,prevSnap]=await Promise.all([
+          getDocs(query(collection(db,COL.counts),where("date",">=",from),where("date","<=",to))),
+          getDocs(query(collection(db,COL.counts),where("date",">=",prev.from),where("date","<=",prev.to)))
+        ]);
+        const cur=computePeriodStats(curSnap.docs.map(d=>d.data()),totalClasses), pr=computePeriodStats(prevSnap.docs.map(d=>d.data()),totalClasses);
+        if(!cur.hasData){ body.innerHTML=`<div class="empty"><strong>No data for this period</strong>No daily counts have been recorded in ${fmtDateLong(from)} – ${fmtDateLong(to)} yet.</div>`; return; }
+        const fmt1=v=>String(Math.round(v*10)/10), fmtPct=v=>v.toFixed(1)+"%";
+        body.innerHTML=`
+          <div class="acard-grid">
+            ${acard("📊","Average Daily Total",cur.avgTotal,fmt1,pr.hasData?pr.avgTotal:null)}
+            ${acard("👨","Average Boys",cur.avgBoys,fmt1,pr.hasData?pr.avgBoys:null)}
+            ${acard("👩","Average Girls",cur.avgGirls,fmt1,pr.hasData?pr.avgGirls:null)}
+            ${acard("🏫","Avg Classes Submitted / Day",cur.avgSubmitted,fmt1,pr.hasData?pr.avgSubmitted:null)}
+            ${acard("✅","Submission Rate",cur.submissionRate,fmtPct,pr.hasData?pr.submissionRate:null)}
+            ${acard("📅","Days With Data",cur.days,v=>String(Math.round(v)),null)}
+          </div>
+          <div class="card" style="margin-bottom:18px"><div class="card-head"><h2>Highest &amp; Lowest Day</h2></div>
+            <div class="kv" style="grid-template-columns:1fr 1fr">
+              <div><b>${cur.best.total}</b><span>Highest — ${fmtDateShort(cur.best.date)}</span></div>
+              <div><b>${cur.worst.total}</b><span>Lowest — ${fmtDateShort(cur.worst.date)}</span></div>
+            </div></div>
+          <div class="charts">
+            <div class="card"><h2 style="margin-bottom:12px">Boys vs Girls (avg)</h2><div class="chart-box"><canvas id="ovDist"></canvas></div></div>
+            <div class="card"><h2 style="margin-bottom:12px">Daily Total Trend</h2><div class="chart-box"><canvas id="ovTrend"></canvas></div></div>
+            <div class="card"><h2 style="margin-bottom:12px">Avg Submission Rate</h2><div class="chart-box"><canvas id="ovRate"></canvas></div></div>
+          </div>
+          <div class="card"><div class="card-head"><h2>Day-by-Day Breakdown</h2>
+            <div><button class="btn sm" id="csv">${icon("download")} CSV</button> <button class="btn sm navy" id="pr">${icon("print")} Print</button></div></div>
+            <div class="table-wrap"><table class="tbl"><thead><tr><th>Date</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th><th class="num">Submitted</th><th class="num">Missing</th></tr></thead>
+            <tbody>${cur.dayList.map(d=>`<tr><td>${fmtDateShort(d.date)}</td><td class="num">${d.boys}</td><td class="num">${d.girls}</td><td class="num">${d.total}</td><td class="num">${d.submitted}/${totalClasses}</td><td class="num">${d.missing}</td></tr>`).join("")}</tbody></table></div></div>`;
+        await ensureCharts();
+        const navy="#0b2447",blue="#1a73d9",amber="#f3c15e",green="#14874f",red="#c93a3a",grid="#e6edf6";
+        new Chart($("#ovDist"),{type:"doughnut",data:{labels:["Boys","Girls"],datasets:[{data:[cur.avgBoys,cur.avgGirls],backgroundColor:[blue,amber],borderWidth:0}]},options:{plugins:{legend:{position:"bottom"}},cutout:"68%",maintainAspectRatio:false}});
+        new Chart($("#ovTrend"),{type:"line",data:{labels:cur.dayList.map(d=>fmtDateShort(d.date)),datasets:[{label:"Total",data:cur.dayList.map(d=>d.total),borderColor:navy,backgroundColor:"rgba(11,36,71,.1)",fill:true,tension:.35,pointRadius:2}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:grid}}}}});
+        new Chart($("#ovRate"),{type:"pie",data:{labels:["Submitted","Missing"],datasets:[{data:[cur.avgSubmitted,Math.max(0,totalClasses-cur.avgSubmitted)],backgroundColor:[green,red],borderWidth:0}]},options:{plugins:{legend:{position:"bottom"}},maintainAspectRatio:false}});
+        $("#csv").onclick=()=>download(`WHC-analytics-${from}_to_${to}.csv`,toCSV([[SCHOOL_NAME],["Analytics Overview"],["Period",`${fmtDateLong(from)} - ${fmtDateLong(to)}`],[],["Date","Boys","Girls","Total","Submitted","Missing"],...cur.dayList.map(d=>[fmtDateShort(d.date),d.boys,d.girls,d.total,`${d.submitted}/${totalClasses}`,d.missing])]));
+        $("#pr").onclick=()=>printHTML(`<div class="report-sheet"><div class="report-head"><img src="${LOGO}" width="64" height="64" alt=""><div><h1>${SCHOOL_NAME}</h1><h2>Analytics Overview</h2><p>${fmtDateLong(from)} – ${fmtDateLong(to)}</p></div></div>
+          <table class="report-totals"><tbody><tr><th>Average Daily Total</th><td>${fmt1(cur.avgTotal)}</td></tr><tr><th>Average Boys</th><td>${fmt1(cur.avgBoys)}</td></tr><tr><th>Average Girls</th><td>${fmt1(cur.avgGirls)}</td></tr><tr><th>Submission Rate</th><td>${fmtPct(cur.submissionRate)}</td></tr></tbody></table>
+          <table class="report-table" style="margin-top:14px"><thead><tr><th>Date</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th><th class="num">Submitted</th></tr></thead><tbody>${cur.dayList.map(d=>`<tr><td>${fmtDateShort(d.date)}</td><td class="num">${d.boys}</td><td class="num">${d.girls}</td><td class="num">${d.total}</td><td class="num">${d.submitted}/${totalClasses}</td></tr>`).join("")}</tbody></table>
+          <p class="report-foot">Generated ${new Date().toLocaleString("en-GB",{timeZone:TIMEZONE})} · WHC Student Daily Count Management System</p></div>`);
+      }catch(e){ console.error(e); $("#ov-body").innerHTML=`<div class="empty"><strong>Couldn't load analytics</strong>${escapeHtml(friendlyError(e))}</div>`; }
+    }
+    load();
+  }
+
+  /* ---------------- Class-wise ---------------- */
+  async function renderClasswise(){
+    const pane=$("#pane");
+    const cls=await getClasses();
+    const state={period:"thisMonth",from:null,to:null,classId:cls[0]?.classId||""};
+    const r0=periodRange(state.period); state.from=r0.from; state.to=r0.to;
+    pane.innerHTML=`<div class="filters" style="margin-bottom:6px"><label class="field">Class<select class="input" id="clsSel">${cls.map(c=>`<option value="${c.classId}">${escapeHtml(c.name||"Grade "+c.classId)}</option>`).join("")}</select></label></div>
+      ${periodPickerHTML(state)}<div id="cw-body"><div class="loading"><span class="spin"></span>Loading...</div></div>`;
+    if(!cls.length){ $("#cw-body").innerHTML=`<div class="empty"><strong>No classes set up yet</strong>Go to <a href="${hashFor('settings')}">Settings</a> to create classes.</div>`; return; }
+    $("#clsSel").value=state.classId;
+    $("#clsSel").onchange=e=>{ state.classId=e.target.value; load(); };
+    wirePeriodPicker(pane,state,load);
+    async function load(){
+      refreshPicker(pane,state,load);
+      const body=$("#cw-body"); body.innerHTML=`<div class="loading"><span class="spin"></span>Loading...</div>`;
+      try{
+        const {from,to,classId}=state; const prev=priorPeriod(from,to);
+        const [curSnap,prevSnap]=await Promise.all([
+          getDocs(query(collection(db,COL.counts),where("classId","==",classId),where("date",">=",from),where("date","<=",to))),
+          getDocs(query(collection(db,COL.counts),where("classId","==",classId),where("date",">=",prev.from),where("date","<=",prev.to)))
+        ]);
+        const rows=curSnap.docs.map(d=>d.data()).sort((a,b)=>a.date<b.date?-1:1);
+        const prevRows=prevSnap.docs.map(d=>d.data());
+        const className=cls.find(c=>c.classId===classId)?.name||"Grade "+classId;
+        const periodDays=Math.round((new Date(to+"T00:00:00Z")-new Date(from+"T00:00:00Z"))/86400000)+1;
+        const prevDays=Math.round((new Date(prev.to+"T00:00:00Z")-new Date(prev.from+"T00:00:00Z"))/86400000)+1;
+        if(!rows.length){ body.innerHTML=`<div class="empty"><strong>No submissions for ${escapeHtml(className)}</strong>in ${fmtDateLong(from)} – ${fmtDateLong(to)}.</div>`; return; }
+        const avgTotal=rows.reduce((s,r)=>s+r.total,0)/rows.length, avgBoys=rows.reduce((s,r)=>s+r.boys,0)/rows.length, avgGirls=rows.reduce((s,r)=>s+r.girls,0)/rows.length;
+        const subRate=periodDays?rows.length/periodDays*100:null;
+        const pAvg=prevRows.length?prevRows.reduce((s,r)=>s+r.total,0)/prevRows.length:null;
+        const pSubRate=(prevRows.length&&prevDays)?prevRows.length/prevDays*100:null;
+        const best=rows.reduce((a,b)=>b.total>a.total?b:a,rows[0]), worst=rows.reduce((a,b)=>b.total<a.total?b:a,rows[0]);
+        const fmt1=v=>String(Math.round(v*10)/10), fmtPct=v=>v.toFixed(1)+"%";
+        body.innerHTML=`
+          <div class="acard-grid">
+            ${acard("📈","Class Average",avgTotal,fmt1,pAvg)}
+            ${acard("👨","Boys Average",avgBoys,fmt1,null)}
+            ${acard("👩","Girls Average",avgGirls,fmt1,null)}
+            ${acard("✅","Submission Rate",subRate,fmtPct,pSubRate)}
+            ${acard("📅","Days Submitted",rows.length,v=>String(Math.round(v))+"/"+periodDays,null)}
+          </div>
+          <div class="card" style="margin-bottom:18px"><div class="card-head"><h2>Highest &amp; Lowest Day</h2></div>
+            <div class="kv" style="grid-template-columns:1fr 1fr">
+              <div><b>${best.total}</b><span>Highest — ${fmtDateShort(best.date)}</span></div>
+              <div><b>${worst.total}</b><span>Lowest — ${fmtDateShort(worst.date)}</span></div>
+            </div></div>
+          <div class="card" style="margin-bottom:18px"><h2 style="margin-bottom:12px">Attendance Trend — ${escapeHtml(className)}</h2><div class="chart-box"><canvas id="cwTrend"></canvas></div></div>
+          <div class="card"><div class="card-head"><h2>Submissions</h2><div><button class="btn sm" id="csv">${icon("download")} CSV</button> <button class="btn sm navy" id="pr">${icon("print")} Print</button></div></div>
+            <div class="table-wrap"><table class="tbl"><thead><tr><th>Date</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th></tr></thead>
+            <tbody>${rows.map(r=>`<tr><td>${fmtDateShort(r.date)}</td><td class="num">${r.boys}</td><td class="num">${r.girls}</td><td class="num">${r.total}</td></tr>`).join("")}</tbody></table></div></div>`;
+        await ensureCharts();
+        new Chart($("#cwTrend"),{type:"line",data:{labels:rows.map(r=>fmtDateShort(r.date)),datasets:[{label:"Total",data:rows.map(r=>r.total),borderColor:"#1a73d9",backgroundColor:"rgba(26,115,217,.12)",fill:true,tension:.35,pointRadius:3}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+        $("#csv").onclick=()=>download(`WHC-${classId}-analytics-${from}_to_${to}.csv`,toCSV([[SCHOOL_NAME],[className+" Analytics"],["Period",`${fmtDateLong(from)} - ${fmtDateLong(to)}`],[],["Date","Boys","Girls","Total"],...rows.map(r=>[fmtDateShort(r.date),r.boys,r.girls,r.total])]));
+        $("#pr").onclick=()=>printHTML(`<div class="report-sheet"><div class="report-head"><img src="${LOGO}" width="64" height="64" alt=""><div><h1>${SCHOOL_NAME}</h1><h2>${escapeHtml(className)} Analytics</h2><p>${fmtDateLong(from)} – ${fmtDateLong(to)}</p></div></div>
+          <table class="report-totals"><tbody><tr><th>Class Average</th><td>${fmt1(avgTotal)}</td></tr><tr><th>Boys Average</th><td>${fmt1(avgBoys)}</td></tr><tr><th>Girls Average</th><td>${fmt1(avgGirls)}</td></tr><tr><th>Submission Rate</th><td>${subRate==null?"—":fmtPct(subRate)}</td></tr></tbody></table>
+          <table class="report-table" style="margin-top:14px"><thead><tr><th>Date</th><th class="num">Boys</th><th class="num">Girls</th><th class="num">Total</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${fmtDateShort(r.date)}</td><td class="num">${r.boys}</td><td class="num">${r.girls}</td><td class="num">${r.total}</td></tr>`).join("")}</tbody></table>
+          <p class="report-foot">Generated ${new Date().toLocaleString("en-GB",{timeZone:TIMEZONE})} · WHC Student Daily Count Management System</p></div>`);
+      }catch(e){ console.error(e); $("#cw-body").innerHTML=`<div class="empty"><strong>Couldn't load class analytics</strong>${escapeHtml(friendlyError(e))}</div>`; }
+    }
+    load();
+  }
+
+  /* ---------------- Compare Classes ---------------- */
+  async function renderCompare(){
+    const pane=$("#pane");
+    const cls=await getClasses();
+    const state={period:"thisMonth",from:null,to:null,selected:new Set(cls.slice(0,Math.min(4,cls.length)).map(c=>c.classId))};
+    const r0=periodRange(state.period); state.from=r0.from; state.to=r0.to;
+    pane.innerHTML=`<p class="mini-note">Pick 2–10 classes to compare over the same period.</p>
+      <div class="class-compare-picker">${cls.map(c=>`<button data-c="${c.classId}" class="${state.selected.has(c.classId)?"on":""}" type="button">${escapeHtml(c.name||"Grade "+c.classId)}</button>`).join("")}</div>
+      ${periodPickerHTML(state)}<div id="cmp-body"><div class="loading"><span class="spin"></span>Loading...</div></div>`;
+    $$(".class-compare-picker button",pane).forEach(b=>b.onclick=()=>{
+      const id=b.dataset.c;
+      if(state.selected.has(id)) state.selected.delete(id);
+      else{ if(state.selected.size>=10) return toast("You can compare up to 10 classes.","err"); state.selected.add(id); }
+      b.classList.toggle("on"); load();
+    });
+    wirePeriodPicker(pane,state,load);
+    async function load(){
+      refreshPicker(pane,state,load);
+      const body=$("#cmp-body");
+      const ids=[...state.selected];
+      if(ids.length<2){ body.innerHTML=`<div class="empty"><strong>Select at least 2 classes</strong>Choose classes above to compare.</div>`; return; }
+      body.innerHTML=`<div class="loading"><span class="spin"></span>Loading...</div>`;
+      try{
+        const {from,to}=state;
+        const results=await Promise.all(ids.map(id=>getDocs(query(collection(db,COL.counts),where("classId","==",id),where("date",">=",from),where("date","<=",to)))));
+        const periodDays=Math.round((new Date(to+"T00:00:00Z")-new Date(from+"T00:00:00Z"))/86400000)+1;
+        const fmt1=v=>String(Math.round(v*10)/10);
+        const stats=ids.map((id,i)=>{
+          const rows=results[i].docs.map(d=>d.data());
+          const className=cls.find(c=>c.classId===id)?.name||"Grade "+id;
+          if(!rows.length) return {id,className,hasData:false};
+          const avgTotal=rows.reduce((s,r)=>s+r.total,0)/rows.length, avgBoys=rows.reduce((s,r)=>s+r.boys,0)/rows.length, avgGirls=rows.reduce((s,r)=>s+r.girls,0)/rows.length;
+          return {id,className,hasData:true,students:rows.length,avgTotal,avgBoys,avgGirls,subRate:periodDays?rows.length/periodDays*100:null};
+        });
+        body.innerHTML=`
+          <div class="card" style="margin-bottom:18px"><div class="card-head"><h2>Comparison — ${fmtDateLong(from)} – ${fmtDateLong(to)}</h2>
+            <div><button class="btn sm" id="csv">${icon("download")} CSV</button> <button class="btn sm navy" id="pr">${icon("print")} Print</button></div></div>
+            <div class="table-wrap"><table class="tbl"><thead><tr><th>Class</th><th class="num">Days Submitted</th><th class="num">Avg Total</th><th class="num">Avg Boys</th><th class="num">Avg Girls</th><th class="num">Submission Rate</th></tr></thead>
+            <tbody>${stats.map(s=>s.hasData?`<tr><td>${escapeHtml(s.className)}</td><td class="num">${s.students}</td><td class="num">${fmt1(s.avgTotal)}</td><td class="num">${fmt1(s.avgBoys)}</td><td class="num">${fmt1(s.avgGirls)}</td><td class="num">${s.subRate==null?"—":s.subRate.toFixed(1)+"%"}</td></tr>`:`<tr><td>${escapeHtml(s.className)}</td><td colspan="5" class="muted">No data in this period</td></tr>`).join("")}</tbody></table></div></div>
+          <div class="card"><h2 style="margin-bottom:12px">Average Total Students by Class</h2><div class="chart-box"><canvas id="cmpBar"></canvas></div></div>`;
+        await ensureCharts();
+        const withData=stats.filter(s=>s.hasData);
+        new Chart($("#cmpBar"),{type:"bar",data:{labels:withData.map(s=>s.className),datasets:[{label:"Average Total",data:withData.map(s=>Math.round(s.avgTotal*10)/10),backgroundColor:"#0b2447",borderRadius:5,maxBarThickness:36}]},options:{plugins:{legend:{display:false}},maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}});
+        $("#csv").onclick=()=>download(`WHC-class-comparison-${from}_to_${to}.csv`,toCSV([[SCHOOL_NAME],["Class Comparison"],["Period",`${fmtDateLong(from)} - ${fmtDateLong(to)}`],[],["Class","Days Submitted","Avg Total","Avg Boys","Avg Girls","Submission Rate"],...stats.map(s=>[s.className,s.hasData?s.students:0,s.hasData?fmt1(s.avgTotal):"",s.hasData?fmt1(s.avgBoys):"",s.hasData?fmt1(s.avgGirls):"",(s.hasData&&s.subRate!=null)?s.subRate.toFixed(1)+"%":""])]));
+        $("#pr").onclick=()=>printHTML(`<div class="report-sheet"><div class="report-head"><img src="${LOGO}" width="64" height="64" alt=""><div><h1>${SCHOOL_NAME}</h1><h2>Class Comparison</h2><p>${fmtDateLong(from)} – ${fmtDateLong(to)}</p></div></div>
+          <table class="report-table"><thead><tr><th>Class</th><th class="num">Days</th><th class="num">Avg Total</th><th class="num">Avg Boys</th><th class="num">Avg Girls</th><th class="num">Sub. Rate</th></tr></thead><tbody>${stats.map(s=>s.hasData?`<tr><td>${escapeHtml(s.className)}</td><td class="num">${s.students}</td><td class="num">${fmt1(s.avgTotal)}</td><td class="num">${fmt1(s.avgBoys)}</td><td class="num">${fmt1(s.avgGirls)}</td><td class="num">${s.subRate==null?"—":s.subRate.toFixed(1)+"%"}</td></tr>`:`<tr><td>${escapeHtml(s.className)}</td><td colspan="5">No data</td></tr>`).join("")}</tbody></table>
+          <p class="report-foot">Generated ${new Date().toLocaleString("en-GB",{timeZone:TIMEZONE})} · WHC Student Daily Count Management System</p></div>`);
+      }catch(e){ console.error(e); $("#cmp-body").innerHTML=`<div class="empty"><strong>Couldn't load comparison</strong>${escapeHtml(friendlyError(e))}</div>`; }
+    }
+    load();
+  }
+}
+
+/* =============================== render: QR ============================== */
+async function renderQR(){
+  const u=requireAdmin(); if(!u) return;
+  stopLive();
+  const content=mountShell("qr","QR Codes","Class QR codes for daily submissions, and the admin login QR");
+  content.innerHTML=`<div class="loading"><span class="spin"></span>Loading classes...</div>`;
+  let siteUrl="";
+  try{ const s=await getDoc(doc(db,COL.settings,"site")); siteUrl=s.exists()?(s.data().siteUrl||""):""; }catch{}
+  const base=siteUrl || (location.origin+location.pathname);
+  await ensureQR();
+  let cls;
+  try{
+    const snap=await getDocs(collection(db,COL.classes));
+    cls=(snap.empty?DEFAULT_CLASSES:snap.docs.map(d=>({classId:d.id,...d.data()}))).filter(c=>c.active!==false).sort((a,b)=>(a.sortOrder??999)-(b.sortOrder??999));
+  }catch(e){ console.error(e); content.innerHTML=`<div class="empty"><strong>Couldn't load classes</strong>${escapeHtml(friendlyError(e))}</div>`; return; }
+
+  const usingDefault=!siteUrl;
+  content.innerHTML=`${usingDefault?`<div class="banner info" style="margin-bottom:16px">${icon("alert")}<span>Using this page's own address for the QR links. Set the live website address in <a href="${hashFor('settings')}">Settings</a> before printing QR codes for classrooms.</span></div>`:""}
+    <div class="toolbar"><h2 style="font:700 20px var(--serif)">Class QR Codes</h2><div class="grow"></div><button class="btn navy" id="printAll">${icon("print")} PRINT ALL QR CODES</button></div>
+    <div class="qr-grid" id="grid"></div>
+    <div class="card" style="margin-top:24px"><h2 style="margin-bottom:6px">Administration login QR</h2>
+      <p class="muted" style="margin:0 0 14px">Scanning this opens the secure admin login page. It never contains a password.</p>
+      <div class="qr-tile" style="margin:0 auto;max-width:230px"><div class="qr" id="adminQr"></div><p><code id="adminLink"></code></p>
+        <div class="btns"><button class="btn sm" data-dl="admin">${icon("download")} Download</button><button class="btn sm" data-copy="admin">${icon("copy")} Copy Link</button></div></div>
+    </div>`;
+
+  const grid=$("#grid");
+  cls.forEach(c=>{
+    const link=base+`#/class/${encodeURIComponent(c.classId)}`;
+    const tile=document.createElement("div"); tile.className="qr-tile";
+    tile.innerHTML=`<h3>${escapeHtml(c.name||"Grade "+c.classId)}</h3><div class="qr" id="qr-${c.classId}"></div>
+      <p>Scan to submit today's count</p><code>${escapeHtml(c.classId)}</code>
+      <div class="btns"><button class="btn sm" data-dl="${c.classId}">${icon("download")} Download</button>
+        <button class="btn sm" data-print="${c.classId}">${icon("print")} Print</button>
+        <button class="btn sm" data-copy="${c.classId}">${icon("copy")} Copy Link</button></div>`;
+    grid.append(tile);
+    new QRCode(tile.querySelector(".qr"),{text:link,width:160,height:160,correctLevel:QRCode.CorrectLevel.M});
+  });
+  const adminLink=base+"#/login";
+  $("#adminLink").textContent=adminLink;
+  new QRCode($("#adminQr"),{text:adminLink,width:160,height:160,correctLevel:QRCode.CorrectLevel.M});
+
+  function downloadCanvas(canvas,name){ if(!canvas) return toast("QR code isn't ready yet.","err"); const a=Object.assign(document.createElement("a"),{href:canvas.toDataURL("image/png"),download:name}); document.body.append(a); a.click(); a.remove(); }
+  async function copyText(text){ try{ await navigator.clipboard.writeText(text); toast("Link copied"); }catch{ toast("Couldn't copy the link","err"); } }
+  function cardHTML(c,imgSrc,url){ return `<div class="print-card"><img class="logo" src="${LOGO}" alt=""><div class="sn">${SCHOOL_NAME}</div><div class="gr">${escapeHtml(c.name||"Grade "+c.classId)}</div>${imgSrc?`<img class="qrimg" src="${imgSrc}" alt="QR code">`:""}<div class="cap">Daily Student Count</div><div class="url">${escapeHtml(url)}</div></div>`; }
+
+  grid.addEventListener("click",e=>{
+    const dl=e.target.closest("[data-dl]"), cp=e.target.closest("[data-copy]"), pr=e.target.closest("[data-print]");
+    if(dl) downloadCanvas(document.querySelector(`#qr-${CSS.escape(dl.dataset.dl)} canvas`), `WHC-grade-${dl.dataset.dl}-QR.png`);
+    if(cp) copyText(base+`#/class/${encodeURIComponent(cp.dataset.copy)}`);
+    if(pr){ const c=cls.find(x=>x.classId===pr.dataset.print); const img=document.querySelector(`#qr-${CSS.escape(c.classId)} canvas`)?.toDataURL("image/png"); printHTML(cardHTML(c,img,base+`#/class/${encodeURIComponent(c.classId)}`),"qr-page"); }
+  });
+  document.body.addEventListener("click", function adminClickHandler(e){
+    if(e.target.closest("[data-dl='admin']")) downloadCanvas($("#adminQr canvas"),"WHC-admin-login-QR.png");
+    if(e.target.closest("[data-copy='admin']")) copyText(adminLink);
+  }, { once:false });
+  $("#printAll").onclick=()=>{
+    const cards=cls.map(c=>{ const img=document.querySelector(`#qr-${CSS.escape(c.classId)} canvas`)?.toDataURL("image/png"); return cardHTML(c,img,base+`#/class/${encodeURIComponent(c.classId)}`); });
+    const pages=[]; for(let i=0;i<cards.length;i+=4) pages.push(`<div class="qr-page">${cards.slice(i,i+4).join("")}</div>`);
+    printHTML(pages.join(""));
+  };
+}
+
+/* =============================== render: USERS ============================ */
+async function renderUsers(){
+  const u=requireAdmin(); if(!u) return;
+  stopLive();
+  const content=mountShell("users","Users","Principal, teachers and other staff accounts");
+  content.innerHTML=`<div class="banner info" style="margin-bottom:16px">${icon("alert")}<span>Accounts are created and removed in the Teacher Management system. Here you can review staff and assign classes for daily-count submissions.</span></div>
+    <div class="toolbar"><div class="search"><span>${icon("search")}</span><input class="input" id="q" placeholder="Search name or username"></div>
+      <select class="input" id="roleF" style="width:auto"><option value="all">All roles</option>${Object.entries(ROLE_LABELS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
+      <div class="grow"></div><span class="muted" id="count"></span></div>
+    <div class="card"><div class="table-wrap"><table class="tbl"><thead><tr><th>Name</th><th>Role</th><th>Assigned Class</th><th>Username</th><th></th></tr></thead>
+    <tbody id="tb"><tr><td colspan="5"><div class="loading"><span class="spin"></span>Loading staff...</div></td></tr></tbody></table></div></div>`;
+  let staff=[], classes=[], text="", role="all";
+  $("#q").addEventListener("input",debounce(e=>{ text=e.target.value.trim().toLowerCase(); draw(); },150));
+  $("#roleF").addEventListener("change",e=>{ role=e.target.value; draw(); });
+
+  try{
+    const [sSnap,cSnap]=await Promise.all([
+      getDocs(query(collection(db,COL.staff),orderBy("name"))).catch(()=>getDocs(collection(db,COL.staff))),
+      getDocs(collection(db,COL.classes))
+    ]);
+    staff=sSnap.docs.map(d=>({id:d.id,...d.data(),role:cleanRole(d.data().role)}));
+    classes=(cSnap.empty?DEFAULT_CLASSES:cSnap.docs.map(d=>({classId:d.id,...d.data()}))).filter(c=>c.active!==false).sort((a,b)=>(a.sortOrder??999)-(b.sortOrder??999));
+    draw();
+  }catch(e){ console.error(e); const denied=/permission-denied|insufficient permissions/i.test(String(e&&(e.code||e.message))); $("#tb").innerHTML=`<tr><td colspan="5"><div class="empty"><strong>Couldn't load staff</strong>${escapeHtml(denied?"The staff list is protected. Sign in as WHC@Admin to view and assign staff.":friendlyError(e))}</div></td></tr>`; }
+
+  function draw(){
+    let view=staff;
+    if(role!=="all") view=view.filter(s=>s.role===role);
+    if(text) view=view.filter(s=>(s.name||"").toLowerCase().includes(text)||(s.username||"").toLowerCase().includes(text));
+    $("#count").textContent=`${view.length} of ${staff.length} staff`;
+    $("#tb").innerHTML=view.length?view.map(s=>`<tr><td><strong>${escapeHtml(s.name||"—")}</strong></td><td><span class="pill role">${escapeHtml(ROLE_LABELS[s.role]||s.role)}</span></td><td>${escapeHtml(s.className||"—")}</td><td class="muted">${escapeHtml(s.username||"—")}</td><td><button class="btn sm" data-assign="${s.id}">Assign class</button></td></tr>`).join("") : `<tr><td colspan="5"><div class="empty"><strong>No matching staff</strong></div></td></tr>`;
+  }
+  $("#tb").addEventListener("click",e=>{
+    const b=e.target.closest("[data-assign]"); if(!b) return;
+    const s=staff.find(x=>x.id===b.dataset.assign); if(s) openAssign(s);
+  });
+  function openAssign(s){
+    const m=openModal(`<h2>Assign class</h2><p class="muted" style="margin:0 0 6px">${escapeHtml(s.name)} · ${escapeHtml(ROLE_LABELS[s.role]||s.role)}</p>
+      <div id="amsg" class="banner err" hidden></div>
+      <label class="field" style="display:block;margin-top:12px">Class<select class="input" id="ac"><option value="">— None —</option>${classes.map(c=>`<option value="${escapeHtml(c.name||"Grade "+c.classId)}" ${s.className===(c.name||"Grade "+c.classId)?"selected":""}>${escapeHtml(c.name||"Grade "+c.classId)}</option>`).join("")}</select></label>
+      <div class="actions"><button class="btn" data-close type="button">Cancel</button><button class="btn primary" id="save" type="button">Save</button></div>`);
+    m.el.querySelector("#save").onclick=async()=>{
+      const btn=m.el.querySelector("#save"); setBusy(btn,true,"Saving…");
+      try{ await updateDoc(doc(db,COL.staff,s.id),{className:m.el.querySelector("#ac").value}); s.className=m.el.querySelector("#ac").value; m.close(); draw(); toast("Class assigned"); }
+      catch(e){ console.error(e); setBusy(btn,false); banner(m.el.querySelector("#amsg"), friendlyError(e,"Couldn't save. Please try again.")); }
+    };
+  }
+}
+
+/* ============================== render: SETTINGS ========================== */
+async function renderSettings(){
+  const u=requireAdmin(); if(!u) return;
+  stopLive();
+  const content=mountShell("settings","Settings","Classes and site configuration");
+  content.innerHTML=`<div class="card" style="margin-bottom:20px"><h2 style="margin-bottom:6px">Website address</h2>
+      <p class="muted" style="margin:0 0 14px">Used to build the QR code links on the QR Codes page (e.g. https://whc-daily-count.web.app/). Leave blank to use this page's own address.</p>
+      <div id="umsg" class="banner err" hidden style="margin-bottom:12px"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><input class="input" id="siteUrl" placeholder="https://yourschool.web.app/" style="flex:1;min-width:240px"><button class="btn primary" id="saveUrl">Save</button></div></div>
+    <div class="card"><div class="card-head"><h2>Classes</h2><span class="muted" id="cCount"></span></div>
+      <div id="setupMsg"></div>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>ID</th><th>Class Name</th><th>Status</th><th></th></tr></thead>
+      <tbody id="tb"><tr><td colspan="4"><div class="loading"><span class="spin"></span>Loading classes...</div></td></tr></tbody></table></div></div>`;
+
+  let classes=[];
+  try{ const s=await getDoc(doc(db,COL.settings,"site")); $("#siteUrl").value=s.exists()?(s.data().siteUrl||""):""; }catch(e){ console.error(e); }
+  $("#saveUrl").onclick=async()=>{
+    const btn=$("#saveUrl"), val=$("#siteUrl").value.trim();
+    if(val && !/^https?:\/\/.+/.test(val)) return banner($("#umsg"),"Enter a full address starting with http:// or https://");
+    setBusy(btn,true,"Saving…");
+    try{ await setDoc(doc(db,COL.settings,"site"),{siteUrl:val.replace(/\/?$/,"/")}); banner($("#umsg"),""); toast("Website address saved"); }
+    catch(e){ console.error(e); banner($("#umsg"),friendlyError(e)); }
+    setBusy(btn,false);
+  };
+
+  async function load(){
+    try{
+      const snap=await getDocs(collection(db,COL.classes));
+      classes=snap.docs.map(d=>({classId:d.id,...d.data()})).sort((a,b)=>(a.sortOrder??999)-(b.sortOrder??999));
+      if(!classes.length){
+        $("#setupMsg").innerHTML=`<div class="banner info" style="margin-bottom:14px">${icon("alert")}<span>No classes found yet. Create the 19 standard classes to get started.</span><button class="btn primary sm" id="seed" style="margin-left:auto">Create default classes</button></div>`;
+        $("#seed").onclick=seed;
+      }else{ $("#setupMsg").innerHTML=""; }
+      draw();
+    }catch(e){ console.error(e); $("#tb").innerHTML=`<tr><td colspan="4"><div class="empty"><strong>Couldn't load classes</strong>${escapeHtml(friendlyError(e))}</div></td></tr>`; }
+  }
+  async function seed(){
+    const btn=$("#seed"); setBusy(btn,true,"Creating…");
+    try{ const batch=writeBatch(db); DEFAULT_CLASSES.forEach(c=>batch.set(doc(db,COL.classes,c.classId),c,{merge:true})); await batch.commit(); toast("Default classes created"); load(); }
+    catch(e){ console.error(e); setBusy(btn,false); toast(friendlyError(e),"err"); }
+  }
+  function draw(){
+    $("#cCount").textContent=`${classes.length} classes`;
+    $("#tb").innerHTML=classes.length?classes.map(c=>`<tr><td><code>${escapeHtml(c.classId)}</code></td><td>${escapeHtml(c.name||"Grade "+c.classId)}</td><td><span class="pill ${c.active===false?"no":"ok"}">${c.active===false?"Inactive":"Active"}</span></td><td style="display:flex;gap:6px"><button class="btn sm" data-rename="${c.classId}">Rename</button><button class="btn sm" data-toggle="${c.classId}">${c.active===false?"Activate":"Deactivate"}</button></td></tr>`).join("") : `<tr><td colspan="4"><div class="empty"><strong>No classes yet</strong></div></td></tr>`;
+  }
+  $("#tb").addEventListener("click", async e=>{
+    const t=e.target.closest("[data-toggle]"), r=e.target.closest("[data-rename]");
+    if(t){ const c=classes.find(x=>x.classId===t.dataset.toggle); try{ await updateDoc(doc(db,COL.classes,c.classId),{active:c.active===false}); c.active=c.active===false; draw(); }catch(e2){ console.error(e2); toast(friendlyError(e2),"err"); } }
+    if(r){
+      const c=classes.find(x=>x.classId===r.dataset.rename);
+      const m=openModal(`<h2>Rename class</h2><p class="muted" style="margin:0 0 10px">Class ID: <code>${escapeHtml(c.classId)}</code> (fixed)</p><label class="field" style="display:block">Display name<input class="input" id="nm" value="${escapeHtml(c.name||"")}"></label><div class="actions"><button class="btn" data-close type="button">Cancel</button><button class="btn primary" id="sv" type="button">Save</button></div>`);
+      m.el.querySelector("#sv").onclick=async()=>{
+        const btn=m.el.querySelector("#sv"), val=m.el.querySelector("#nm").value.trim(); if(!val) return;
+        setBusy(btn,true,"Saving…");
+        try{ await updateDoc(doc(db,COL.classes,c.classId),{name:val}); c.name=val; m.close(); draw(); }
+        catch(e2){ console.error(e2); setBusy(btn,false); toast(friendlyError(e2),"err"); }
+      };
+    }
+  });
+  load();
+}
+
+/* ================================ router go ============================= */
+function route(){
+  const { page, seg1, q } = parseHash();
+  window.scrollTo(0,0);
+  if(page==="home") return renderHome();
+  if(page==="login") return renderLogin(q);
+  if(page==="class") return renderClass({ id: seg1 || q.id || "" });
+  if(page==="dashboard") return renderDashboard();
+  if(page==="reports") return renderReports(seg1);
+  if(page==="analytics") return renderAnalytics(seg1);
+  if(page==="classes") return renderClasses(seg1);
+  if(page==="qr") return renderQR();
+  if(page==="users") return renderUsers();
+  if(page==="settings") return renderSettings();
+  return renderHome();
+}
+addEventListener("hashchange", route);
+if(!location.hash) location.hash = "#/";
+ensureFirebaseAuth().catch(e=>console.error("Firebase sign-in failed",e)).finally(route);
+</script>
+
+
+
+<!-- RizKa AI Assistant Embed -->
+<style id="rizka-ai-embed-style">
+  #rizka-ai-launcher{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    width:58px;
+    height:58px;
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:50%;
+    background:linear-gradient(135deg,#2563eb,#06b6d4);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:100001;
+    box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 0 4px rgba(59,130,246,.12);
+    transition:transform .2s ease, box-shadow .2s ease;
+    font:700 24px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  #rizka-ai-launcher:hover{
+    transform:translateY(-2px) scale(1.04);
+    box-shadow:0 14px 34px rgba(0,0,0,.4),0 0 0 5px rgba(59,130,246,.16);
+  }
+  #rizka-ai-launcher:focus-visible{
+    outline:3px solid rgba(125,211,252,.9);
+    outline-offset:3px;
+  }
+  #rizka-ai-launcher .rizka-ai-icon{
+    width:28px;height:28px;display:grid;place-items:center;
+    border-radius:10px;background:rgba(255,255,255,.15);
+    font-size:18px;
+  }
+
+  #rizka-ai-panel{
+    position:fixed;
+    right:18px;
+    bottom:88px;
+    width:min(390px,calc(100vw - 28px));
+    height:min(620px,calc(100vh - 120px));
+    min-height:420px;
+    background:#0b1220;
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:18px;
+    overflow:hidden;
+    z-index:100000;
+    box-shadow:0 22px 70px rgba(0,0,0,.48);
+    display:none;
+    opacity:0;
+    transform:translateY(12px) scale(.98);
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  #rizka-ai-panel.rizka-ai-open{
+    display:block;
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+  #rizka-ai-panel .rizka-ai-bar{
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 10px 0 14px;
+    background:linear-gradient(135deg,rgba(15,23,42,.96),rgba(30,64,175,.9));
+    color:#fff;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    font:700 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  #rizka-ai-panel .rizka-ai-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-width:0;
+  }
+  #rizka-ai-panel .rizka-ai-title-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:#22c55e;
+    box-shadow:0 0 10px rgba(34,197,94,.7);
+    flex:none;
+  }
+  #rizka-ai-panel .rizka-ai-close{
+    width:30px;height:30px;
+    border:0;
+    border-radius:8px;
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    cursor:pointer;
+    font-size:17px;
+  }
+  #rizka-ai-panel .rizka-ai-close:hover{background:rgba(255,255,255,.16)}
+  #rizka-ai-frame{
+    width:100%;
+    height:calc(100% - 42px);
+    border:0;
+    display:block;
+    background:#0b1220;
+  }
+
+  @media (max-width:600px){
+    #rizka-ai-launcher{
+      right:14px; bottom:14px; width:54px; height:54px;
+    }
+    #rizka-ai-panel{
+      right:10px; left:10px; bottom:78px;
+      width:auto; height:min(76vh,620px);
+      min-height:400px; border-radius:16px;
+    }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    #rizka-ai-launcher,#rizka-ai-panel{transition:none}
+  }
+</style>
+
+<button id="rizka-ai-launcher" type="button" aria-label="Open AI Assistant" aria-expanded="false" title="Open AI Assistant">
+  <span class="rizka-ai-icon">✨</span>
+</button>
+
+<section id="rizka-ai-panel" aria-label="AI Assistant">
+  <div class="rizka-ai-bar">
+    <div class="rizka-ai-title">
+      <span class="rizka-ai-title-dot"></span>
+      <span>AI Assistant</span>
+    </div>
+    <button class="rizka-ai-close" type="button" aria-label="Close AI Assistant" title="Close">×</button>
+  </div>
+  <iframe
+    id="rizka-ai-frame"
+    title="Embedded AI Assistant"
+    src="https://hinducollegewellimada-code.github.io/Portal/Ai%20Assitant/index.html"
+    loading="lazy"
+    referrerpolicy="strict-origin-when-cross-origin">
+  </iframe>
+</section>
+
+<script id="rizka-ai-embed-script">
+(function(){
+  const launcher = document.getElementById("rizka-ai-launcher");
+  const panel = document.getElementById("rizka-ai-panel");
+  const closeBtn = panel && panel.querySelector(".rizka-ai-close");
+  const frame = document.getElementById("rizka-ai-frame");
+  if(!launcher || !panel || !closeBtn) return;
+
+  function setOpen(open){
+    panel.classList.toggle("rizka-ai-open", open);
+    launcher.setAttribute("aria-expanded", String(open));
+    launcher.title = open ? "Close AI Assistant" : "Open AI Assistant";
+    launcher.querySelector(".rizka-ai-icon").textContent = open ? "×" : "✨";
+    if(open && frame){
+      try { frame.focus(); } catch(e){}
+    }
+  }
+
+  launcher.addEventListener("click", function(){
+    setOpen(!panel.classList.contains("rizka-ai-open"));
+  });
+
+  closeBtn.addEventListener("click", function(){
+    setOpen(false);
+    launcher.focus();
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && panel.classList.contains("rizka-ai-open")){
+      setOpen(false);
+      launcher.focus();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

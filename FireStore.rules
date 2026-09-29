@@ -1,0 +1,85 @@
+rules_version = '2';
+
+// B/Hindu College Welimada - Firestore rules
+// Used by: Hindu Attendance.html, Hindu Schedule.html, Hindu TMenagement.html, Backup.html
+//
+// How access works (Firestore only - no Firebase Storage):
+//  * Every visitor of the three sites is signed in silently with Firebase ANONYMOUS auth.
+//  * "WHC@Admin" signs in with a real Firebase Email/Password account (see README.md).
+//  * Backup.html signs in with the same admin account and can read/restore every collection.
+//  * Nobody who is not signed in can read or write anything.
+//  * whc_staff (usernames, passwords, phone numbers ...) is NEVER listable/readable by the public:
+//      - anonymous clients may only run a login lookup that returns at most 1 document
+//        (where username == X and password == Y, limit 1) - they cannot list or dump the collection;
+//      - full read/write access is limited to the admin account.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // The single Firebase Email/Password administrator account (create it in the console).
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.firebase.sign_in_provider == 'password'
+        && request.auth.token.email == 'whc.admin@hinducollege.lk';
+    }
+
+    function validCount(d) {
+      return d.boys is int && d.girls is int
+        && d.boys >= 0 && d.boys <= 500
+        && d.girls >= 0 && d.girls <= 500
+        && d.total == d.boys + d.girls
+        && d.classId is string
+        && d.date is string;
+    }
+
+    // Teacher Management + login lookups for all three sites
+    match /whc_staff/{staffId} {
+      allow get: if isAdmin();
+      allow list: if isAdmin()
+                  || (signedIn() && request.query.limit <= 1);
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Schedule: classes / timetables (also read by Teacher Management)
+    match /classes/{classId} {
+      allow read, write: if signedIn();
+    }
+
+    // Schedule: student records
+    match /students/{studentId} {
+      allow read, write: if signedIn();
+    }
+
+    // Schedule: examination marks
+    match /whc_marks/{marksId} {
+      allow read, write: if signedIn();
+    }
+
+    // Attendance: class list
+    match /count_classes/{classId} {
+      allow read, write: if signedIn();
+    }
+
+    // Attendance: daily counts (QR submissions come from anonymous visitors)
+    match /daily_counts/{countId} {
+      allow read: if signedIn();
+      allow create, update: if isAdmin()
+                            || (signedIn() && validCount(request.resource.data));
+      allow delete: if isAdmin();
+    }
+
+    // Attendance: site settings
+    match /count_settings/{settingId} {
+      allow read, write: if signedIn();
+    }
+
+    // Everything else, including subcollections and Backup.html scan/restore: admin only
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

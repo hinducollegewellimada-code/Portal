@@ -1,0 +1,1122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindu College TMenagement</title>
+<link rel="icon" href="Ai%20Assitant/school-logo.png">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<style>
+  :root{
+    --bg1:#0a0e1a; --bg2:#0f1729; --navy:#111a2e;
+    --glass: rgba(255,255,255,0.04);
+    --glass-b: rgba(255,255,255,0.08);
+    --accent:#3b82f6; --accent2:#06b6d4;
+    --gold:#d4af37;
+    --text:#e8ecf4; --muted:#8a93a8;
+    --danger:#ef4444; --success:#22c55e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(59,130,246,0.08), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(139,92,246,0.08), transparent 40%),
+      linear-gradient(160deg, var(--bg1), var(--bg2));
+    color:var(--text);
+    overflow-x:hidden;
+  }
+  .hidden{display:none !important;}
+
+  @keyframes fadeUp{from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);}}
+  .logo-wrap{
+    width:88px;height:88px;margin:0 auto 16px;
+    border-radius:50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700; font-size:26px; color:#fff;
+    box-shadow:0 8px 24px rgba(59,130,246,0.4);
+    overflow:hidden;
+    border:2px solid rgba(212,175,55,0.5);
+  }
+  .logo-wrap img{width:100%;height:100%;object-fit:cover;}
+  .field{margin-bottom:16px; text-align:left;}
+  .field label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:600; letter-spacing:.3px;}
+  .field input, .field select{
+    width:100%; padding:12px 14px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--glass-b);
+    border-radius:10px; color:var(--text); font-size:14px;
+    outline:none; transition:.2s;
+  }
+  .field input:focus, .field select:focus{border-color:var(--accent); background:rgba(59,130,246,0.06);}
+  .btn{
+    width:100%; padding:13px; border:none; border-radius:10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color:#fff; font-weight:600; font-size:14px; cursor:pointer;
+    transition:.2s; margin-top:6px;
+  }
+  .btn:hover{filter:brightness(1.1); transform:translateY(-1px);}
+  .btn.secondary{background:rgba(255,255,255,0.06); border:1px solid var(--glass-b);}
+  .btn.danger{background:linear-gradient(135deg,#ef4444,#b91c1c);}
+  .btn.small{width:auto; padding:8px 14px; font-size:12px;}
+  .login-toggle{display:flex; gap:8px; margin-bottom:24px; background:rgba(255,255,255,0.03); padding:4px; border-radius:10px;}
+  .login-toggle button{
+    flex:1; padding:9px; border:none; border-radius:8px; background:transparent; color:var(--muted);
+    font-size:13px; font-weight:600; cursor:pointer; transition:.2s;
+  }
+  .login-toggle button.active{background:linear-gradient(135deg, var(--accent), var(--accent2)); color:#fff;}
+
+  /* ---------- APP SHELL ---------- */
+  #appScreen{min-height:100vh;}
+  header.topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+    background:rgba(10,14,26,0.7); backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--glass-b);
+    position:sticky; top:0; z-index:50;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand .logo-wrap{width:42px;height:42px; margin:0; font-size:14px; border-width:1px;}
+  .brand-text .name{font-weight:700; font-size:15px;}
+  .brand-text .sub{font-size:11px; color:var(--muted);}
+  .user-chip{display:flex; align-items:center; gap:10px;}
+  .user-chip .role-badge{
+    font-size:11px; padding:4px 10px; border-radius:20px;
+    background:rgba(139,92,246,0.15); color:#c4b5fd; border:1px solid rgba(139,92,246,0.3);
+    font-weight:600;
+  }
+  .user-chip .role-badge.admin{background:rgba(212,175,55,0.15); color:var(--gold); border-color:rgba(212,175,55,0.35);}
+
+  main{max-width:1200px; margin:0 auto; padding:28px;}
+  .tabs{display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap;}
+  .tab{
+    padding:10px 18px; border-radius:10px; background:var(--glass); border:1px solid var(--glass-b);
+    color:var(--muted); font-size:13px; font-weight:600; cursor:pointer; transition:.2s;
+  }
+  .tab.active{background:linear-gradient(135deg, var(--accent), var(--accent2)); color:#fff; border-color:transparent;}
+  .panel{display:none; animation:fadeUp .4s ease;}
+  .panel.active{display:block;}
+
+  .card{
+    background:var(--glass); border:1px solid var(--glass-b); border-radius:16px;
+    padding:22px; margin-bottom:20px; backdrop-filter:blur(10px);
+  }
+  .card h3{font-size:15px; margin-bottom:16px; display:flex; align-items:center; gap:8px;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;}
+  @media (max-width:700px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th{text-align:left; color:var(--muted); font-weight:600; padding:10px 12px; border-bottom:1px solid var(--glass-b); font-size:11px; text-transform:uppercase; letter-spacing:.5px;}
+  td{padding:12px; border-bottom:1px solid rgba(255,255,255,0.04);}
+  tr:hover td{background:rgba(255,255,255,0.02);}
+  .pill{font-size:11px; padding:3px 10px; border-radius:20px; font-weight:600; display:inline-block;}
+  .pill.principal{background:rgba(212,175,55,0.15); color:var(--gold);}
+  .pill.vice{background:rgba(139,92,246,0.15); color:#c4b5fd;}
+  .pill.section{background:rgba(59,130,246,0.15); color:#93c5fd;}
+  .pill.teacher{background:rgba(34,197,94,0.15); color:#86efac;}
+  .row-actions{display:flex; gap:6px;}
+  .icon-btn{
+    width:30px;height:30px; border-radius:8px; border:1px solid var(--glass-b); background:rgba(255,255,255,0.03);
+    color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; transition:.2s;
+  }
+  .icon-btn:hover{background:rgba(255,255,255,0.08); color:var(--text);}
+  .icon-btn.del:hover{background:rgba(239,68,68,0.15); color:var(--danger);}
+
+  .empty-state{text-align:center; padding:40px 20px; color:var(--muted); font-size:13px;}
+  .search-bar{margin-bottom:16px;}
+  .search-bar input{max-width:320px;}
+  .cred-box{
+    background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.25);
+    border-radius:10px; padding:14px 16px; margin-top:14px; font-size:13px;
+  }
+  .cred-box b{color:var(--accent);}
+  .toast{
+    position:fixed; bottom:24px; right:24px; background:rgba(20,30,50,0.95);
+    border:1px solid var(--glass-b); padding:14px 20px; border-radius:12px; font-size:13px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4); z-index:200; animation:fadeUp .3s ease; max-width:320px;
+  }
+  .toast.success{border-color:rgba(34,197,94,0.4);}
+  .toast.error{border-color:rgba(239,68,68,0.4);}
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center; z-index:150; padding:20px;
+  }
+  .modal{
+    background:var(--navy); border:1px solid var(--glass-b); border-radius:16px; padding:26px;
+    max-width:420px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .modal h3{margin-bottom:16px;}
+  .modal-actions{display:flex; gap:10px; margin-top:20px;}
+  .chip-list{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .chip{
+    font-size:11px; background:rgba(255,255,255,0.05); border:1px solid var(--glass-b);
+    padding:4px 10px; border-radius:20px; color:var(--muted);
+  }
+  .stat-cards{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px;}
+  @media (max-width:700px){.stat-cards{grid-template-columns:1fr 1fr;}}
+  .stat-card{background:var(--glass); border:1px solid var(--glass-b); border-radius:14px; padding:18px;}
+  .stat-card .num{font-size:26px; font-weight:700;}
+  .stat-card .label{font-size:12px; color:var(--muted); margin-top:2px;}
+  ::placeholder{color:#5a6478;}
+  .spinner{
+    width:18px;height:18px; border:2px solid rgba(255,255,255,0.2); border-top-color:#fff;
+    border-radius:50%; animation:spin .7s linear infinite; display:inline-block; vertical-align:middle;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- PROFILE ---------- */
+  .avatar-circle{
+    width:34px;height:34px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#fff;font-weight:700;font-size:13px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .name-cell{display:flex;align-items:center;gap:10px;}
+  .name-cell .sub{font-size:11px;color:var(--muted);}
+  .profile-modal .modal{max-width:520px;}
+  .profile-head{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
+  .profile-head .avatar-circle{width:64px;height:64px;font-size:22px;}
+  .profile-head .p-name{font-size:17px;font-weight:700;}
+  .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin-bottom:6px;}
+  .profile-item{font-size:13px;}
+  .profile-item .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+  .profile-item .val{font-weight:600;}
+
+/* ===== WHC shared login screen (identical in Attendance, Schedule and Teacher Management) ===== */
+.whc-lg-page,.whc-lg-page *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.whc-lg-page{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));overflow-y:auto;color:#10213a;-webkit-text-size-adjust:100%;
+  background:radial-gradient(circle at 12% 8%,rgba(45,145,240,.16),transparent 32%),radial-gradient(circle at 92% 16%,rgba(32,160,90,.13),transparent 28%),linear-gradient(145deg,#f6fbff 0%,#eaf2ff 48%,#f4fff9 100%)}
+.whc-lg-page.hidden,.whc-lg-page[hidden]{display:none!important}
+.whc-lg-card{width:100%;max-width:420px;margin:auto;padding:36px 30px 28px;text-align:center;background:#fff;border:1px solid rgba(17,52,91,.08);border-radius:24px;box-shadow:0 18px 50px rgba(24,55,95,.14);animation:whcLgUp .5s ease both}
+@keyframes whcLgUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.whc-lg-logo{display:block;width:96px;height:96px;margin:0 auto 16px;object-fit:contain;padding:8px;background:#fff;border:1px solid rgba(11,79,156,.10);border-radius:24px;box-shadow:0 10px 26px rgba(11,79,156,.14)}
+.whc-lg-title{margin:0;padding:0;font-size:1.3rem;line-height:1.25;font-weight:800;letter-spacing:-.02em;color:#10213a;background:none;-webkit-text-fill-color:currentColor}
+.whc-lg-sub{margin:6px 0 22px;padding:0;font-size:.92rem;line-height:1.4;font-weight:600;color:#63738a}
+.whc-lg-alert{margin:0 0 16px;padding:11px 14px;text-align:left;font-size:.86rem;line-height:1.45;font-weight:500;color:#8f2323;background:#fdeaea;border:1px solid #f5c2c2;border-radius:12px}
+.whc-lg-alert[hidden]{display:none!important}
+.whc-lg-form{margin:0;text-align:left}
+.whc-lg-label{display:block;margin:0 0 6px;font-size:.8rem;font-weight:700;letter-spacing:.01em;color:#63738a}
+.whc-lg-input{display:block;width:100%;height:48px;margin:0 0 16px;padding:0 14px;font-size:16px;line-height:1.2;color:#10213a;background:#fff;border:1.5px solid #d5dfec;border-radius:12px;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s,box-shadow .15s}
+select.whc-lg-input{background-image:linear-gradient(45deg,transparent 50%,#63738a 50%),linear-gradient(135deg,#63738a 50%,transparent 50%);background-position:calc(100% - 20px) 21px,calc(100% - 14px) 21px;background-size:6px 6px;background-repeat:no-repeat;padding-right:36px}
+.whc-lg-input::placeholder{color:#9aa8bb}
+.whc-lg-input:focus{border-color:#0b4f9c;box-shadow:0 0 0 4px rgba(11,79,156,.14)}
+.whc-lg-pass{position:relative}
+.whc-lg-pass .whc-lg-input{padding-right:66px}
+.whc-lg-eye{position:absolute;top:0;right:4px;height:48px;padding:0 12px;font-size:.78rem;font-weight:800;color:#0b4f9c;background:none;border:0;cursor:pointer}
+.whc-lg-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;height:50px;margin:6px 0 0;padding:0 16px;font-size:1rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#0b4f9c,#0e69c4);border:0;border-radius:14px;box-shadow:0 10px 25px rgba(11,79,156,.22);cursor:pointer;transition:filter .2s,transform .2s}
+.whc-lg-btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.whc-lg-btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.whc-lg-spin{width:16px;height:16px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:whcLgSpin .7s linear infinite}
+@keyframes whcLgSpin{to{transform:rotate(360deg)}}
+.whc-lg-foot{margin:20px 0 0;text-align:center;font-size:.84rem}
+.whc-lg-foot a,.whc-lg-foot button{color:#0b4f9c;font-weight:700;text-decoration:none;background:none;border:0;padding:0;font-size:inherit;cursor:pointer}
+.whc-lg-foot a:hover,.whc-lg-foot button:hover{text-decoration:underline}
+@media (max-width:480px){.whc-lg-card{padding:28px 20px 22px;border-radius:20px}.whc-lg-logo{width:84px;height:84px}.whc-lg-title{font-size:1.15rem}}
+@media (prefers-reduced-motion:reduce){.whc-lg-card{animation:none}.whc-lg-btn{transition:none}}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="loginScreen" class="whc-lg-page">
+  <div class="whc-lg-card">
+    <img class="whc-lg-logo" src="Ai%20Assitant/school-logo.png" alt="B/Hindu College Welimada logo" width="96" height="96">
+    <h1 class="whc-lg-title">B/Hindu College Welimada</h1>
+    <p class="whc-lg-sub">Teacher Management System</p>
+    <div class="whc-lg-alert" id="loginErr" role="alert" hidden></div>
+    <form class="whc-lg-form" id="loginForm" novalidate onsubmit="event.preventDefault();doLogin()">
+      <label class="whc-lg-label" for="loginUser">Username</label>
+      <input class="whc-lg-input" id="loginUser" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Enter your username">
+      <label class="whc-lg-label" for="loginPass">Password</label>
+      <div class="whc-lg-pass"><input class="whc-lg-input" id="loginPass" type="password" autocomplete="current-password" placeholder="Enter your password"><button class="whc-lg-eye" type="button" aria-label="Show password" onclick="var i=document.getElementById('loginPass');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'Show':'Hide';this.setAttribute('aria-label',i.type==='password'?'Show password':'Hide password')">Show</button></div>
+      <button class="whc-lg-btn" id="loginBtn" type="submit">Sign in</button>
+    </form>
+    <div class="whc-lg-foot"><a href="index.html">&larr; Back to Portal</a></div>
+  </div>
+</div>
+
+<!-- ============ APP SCREEN ============ -->
+<div id="appScreen" class="hidden">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-wrap" id="logoWrapApp">WHC</div>
+      <div class="brand-text">
+        <div class="name">B/Hindu College Welimada</div>
+        <div class="sub">Teacher Management System</div>
+      </div>
+    </div>
+    <div class="user-chip">
+      <span id="currentUserName" style="font-size:13px;"></span>
+      <span class="role-badge" id="currentUserRole">Admin</span>
+      <button class="btn secondary small" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ADMIN VIEW -->
+    <div id="adminView">
+      <div class="stat-cards">
+        <div class="stat-card"><div class="num" id="statTotal">0</div><div class="label">Total Staff</div></div>
+        <div class="stat-card"><div class="num" id="statTeachers">0</div><div class="label">Teachers</div></div>
+        <div class="stat-card"><div class="num" id="statLeadership">0</div><div class="label">Leadership</div></div>
+        <div class="stat-card"><div class="num" id="statClasses">0</div><div class="label">Classes Assigned</div></div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="staffTab" onclick="switchTab('staffTab', this)">All Staff</div>
+        <div class="tab" data-tab="addTab" onclick="switchTab('addTab', this)">Add Staff</div>
+      </div>
+
+      <!-- STAFF LIST -->
+      <div class="panel active" id="staffTab">
+        <div class="card">
+          <div class="search-bar">
+            <input type="text" id="searchStaff" placeholder="Search by name or username..." oninput="renderStaffTable()">
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th><th>Role</th><th>Age</th><th>Username</th><th>Password</th><th>Class</th><th>Subject</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="staffTableBody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state hidden" id="staffEmpty">No staff records yet. Add your first staff member.</div>
+        </div>
+      </div>
+
+      <!-- ADD STAFF -->
+      <div class="panel" id="addTab">
+        <div class="card">
+          <h3>➕ Add New Staff Member</h3>
+          <div class="grid2">
+            <div class="field">
+              <label>Full Name</label>
+              <input type="text" id="newName" placeholder="e.g. Mr. K. Perera">
+            </div>
+            <div class="field">
+              <label>Role</label>
+              <select id="newRole" onchange="toggleClassSubjectFields()">
+                <option value="principal">Principal</option>
+                <option value="deputy_principal">Deputy Principal</option>
+                <option value="vice_principal">Vice Principal</option>
+                <option value="sectional_head">Sectional Head</option>
+                <option value="teacher" selected>Teacher</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid3">
+            <div class="field">
+              <label>Date of Birth</label>
+              <input type="date" id="newDob">
+            </div>
+            <div class="field">
+              <label>Gender</label>
+              <select id="newGender">
+                <option value="">— None —</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Employee / NIC No.</label>
+              <input type="text" id="newEmpId" placeholder="e.g. WHC-0042">
+            </div>
+          </div>
+
+          <div class="grid3">
+            <div class="field">
+              <label>Phone Number</label>
+              <input type="text" id="newPhone" placeholder="e.g. 077 123 4567">
+            </div>
+            <div class="field">
+              <label>Qualification</label>
+              <input type="text" id="newQualification" placeholder="e.g. BSc (Hons), PGDE">
+            </div>
+            <div class="field">
+              <label>Date Joined</label>
+              <input type="date" id="newJoinDate">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Address</label>
+            <input type="text" id="newAddress" placeholder="e.g. Welimada, Badulla">
+          </div>
+
+          <div class="grid2" id="classSubjectRow">
+            <div class="field">
+              <label>Class Teacher Of (optional)</label>
+              <select id="newClass">
+                <option value="">— None —</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Subject Taught</label>
+              <select id="newSubject">
+                <option value="">— None —</option>
+              </select>
+            </div>
+          </div>
+          <p style="font-size:11px; color:var(--muted); margin:-6px 0 14px;">
+            💡 In the Marks Schedule app: <b>Class</b> = full class teacher rights in that class (every subject).
+            <b>Subject</b> = can edit that subject's marks in every class it appears in.
+            Setting <b>both</b> stacks them — e.g. Class "Grade 11" + Subject "Maths" = full Grade 11 access
+            <i>plus</i> Maths marks in every other class too.
+          </p>
+
+          <div class="grid2">
+            <div class="field">
+              <label>Username <span style="color:var(--muted); font-weight:400;">(auto-generated, editable)</span></label>
+              <input type="text" id="newUsername" placeholder="auto">
+            </div>
+            <div class="field">
+              <label>Password <span style="color:var(--muted); font-weight:400;">(auto-generated, editable)</span></label>
+              <input type="text" id="newPassword" placeholder="auto">
+            </div>
+          </div>
+
+          <button class="btn" onclick="regenerateCreds()" style="width:auto; padding:9px 16px; background:rgba(255,255,255,0.06); border:1px solid var(--glass-b); color:var(--text); margin-right:8px;">🔄 Regenerate Username/Password</button>
+          <button class="btn" onclick="addStaff()" style="width:auto; padding:9px 22px; display:inline-block;">Save Staff Member</button>
+
+          <div class="cred-box" id="lastCreatedBox" style="display:none;">
+            <b>Account created!</b><br>
+            Share these credentials with the staff member so they can log in.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay hidden" id="editModal">
+  <div class="modal">
+    <h3>Edit Staff Member</h3>
+    <input type="hidden" id="editId">
+    <div class="field"><label>Full Name</label><input type="text" id="editName"></div>
+    <div class="field">
+      <label>Role</label>
+      <select id="editRole">
+        <option value="principal">Principal</option>
+        <option value="deputy_principal">Deputy Principal</option>
+        <option value="vice_principal">Vice Principal</option>
+        <option value="sectional_head">Sectional Head</option>
+        <option value="teacher">Teacher</option>
+      </select>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Class</label><select id="editClass"><option value="">— None —</option></select></div>
+      <div class="field"><label>Subject</label><select id="editSubject"><option value="">— None —</option></select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Date of Birth</label><input type="date" id="editDob"></div>
+      <div class="field">
+        <label>Gender</label>
+        <select id="editGender">
+          <option value="">— None —</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Employee / NIC No.</label><input type="text" id="editEmpId"></div>
+      <div class="field"><label>Phone Number</label><input type="text" id="editPhone"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Qualification</label><input type="text" id="editQualification"></div>
+      <div class="field"><label>Date Joined</label><input type="date" id="editJoinDate"></div>
+    </div>
+    <div class="field"><label>Address</label><input type="text" id="editAddress"></div>
+    <div class="grid2">
+      <div class="field"><label>Username</label><input type="text" id="editUsername"></div>
+      <div class="field"><label>Password</label><input type="text" id="editPassword"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn secondary" onclick="closeEditModal()">Cancel</button>
+      <button class="btn" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile View Modal -->
+<div class="modal-overlay hidden profile-modal" id="profileModal">
+  <div class="modal" id="profileModalBody"></div>
+</div>
+
+<script>
+/* ================= FIREBASE ================= */
+const firebaseConfig = {
+  apiKey:            "AIzaSyBh5PYhost31YBNWmr4G3sVCPxcaD2yNEY",
+  authDomain:        "whc-full-data.firebaseapp.com",
+  projectId:         "whc-full-data",
+  storageBucket:     "whc-full-data.firebasestorage.app",
+  messagingSenderId: "600680727409",
+  appId:             "1:600680727409:web:ffedf16d56098282bfecd0",
+  measurementId:     "G-YSQCY0FHP0"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const fbAuth = firebase.auth();
+fbAuth.setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(e=>console.warn("persistence", e));
+const STAFF_COL = "whc_staff"; // Firestore collection for teacher/staff records
+
+/* ================= CONSTANTS ================= */
+const ADMIN_USER = "WHC@Admin";
+/* The password is verified by Firebase Authentication (Email/Password account below),
+   so it is NOT stored in this file. See README for the one-time setup. */
+const ADMIN_EMAIL = "whc.admin@hinducollege.lk";
+const AUTH_MSG = {"empty": "Please enter your username and password.", "bad": "Incorrect username or password.", "net": "Can't reach the school database right now. Please check your connection and try again.", "setup": "Database sign-in is not set up yet. The administrator must enable Anonymous sign-in in Firebase Authentication.", "adminsetup": "The WHC@Admin account is not set up yet. The administrator must create it in Firebase Authentication (Email/Password).", "perm": "The school database refused the request. The administrator must publish the latest FireStore.rules."};
+function whcLgAlert(el,msg){ if(!el) return; if(!msg){ el.hidden=true; el.textContent=""; return; } el.hidden=false; el.textContent=msg; }
+function whcLgBusy(btn,busy,label){ if(!btn) return; if(busy){ if(!btn.dataset.label) btn.dataset.label=btn.textContent; btn.disabled=true; btn.innerHTML='<span class="whc-lg-spin"></span>'+(label||"Signing in\u2026"); } else { btn.disabled=false; btn.textContent=btn.dataset.label||"Sign in"; } }
+const ROLE_LABELS = {
+  principal: "Principal",
+  deputy_principal: "Deputy Principal",
+  vice_principal: "Vice Principal",
+  sectional_head: "Sectional Head",
+  teacher: "Teacher"
+};
+const ROLE_PILL_CLASS = {
+  principal: "principal",
+  deputy_principal: "principal",
+  vice_principal: "vice",
+  sectional_head: "section",
+  teacher: "teacher"
+};
+
+/* ================= STATE ================= */
+let staffCache = [];
+let scheduleClasses = [];   // populated from Firestore "classes" collection (same as Hindu Schedule.html)
+
+/* Subject lists — mirrors DEFAULT_SUBJECTS_9_11 / DEFAULT_SUBJECTS_6_8 used in Hindu Schedule.html (fallback only) */
+const SUBJECT_OPTIONS_9_11 = ["Religion","Tamil","English","Maths","Science","History","B1","B2","B3"];
+const SUBJECT_OPTIONS_6_8  = ["Religion","Tamil","Maths","Science","English","History","Civics","Art/Dance","PTS","Sinhala","ICT","Health","Geography"];
+let ALL_SUBJECTS = [...new Set([...SUBJECT_OPTIONS_9_11, ...SUBJECT_OPTIONS_6_8])].sort();
+
+/* ================= LOAD CLASSES FROM SCHEDULE SYSTEM ================= */
+async function loadScheduleClasses(){
+  try{
+    const snap = await db.collection("classes").get();
+    scheduleClasses = snap.docs.map(d => ({ id: d.id, name: (d.data().name || d.id) }));
+    scheduleClasses.sort((a,b)=> a.name.localeCompare(b.name));
+
+    // Aggregate subjects actually defined per-class in the schedule system (live, principal-managed)
+    const liveSubjects = new Set();
+    snap.docs.forEach(d => {
+      const subs = d.data().subjects;
+      if (Array.isArray(subs)) subs.forEach(s => s && liveSubjects.add(s));
+    });
+    if (liveSubjects.size > 0) {
+      ALL_SUBJECTS = [...liveSubjects].sort();
+    }
+  } catch(e){
+    console.error("Failed to load classes:", e);
+    scheduleClasses = [];
+  }
+  populateClassDropdown('newClass');
+  populateSubjectDropdown('newSubject');
+  populateClassDropdown('editClass');
+  populateSubjectDropdown('editSubject');
+}
+
+function populateClassDropdown(selectId){
+  const sel = document.getElementById(selectId);
+  if(!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— None —</option>';
+  if(scheduleClasses.length === 0){
+    const opt = document.createElement('option');
+    opt.value = ""; opt.textContent = "No classes found in schedule system";
+    opt.disabled = true;
+    sel.appendChild(opt);
+  } else {
+    scheduleClasses.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.name;
+      opt.textContent = c.name;
+      sel.appendChild(opt);
+    });
+  }
+  if(current) sel.value = current;
+}
+
+function populateSubjectDropdown(selectId){
+  const sel = document.getElementById(selectId);
+  if(!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— None —</option>';
+  ALL_SUBJECTS.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    sel.appendChild(opt);
+  });
+  if(current) sel.value = current;
+}
+
+/* ================= LOGO ================= */
+const LOGO_URL = "Ai%20Assitant/school-logo.png";
+document.getElementById('logoWrapApp').innerHTML = `<img src="${LOGO_URL}" alt="Logo">`;
+
+/* ================= UTIL ================= */
+function toast(msg, type="success"){
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=> t.remove(), 3200);
+}
+function slugify(name){
+  return name.trim().toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,14);
+}
+function randomPass(len=8){
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  let out = "";
+  for(let i=0;i<len;i++) out += chars[Math.floor(Math.random()*chars.length)];
+  return out;
+}
+function genUsername(name, role){
+  const base = slugify(name) || "staff";
+  const rolePrefix = {
+    principal:"princ", deputy_principal:"dep", vice_principal:"vice",
+    sectional_head:"sec", teacher:"tch"
+  }[role] || "tch";
+  const rand = Math.floor(10 + Math.random()*89);
+  return `whc.${rolePrefix}.${base}${rand}`;
+}
+
+/* ================= LOGIN =================
+   Single login only: WHC@Admin. This app has one account and does not
+   manage separate teacher/staff logins — those credentials generated
+   below (Add Staff) are for use in another web app, not for logging
+   into this one. */
+async function doLogin(){
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  const errEl = document.getElementById('loginErr');
+  const btn = document.getElementById('loginBtn');
+  whcLgAlert(errEl, "");
+
+  if(!user || !pass){ whcLgAlert(errEl, AUTH_MSG.empty); return; }
+  if(navigator.onLine === false){ whcLgAlert(errEl, AUTH_MSG.net); return; }
+  if(user.toLowerCase() !== ADMIN_USER.toLowerCase()){ whcLgAlert(errEl, AUTH_MSG.bad); return; }
+
+  whcLgBusy(btn, true);
+  try{
+    await fbAuth.signInWithEmailAndPassword(ADMIN_EMAIL, pass);
+    document.getElementById('loginPass').value = "";
+    enterApp();
+  } catch(e){
+    console.error("Admin sign-in failed:", e);
+    const c = String((e && e.code) || "");
+    whcLgAlert(errEl, /network|unavailable/.test(c) ? AUTH_MSG.net : /operation-not-allowed/.test(c) ? AUTH_MSG.adminsetup : AUTH_MSG.bad);
+  } finally {
+    whcLgBusy(btn, false);
+  }
+}
+
+function logout(){
+  fbAuth.signOut().catch(e=>console.warn("signOut", e));
+  staffCache = [];
+  document.getElementById('appScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginUser').value = "";
+  document.getElementById('loginPass').value = "";
+}
+
+function permMsg(e){
+  return /permission-denied|insufficient permissions/i.test(String((e&&(e.code||e.message))||"")) ? AUTH_MSG.perm : (e && e.message) || "Unknown error";
+}
+
+fbAuth.onAuthStateChanged(u => {
+  if(u && u.email === ADMIN_EMAIL && document.getElementById('appScreen').classList.contains('hidden')){ enterApp(); }
+});
+
+function enterApp(){
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appScreen').classList.remove('hidden');
+
+  document.getElementById('currentUserName').textContent = "WHC Admin";
+  document.getElementById('currentUserRole').textContent = "Admin";
+  document.getElementById('currentUserRole').classList.add('admin');
+  loadStaff();
+  loadScheduleClasses();
+}
+
+/* ================= TABS ================= */
+function switchTab(tabId, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+function toggleClassSubjectFields(){
+  // Class/subject relevant mainly for teachers & sectional heads, but keep open for all - optional fields
+}
+
+/* ================= ADD STAFF ================= */
+function regenerateCreds(){
+  const name = document.getElementById('newName').value.trim() || "New Staff";
+  const role = document.getElementById('newRole').value;
+  document.getElementById('newUsername').value = genUsername(name, role);
+  document.getElementById('newPassword').value = randomPass(8);
+}
+
+document.getElementById('newName').addEventListener('input', ()=>{
+  if(!document.getElementById('newUsername').value){
+    regenerateCreds();
+  }
+});
+document.getElementById('newRole').addEventListener('change', ()=>{
+  regenerateCreds();
+});
+
+async function addStaff(){
+  const name = document.getElementById('newName').value.trim();
+  const role = document.getElementById('newRole').value;
+  const className = document.getElementById('newClass').value.trim();
+  const subject = document.getElementById('newSubject').value.trim();
+  const dob = document.getElementById('newDob').value;
+  const gender = document.getElementById('newGender').value;
+  const empId = document.getElementById('newEmpId').value.trim();
+  const phone = document.getElementById('newPhone').value.trim();
+  const qualification = document.getElementById('newQualification').value.trim();
+  const joinDate = document.getElementById('newJoinDate').value;
+  const address = document.getElementById('newAddress').value.trim();
+  let username = document.getElementById('newUsername').value.trim();
+  let password = document.getElementById('newPassword').value.trim();
+
+  if(!name){ toast("Please enter the staff member's name", "error"); return; }
+  if(!username) username = genUsername(name, role);
+  if(!password) password = randomPass(8);
+
+  try{
+    const existing = await db.collection(STAFF_COL).where('username','==',username).limit(1).get();
+    if(!existing.empty){
+      toast("Username already exists, please regenerate", "error");
+      return;
+    }
+
+    await db.collection(STAFF_COL).add({
+      name, role, className, subject, username, password,
+      dob, gender, empId, phone, qualification, joinDate, address,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    toast(`Staff added: ${name}`);
+    document.getElementById('lastCreatedBox').style.display = 'block';
+    document.getElementById('lastCreatedBox').innerHTML =
+      `<b>Account created!</b><br>Username: <b>${username}</b><br>Password: <b>${password}</b><br>Share these with ${name}.`;
+
+    document.getElementById('newName').value = "";
+    document.getElementById('newClass').value = "";
+    document.getElementById('newSubject').value = "";
+    document.getElementById('newUsername').value = "";
+    document.getElementById('newPassword').value = "";
+    document.getElementById('newRole').value = "teacher";
+    document.getElementById('newDob').value = "";
+    document.getElementById('newGender').value = "";
+    document.getElementById('newEmpId').value = "";
+    document.getElementById('newPhone').value = "";
+    document.getElementById('newQualification').value = "";
+    document.getElementById('newJoinDate').value = "";
+    document.getElementById('newAddress').value = "";
+
+    loadStaff();
+  } catch(e){
+    toast("Failed to add: " + permMsg(e), "error");
+  }
+}
+
+/* ================= LOAD & RENDER STAFF ================= */
+async function loadStaff(){
+  try{
+    const snap = await db.collection(STAFF_COL).get();
+    const ms = t => (t && typeof t.toMillis === 'function') ? t.toMillis() : 0;
+    staffCache = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => ms(b.createdAt) - ms(a.createdAt));
+    renderStaffTable();
+    renderStats();
+  } catch(e){
+    console.error(e);
+    toast("Failed to load staff: " + permMsg(e), "error");
+  }
+}
+
+function renderStats(){
+  document.getElementById('statTotal').textContent = staffCache.length;
+  document.getElementById('statTeachers').textContent = staffCache.filter(s=>s.role==='teacher').length;
+  document.getElementById('statLeadership').textContent = staffCache.filter(s=>s.role!=='teacher').length;
+  document.getElementById('statClasses').textContent = staffCache.filter(s=>s.className && s.className.trim()).length;
+}
+
+function calcAge(dob){
+  if(!dob) return null;
+  const b = new Date(dob);
+  if(isNaN(b.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const m = now.getMonth() - b.getMonth();
+  if(m < 0 || (m === 0 && now.getDate() < b.getDate())) age--;
+  return age;
+}
+
+function initials(name){
+  return (name||'').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase() || '?';
+}
+
+function renderStaffTable(){
+  const search = (document.getElementById('searchStaff').value || "").toLowerCase();
+  const tbody = document.getElementById('staffTableBody');
+  const emptyEl = document.getElementById('staffEmpty');
+  tbody.innerHTML = "";
+
+  const filtered = staffCache.filter(s =>
+    (s.name||"").toLowerCase().includes(search) ||
+    (s.username||"").toLowerCase().includes(search)
+  );
+
+  if(filtered.length === 0){
+    emptyEl.classList.remove('hidden');
+    return;
+  }
+  emptyEl.classList.add('hidden');
+
+  filtered.forEach(s => {
+    const age = calcAge(s.dob);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="name-cell">
+          <div class="avatar-circle">${initials(s.name)}</div>
+          <div>
+            <div>${escapeHtml(s.name||'')}</div>
+            ${s.subject || s.qualification ? `<div class="sub">${escapeHtml(s.qualification||'')}</div>` : ''}
+          </div>
+        </div>
+      </td>
+      <td><span class="pill ${ROLE_PILL_CLASS[s.role]||'teacher'}">${ROLE_LABELS[s.role]||s.role}</span></td>
+      <td>${age!=null ? age : '—'}</td>
+      <td>${escapeHtml(s.username||'')}</td>
+      <td>${escapeHtml(s.password||'')}</td>
+      <td>${escapeHtml(s.className||'—')}</td>
+      <td>${escapeHtml(s.subject||'—')}</td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-btn" title="View Profile" onclick="openProfileModal('${s.id}')">👁</button>
+          <button class="icon-btn" title="Edit" onclick="openEditModal('${s.id}')">✎</button>
+          <button class="icon-btn del" title="Delete" onclick="deleteStaff('${s.id}','${escapeHtml(s.name||'')}')">✕</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[m]));
+}
+
+function ensureOptionExists(selectId, value){
+  if(!value) return;
+  const sel = document.getElementById(selectId);
+  if(!sel) return;
+  const exists = Array.from(sel.options).some(o => o.value === value);
+  if(!exists){
+    const opt = document.createElement('option');
+    opt.value = value; opt.textContent = value + " (custom)";
+    sel.appendChild(opt);
+  }
+}
+
+/* ================= EDIT / DELETE ================= */
+function openEditModal(id){
+  const s = staffCache.find(x=>x.id===id);
+  if(!s) return;
+  document.getElementById('editId').value = s.id;
+  document.getElementById('editName').value = s.name || '';
+  document.getElementById('editRole').value = s.role || 'teacher';
+  ensureOptionExists('editClass', s.className);
+  ensureOptionExists('editSubject', s.subject);
+  document.getElementById('editClass').value = s.className || '';
+  document.getElementById('editSubject').value = s.subject || '';
+  document.getElementById('editUsername').value = s.username || '';
+  document.getElementById('editPassword').value = s.password || '';
+  document.getElementById('editDob').value = s.dob || '';
+  document.getElementById('editGender').value = s.gender || '';
+  document.getElementById('editEmpId').value = s.empId || '';
+  document.getElementById('editPhone').value = s.phone || '';
+  document.getElementById('editQualification').value = s.qualification || '';
+  document.getElementById('editJoinDate').value = s.joinDate || '';
+  document.getElementById('editAddress').value = s.address || '';
+  document.getElementById('editModal').classList.remove('hidden');
+}
+function closeEditModal(){
+  document.getElementById('editModal').classList.add('hidden');
+}
+async function saveEdit(){
+  const id = document.getElementById('editId').value;
+  const updated = {
+    name: document.getElementById('editName').value.trim(),
+    role: document.getElementById('editRole').value,
+    className: document.getElementById('editClass').value.trim(),
+    subject: document.getElementById('editSubject').value.trim(),
+    username: document.getElementById('editUsername').value.trim(),
+    password: document.getElementById('editPassword').value.trim(),
+    dob: document.getElementById('editDob').value,
+    gender: document.getElementById('editGender').value,
+    empId: document.getElementById('editEmpId').value.trim(),
+    phone: document.getElementById('editPhone').value.trim(),
+    qualification: document.getElementById('editQualification').value.trim(),
+    joinDate: document.getElementById('editJoinDate').value,
+    address: document.getElementById('editAddress').value.trim(),
+  };
+  try{
+    await db.collection(STAFF_COL).doc(id).update(updated);
+    toast("Staff record updated");
+    closeEditModal();
+    loadStaff();
+  } catch(e){
+    toast("Update failed: " + e.message, "error");
+  }
+}
+/* ================= PROFILE VIEW ================= */
+function openProfileModal(id){
+  const s = staffCache.find(x=>x.id===id);
+  if(!s) return;
+  const age = calcAge(s.dob);
+  const body = document.getElementById('profileModalBody');
+  body.innerHTML = `
+    <div class="profile-head">
+      <div class="avatar-circle">${initials(s.name)}</div>
+      <div>
+        <div class="p-name">${escapeHtml(s.name||'')}</div>
+        <span class="pill ${ROLE_PILL_CLASS[s.role]||'teacher'}">${ROLE_LABELS[s.role]||s.role}</span>
+      </div>
+    </div>
+    <div class="profile-grid">
+      <div class="profile-item"><div class="lbl">Age</div><div class="val">${age!=null?age+' yrs':'—'}</div></div>
+      <div class="profile-item"><div class="lbl">Gender</div><div class="val">${escapeHtml(s.gender||'—')}</div></div>
+      <div class="profile-item"><div class="lbl">Date of Birth</div><div class="val">${escapeHtml(s.dob||'—')}</div></div>
+      <div class="profile-item"><div class="lbl">Date Joined</div><div class="val">${escapeHtml(s.joinDate||'—')}</div></div>
+      <div class="profile-item"><div class="lbl">Employee / NIC No.</div><div class="val">${escapeHtml(s.empId||'—')}</div></div>
+      <div class="profile-item"><div class="lbl">Phone</div><div class="val">${escapeHtml(s.phone||'—')}</div></div>
+      <div class="profile-item"><div class="lbl">Qualification</div><div class="val">${escapeHtml(s.qualification||'—')}</div></div>
+      <div class="profile-item"><div class="lbl">Address</div><div class="val">${escapeHtml(s.address||'—')}</div></div>
+      <div class="profile-item"><div class="lbl">Class</div><div class="val">${escapeHtml(s.className||'—')}</div></div>
+      <div class="profile-item"><div class="lbl">Subject</div><div class="val">${escapeHtml(s.subject||'—')}</div></div>
+      <div class="profile-item"><div class="lbl">Username</div><div class="val">${escapeHtml(s.username||'—')}</div></div>
+      <div class="profile-item"><div class="lbl">Password</div><div class="val">${escapeHtml(s.password||'—')}</div></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn secondary" onclick="closeProfileModal()">Close</button>
+      <button class="btn" onclick="closeProfileModal(); openEditModal('${s.id}')">Edit Profile</button>
+    </div>
+  `;
+  document.getElementById('profileModal').classList.remove('hidden');
+}
+function closeProfileModal(){
+  document.getElementById('profileModal').classList.add('hidden');
+}
+
+async function deleteStaff(id, name){
+  if(!confirm(`Delete ${name}? This cannot be undone.`)) return;
+  try{
+    await db.collection(STAFF_COL).doc(id).delete();
+    toast(`Deleted ${name}`);
+    loadStaff();
+  } catch(e){
+    toast("Delete failed: " + e.message, "error");
+  }
+}
+
+/* Allow Enter key to submit login */
+</script>
+
+
+<!-- RizKa AI Assistant Embed -->
+<style id="rizka-ai-embed-style">
+  #rizka-ai-launcher{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    width:58px;
+    height:58px;
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:50%;
+    background:linear-gradient(135deg,#2563eb,#06b6d4);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:100001;
+    box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 0 4px rgba(59,130,246,.12);
+    transition:transform .2s ease, box-shadow .2s ease;
+    font:700 24px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  #rizka-ai-launcher:hover{
+    transform:translateY(-2px) scale(1.04);
+    box-shadow:0 14px 34px rgba(0,0,0,.4),0 0 0 5px rgba(59,130,246,.16);
+  }
+  #rizka-ai-launcher:focus-visible{
+    outline:3px solid rgba(125,211,252,.9);
+    outline-offset:3px;
+  }
+  #rizka-ai-launcher .rizka-ai-icon{
+    width:28px;height:28px;display:grid;place-items:center;
+    border-radius:10px;background:rgba(255,255,255,.15);
+    font-size:18px;
+  }
+
+  #rizka-ai-panel{
+    position:fixed;
+    right:18px;
+    bottom:88px;
+    width:min(390px,calc(100vw - 28px));
+    height:min(620px,calc(100vh - 120px));
+    min-height:420px;
+    background:#0b1220;
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:18px;
+    overflow:hidden;
+    z-index:100000;
+    box-shadow:0 22px 70px rgba(0,0,0,.48);
+    display:none;
+    opacity:0;
+    transform:translateY(12px) scale(.98);
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  #rizka-ai-panel.rizka-ai-open{
+    display:block;
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+  #rizka-ai-panel .rizka-ai-bar{
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 10px 0 14px;
+    background:linear-gradient(135deg,rgba(15,23,42,.96),rgba(30,64,175,.9));
+    color:#fff;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    font:700 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  #rizka-ai-panel .rizka-ai-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-width:0;
+  }
+  #rizka-ai-panel .rizka-ai-title-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:#22c55e;
+    box-shadow:0 0 10px rgba(34,197,94,.7);
+    flex:none;
+  }
+  #rizka-ai-panel .rizka-ai-close{
+    width:30px;height:30px;
+    border:0;
+    border-radius:8px;
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    cursor:pointer;
+    font-size:17px;
+  }
+  #rizka-ai-panel .rizka-ai-close:hover{background:rgba(255,255,255,.16)}
+  #rizka-ai-frame{
+    width:100%;
+    height:calc(100% - 42px);
+    border:0;
+    display:block;
+    background:#0b1220;
+  }
+
+  @media (max-width:600px){
+    #rizka-ai-launcher{
+      right:14px; bottom:14px; width:54px; height:54px;
+    }
+    #rizka-ai-panel{
+      right:10px; left:10px; bottom:78px;
+      width:auto; height:min(76vh,620px);
+      min-height:400px; border-radius:16px;
+    }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    #rizka-ai-launcher,#rizka-ai-panel{transition:none}
+  }
+</style>
+
+<button id="rizka-ai-launcher" type="button" aria-label="Open AI Assistant" aria-expanded="false" title="Open AI Assistant">
+  <span class="rizka-ai-icon">✨</span>
+</button>
+
+<section id="rizka-ai-panel" aria-label="AI Assistant">
+  <div class="rizka-ai-bar">
+    <div class="rizka-ai-title">
+      <span class="rizka-ai-title-dot"></span>
+      <span>AI Assistant</span>
+    </div>
+    <button class="rizka-ai-close" type="button" aria-label="Close AI Assistant" title="Close">×</button>
+  </div>
+  <iframe
+    id="rizka-ai-frame"
+    title="Embedded AI Assistant"
+    src="https://hinducollegewellimada-code.github.io/Portal/Ai%20Assitant/index.html"
+    loading="lazy"
+    referrerpolicy="strict-origin-when-cross-origin">
+  </iframe>
+</section>
+
+<script id="rizka-ai-embed-script">
+(function(){
+  const launcher = document.getElementById("rizka-ai-launcher");
+  const panel = document.getElementById("rizka-ai-panel");
+  const closeBtn = panel && panel.querySelector(".rizka-ai-close");
+  const frame = document.getElementById("rizka-ai-frame");
+  if(!launcher || !panel || !closeBtn) return;
+
+  function setOpen(open){
+    panel.classList.toggle("rizka-ai-open", open);
+    launcher.setAttribute("aria-expanded", String(open));
+    launcher.title = open ? "Close AI Assistant" : "Open AI Assistant";
+    launcher.querySelector(".rizka-ai-icon").textContent = open ? "×" : "✨";
+    if(open && frame){
+      try { frame.focus(); } catch(e){}
+    }
+  }
+
+  launcher.addEventListener("click", function(){
+    setOpen(!panel.classList.contains("rizka-ai-open"));
+  });
+
+  closeBtn.addEventListener("click", function(){
+    setOpen(false);
+    launcher.focus();
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && panel.classList.contains("rizka-ai-open")){
+      setOpen(false);
+      launcher.focus();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

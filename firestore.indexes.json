@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "daily_counts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "classId", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
