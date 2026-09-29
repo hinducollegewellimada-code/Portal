@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b2447">
 <title>Hindu College Attendance</title>
-<link rel="icon" href="Ai Assitant/school-logo.png">
+<link rel="icon" href="Ai%20Assitant/school-logo.png">
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap");
 :root{--navy:#0b2447;--navy-2:#163a6b;--blue:#1a73d9;--blue-d:#1259ad;--sky:#e8f1fc;--paper:#f4f7fb;--card:#fff;--line:#dde5f0;--ink:#0b2447;--muted:#5b6b85;--green:#14874f;--green-bg:#e3f6ec;--red:#c93a3a;--red-bg:#fdeaea;--r-lg:18px;--r-md:12px;--shadow:0 1px 2px rgba(11,36,71,.06),0 6px 20px -8px rgba(11,36,71,.14);--font:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--serif:"Fraunces",Georgia,"Times New Roman",serif}
@@ -245,7 +245,7 @@ const firebaseConfig = {
 };
 const SCHOOL_NAME = "B/Hindu College Welimada";
 const TIMEZONE = "Asia/Colombo";
-const LOGO = "href="Ai Assitant/school-logo.png";
+const LOGO = "Ai Assitant/school-logo.png";
 const COL = { staff: "whc_staff", classes: "count_classes", counts: "daily_counts", settings: "count_settings" };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -1435,7 +1435,7 @@ route();
     title="Embedded AI Assistant"
     src="https://hinducollegewellimada-code.github.io/Portal/Ai%20Assitant/index.html"
     loading="lazy"
-    referrerpolicy="same-origin">
+    referrerpolicy="strict-origin-when-cross-origin">
   </iframe>
 </section>
 
