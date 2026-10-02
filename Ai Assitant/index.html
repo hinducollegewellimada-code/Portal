@@ -20,6 +20,8 @@
 .assistant.rich.visual-answer{width:100%;max-width:100%;padding:0;background:transparent;border:0;box-shadow:none;white-space:normal}
 .visual-panel{background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(237,242,255,.91));border:1px solid rgba(183,199,255,.8);border-radius:22px;overflow:hidden;box-shadow:0 12px 32px #4e61aa1a;backdrop-filter:blur(18px)}
 .visual-head{background:linear-gradient(115deg,#255ee5,#7352d4);color:white;padding:18px 20px;display:flex;align-items:center;gap:13px}.visual-head .visual-icon{font-size:25px;background:#ffffff30;padding:9px;border-radius:13px}.visual-head h3{color:white;margin:0;font-size:17px}.visual-head small{display:block;color:#e6eaff;font-size:12px;margin-top:3px}.visual-body{padding:17px}.visual-toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:14px}.visual-search{flex:1;min-width:150px;padding:11px 13px;border-radius:12px;border:1px solid #cbd8ff;background:#fff;font:inherit;color:#26395f}.visual-count{font-size:12px;color:#566a9a;font-weight:700}.teacher-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.teacher-card{display:flex;align-items:center;gap:10px;padding:13px 11px;border-radius:15px;background:#ffffffd9;border:1px solid #e0e8ff;min-width:0;box-shadow:0 4px 14px #5269aa0a}.teacher-avatar{width:39px;height:39px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;background:linear-gradient(145deg,#d8e8ff,#e7ddff);color:#4b57b9;font-size:19px}.teacher-grade{font-size:11px;color:#5a66b4;font-weight:750;letter-spacing:.25px}.teacher-name{font-size:13px;font-weight:750;color:#24385f;overflow-wrap:anywhere}.visual-foot{padding:12px 18px;border-top:1px solid #e1e8ff;color:#60729a;font-size:11px;background:#f7f9ff}.profile-panel{display:flex;align-items:center;gap:16px;padding:20px}.profile-avatar{width:64px;height:64px;flex-shrink:0;display:grid;place-items:center;font-size:30px;border-radius:20px;background:linear-gradient(135deg,#d5e5ff,#e8dfff)}.profile-label{font-size:12px;color:#6677a0}.profile-name{font-size:20px;color:#233c77;font-weight:800;line-height:1.3}.schedule.visual-panel{margin:0}.schedule.visual-panel .schedule-title{padding:17px 20px;font-size:16px}.schedule.visual-panel table{font-size:13px}.schedule.visual-panel td,.schedule.visual-panel th{padding:12px 15px}.answer-actions{display:flex;justify-content:flex-end;padding:10px 4px 3px}.subject-table{margin:0 15px 16px}.subject-table td{white-space:normal;overflow-wrap:anywhere}.answer-copy{border:1px solid #cbd8ff;border-radius:20px;background:#ffffffcc;color:#3757a4;font:inherit;font-size:11px;padding:7px 12px;cursor:pointer}.answer-copy:hover{background:#e9efff}@media(max-width:520px){.teacher-grid{grid-template-columns:1fr}.visual-body{padding:12px}.visual-head{padding:15px}.profile-panel{padding:15px}.profile-name{font-size:17px}}
+
+.live-now-card{display:flex;align-items:center;gap:12px;margin:12px 15px 0;padding:13px;border:1px solid #cfe0ff;border-radius:13px;background:linear-gradient(135deg,#f4f8ff,#fff);box-shadow:0 4px 14px #2755aa10}.live-now-card.live-break{border-color:#f0d99d;background:#fffaf0}.live-now-badge{font-size:10px;font-weight:850;letter-spacing:.5px;color:#245dcc;white-space:nowrap}.live-break .live-now-badge{color:#9a6411}.live-now-title{font-weight:800;color:#20375c;font-size:14px}.live-now-sub{font-size:11px;color:#647595;margin-top:3px}.live-timetable .table-wrap{margin-top:12px}.live-timetable tr.live-active td{background:#edf5ff}.live-timetable tr.live-active td:first-child{font-weight:800;color:#1558c9}
 </style>
 </head>
 <body>
@@ -29,12 +31,12 @@
 <nav class="suggestions" aria-label="Suggested questions"><button type="button" data-question="Show full timetable">📅 Full timetable</button><button type="button" data-question="5th period time">🕒 5th period</button><button type="button" data-question="Who is the principal?">🎓 Principal</button></nav><footer class="bottom"><form class="form" id="form"><textarea class="input" id="input" aria-label="Your message" placeholder="Type your message..." rows="1" maxlength="4000" required></textarea><button class="send" id="send" aria-label="Send message" type="submit"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></form><div class="foot">B/Hindu College AI Assistant · Chats are not saved</div></footer>
 </main><button class="reopen" id="reopen">💬 Open school AI chat</button>
 <script>
-// Direct browser-to-Groq mode: no Cloudflare or other backend.
-// Your API key is visible to this browser and to anyone using it; never publish a shared key.
-const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
+// AI requests use the local /api/chat proxy. Keep GROQ_API_KEY on the server, not in this HTML file.
+const GROQ_URL='/api/chat';
 const GROQ_MODEL='openai/gpt-oss-20b';
-const AI_SYSTEM='You are B/Hindu College AI Assistant. Answer school-specific questions only from the verified school knowledge supplied below. If it is missing, say it is not verified. For general educational questions, explain clearly and helpfully. Never invent school announcements, teachers, marks or student records.';
-const groqKey='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';
+const AI_SYSTEM='You are B/Hindu College AI Assistant. Answer school-specific questions only from the verified school knowledge supplied below. If it is missing, say it is not verified. For general educational questions, explain clearly and helpfully. Never invent school announcements, teachers, marks or student records. When a timetable answer is supplied by the local timetable logic, do not override it with guesses.';
+// IMPORTANT: do not put a shared Groq API key in a public HTML file. Use a backend/proxy for AI requests.
+const groqKey='';
 const form=document.getElementById('form'),input=document.getElementById('input'),send=document.getElementById('send'),chat=document.getElementById('chat');
 const history=[];let busy=false;let knowledge=[];let knowledgeReady;
 // The public school knowledge file is searched BEFORE contacting Groq.
@@ -47,8 +49,133 @@ function similar(a,b){return a===b||(a.length>=4&&b.length>=4&&distance(a,b)<= (
 function words(s){return normalize(s).split(' ').filter(Boolean);}
 const STOP=new Set(['what','when','where','which','who','how','tell','about','please','give','show','me','the','a','an','is','are','of','for','in','on','at','to','do','does','can','you','my','our','school','hindu','college','details','information','time','timing','name','who','is','what','whats']);
 function entry(id){return knowledge.find(e=>e.id===id);}
+
+// ---------- Live timetable helper ----------
+// School timetable calculations are deliberately done in the browser using the
+// school's timezone, rather than the visitor's computer timezone. Intl.DateTimeFormat
+// supports an explicit IANA timezone such as Asia/Colombo. See MDN:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+const SCHOOL_TIME_ZONE='Asia/Colombo';
+const WEEK_DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const SUBJECT_NAMES={
+  TA:'Technology & Applied Arts', ENG:'English', MA:'Mathematics', SCI:'Science',
+  SIN:'Sinhala', GEO:'Geography', COM:'Commerce', HIS:'History', REL:'Religion',
+  ICT:'ICT', LIB:'Library', HE:'Health Education', CIV:'Civics', PTS:'PTS'
+};
+function schoolNow(){
+  const parts=new Intl.DateTimeFormat('en-US',{timeZone:SCHOOL_TIME_ZONE,weekday:'long',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date());
+  const get=k=>parts.find(p=>p.type===k)?.value||'';
+  let hour=Number(get('hour')); if(hour===24)hour=0;
+  return {weekday:get('weekday'),year:Number(get('year')),month:Number(get('month')),day:Number(get('day')),hour,minute:Number(get('minute')),minutes:hour*60+Number(get('minute'))};
+}
+function minutesFromTime(text){
+  const m=String(text).trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);if(!m)return NaN;
+  let h=Number(m[1])%12;if(m[3].toUpperCase()==='PM')h+=12;return h*60+Number(m[2]);
+}
+function parseTimetableEntry(found){
+  if(!found?.id?.startsWith('timetable-grade-'))return null;
+  const days={};
+  found.content.split(/\n+/).forEach(line=>{
+    const m=line.match(/^(Monday|Tuesday|Wednesday|Thursday|Friday):\s*(.+)$/i);if(!m)return;
+    const periods={};
+    m[2].split(/,\s*/).forEach(part=>{const p=part.match(/^(\d+)\s+(.+)$/);if(p)periods[Number(p[1])]=p[2].trim();});
+    days[m[1][0].toUpperCase()+m[1].slice(1).toLowerCase()]=periods;
+  });
+  return days;
+}
+function classLabelFromEntry(found){return found?.title?.match(/Grade\s+(\d+[A-Z]?)/i)?.[1]||'';}
+function findLiveSchoolPeriod(question){
+  if(!/(\bwhat\s+(?:period|class|subject)\b.*\bnow\b|\bcurrent\s+(?:period|subject)\b|\b(?:period|subject)\s+now\b|\bwhat.?s\s+now\b)/i.test(question))return null;
+  const n=schoolNow();
+  return {id:'live-school-period',category:'Timetable',title:'Current School Period',content:'',schoolNow:n};
+}
+function liveSchoolPeriodHTML(){
+  const now=schoolNow(),info=currentPeriodInfo(now);
+  const timeText=new Intl.DateTimeFormat('en-US',{timeZone:SCHOOL_TIME_ZONE,hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true}).format(new Date());
+  const dateText=new Intl.DateTimeFormat('en-GB',{timeZone:SCHOOL_TIME_ZONE,weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());
+  let title,sub,badge;
+  if(info.state==='period'){badge='● NOW';title=info.slot.label;sub=info.slot.start+' – '+info.slot.end;}
+  else if(info.state==='interval'){badge='☕ BREAK';title='Interval';sub='10:30 AM – 10:50 AM';}
+  else if(info.state==='before'){badge='⌚ BEFORE SCHOOL';title='School has not started';sub='1st Period starts at 7:50 AM';}
+  else {badge='✓ SCHOOL ENDED';title='No current period';sub='8th Period ended at 1:30 PM';}
+  return '<section class="visual-panel live-timetable"><div class="visual-head"><span class="visual-icon">🕒</span><div><h3>Current School Time</h3><small>'+escapeHTML(dateText)+' · '+escapeHTML(timeText)+' · Asia/Colombo</small></div></div><div class="live-now-card"><div class="live-now-badge">'+badge+'</div><div><div class="live-now-title">'+escapeHTML(title)+'</div><div class="live-now-sub">'+escapeHTML(sub)+'</div></div></div><div class="schedule-note">The current period is calculated from the school timetable using Asia/Colombo time.</div></section>';
+}
+
+function findClassTimetable(question){
+  const w=words(question),q=w.join(' ');
+  const match=q.match(/\b(?:grade|class|std|standard|grde)\s*0*(1[0-3]|[1-9])\s*([abe])?\b/)
+    ||q.match(/\b0*(1[0-3]|[1-9])\s*([abe])\b/);
+  if(!match)return null;
+  const grade=String(Number(match[1])),section=(match[2]||'').toLowerCase();
+  const candidates=knowledge.filter(e=>e.id?.startsWith('timetable-grade-'));
+  const found=candidates.find(e=>{
+    const label=classLabelFromEntry(e),m=label.match(/^(\d+)([A-Z]?)$/i);if(!m||String(Number(m[1]))!==grade)return false;
+    return section ? (m[2]||'').toLowerCase()===section : true;
+  });
+  if(!found)return null;
+  const wantsNow=/(^|\s)(now|currently|current|right\s+now|today.?s?\s+current)(\s|$)/i.test(question)
+    ||/\bcurrent\s+(?:period|subject)\b/i.test(question)
+    ||/\bwhat\s+(?:period|subject)\b/i.test(question)&&/(now|today|currently)/i.test(question);
+  const wantsToday=/\btoday\b/i.test(question)||wantsNow;
+  const periodMatch=q.match(/\b(?:period|prd|perod|piriod)\s*([1-8])\b/)
+    ||q.match(/\b([1-8])(?:st|nd|rd|th)\s+period\b/);
+  const dayMatch=['monday','tuesday','wednesday','thursday','friday'].find(d=>q.includes(d));
+  if(wantsNow||wantsToday||periodMatch||dayMatch||/\btimetable\b|\bschedule\b|\bperiods?\b|\bsubject\b/i.test(question))return {found,gradeLabel:classLabelFromEntry(found),days:parseTimetableEntry(found),wantsNow,wantsToday,period:periodMatch?Number(periodMatch[1]):null,day:dayMatch?dayMatch[0][0].toUpperCase()+dayMatch[0].slice(1):null};
+  return null;
+}
+function readableSubject(code){
+  const exact=SUBJECT_NAMES[code];
+  if(exact)return exact+' ('+code+')';
+  return code;
+}
+function currentPeriodInfo(now){
+  const slots=PERIOD_TIMES.map((r,i)=>({index:i<4?i+1:i,number:i<4?i+1:i,label:r[0],start:r[1],end:r[2],startMin:minutesFromTime(r[1]),endMin:minutesFromTime(r[2])}));
+  const current=slots.find(x=>now.minutes>=x.startMin&&now.minutes<x.endMin);
+  if(current)return {state:'period',slot:current};
+  const interval=slots.find(x=>x.label==='Interval');
+  if(now.minutes>=interval.startMin&&now.minutes<interval.endMin)return {state:'interval',slot:interval};
+  if(now.minutes<slots[0].startMin)return {state:'before',slot:slots[0]};
+  return {state:'after',slot:slots[slots.length-1]};
+}
+function timetableAnswerData(info){
+  const now=schoolNow(),day=info.day||now.weekday,periodInfo=currentPeriodInfo(now);
+  const periods=info.days[day]||{};
+  const selectedPeriod=info.period||((info.wantsNow&&periodInfo.state==='period')?periodInfo.slot.number:null);
+  const subject=selectedPeriod?periods[selectedPeriod]:null;
+  return {now,day,periodInfo,periods,selectedPeriod,subject};
+}
+function liveTimetableHTML(info){
+  const data=timetableAnswerData(info),label=info.gradeLabel,day=data.day;
+  const isToday=day===data.now.weekday;
+  const timeText=new Intl.DateTimeFormat('en-US',{timeZone:SCHOOL_TIME_ZONE,hour:'numeric',minute:'2-digit',hour12:true}).format(new Date());
+  const dateText=new Intl.DateTimeFormat('en-GB',{timeZone:SCHOOL_TIME_ZONE,weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());
+  let status='';
+  if(isToday&&data.periodInfo.state==='period'){
+    const s=data.subject?readableSubject(data.subject):'Not listed';
+    status='<div class="live-now-card"><div class="live-now-badge">● NOW</div><div><div class="live-now-title">Period '+data.periodInfo.slot.number+' · '+escapeHTML(s)+'</div><div class="live-now-sub">'+escapeHTML(data.periodInfo.slot.start)+' – '+escapeHTML(data.periodInfo.slot.end)+'</div></div></div>';
+  }else if(isToday&&data.periodInfo.state==='interval'){
+    status='<div class="live-now-card live-break"><div class="live-now-badge">☕ BREAK</div><div><div class="live-now-title">Interval</div><div class="live-now-sub">10:30 AM – 10:50 AM</div></div></div>';
+  }else if(isToday&&data.periodInfo.state==='before'){
+    status='<div class="live-now-card"><div class="live-now-badge">⌚ BEFORE SCHOOL</div><div><div class="live-now-title">School starts at 7:50 AM</div><div class="live-now-sub">Current time: '+escapeHTML(timeText)+'</div></div></div>';
+  }else if(isToday&&data.periodInfo.state==='after'){
+    status='<div class="live-now-card"><div class="live-now-badge">✓ SCHOOL ENDED</div><div><div class="live-now-title">No current period</div><div class="live-now-sub">The timetable ends at 1:30 PM</div></div></div>';
+  }else if(!['Monday','Tuesday','Wednesday','Thursday','Friday'].includes(day)){
+    status='<div class="live-now-card"><div class="live-now-badge">📅 NO SCHOOL DAY</div><div><div class="live-now-title">Weekend timetable</div><div class="live-now-sub">No regular class timetable is listed for '+escapeHTML(day)+'.</div></div></div>';
+  }
+  const rows=Object.keys(data.periods).sort((a,b)=>Number(a)-Number(b)).map(p=>{
+    const r=PERIOD_TIMES[Number(p)-1+(Number(p)>4?1:0)];
+    const active=isToday&&data.periodInfo.state==='period'&&data.periodInfo.slot.number===Number(p);
+    return '<tr'+(active?' class="live-active"':'')+'><td><span class="period-pill">'+p+'</span> '+escapeHTML(r?.[0]||('Period '+p))+'</td><td>'+escapeHTML(r?.[1]||'')+' – '+escapeHTML(r?.[2]||'')+'</td><td><strong>'+escapeHTML(readableSubject(data.periods[p]))+'</strong></td></tr>';
+  }).join('');
+  return '<section class="visual-panel live-timetable"><div class="visual-head"><span class="visual-icon">🕒</span><div><h3>Grade '+escapeHTML(label)+' Live Timetable</h3><small>'+escapeHTML(dateText)+' · '+escapeHTML(timeText)+' · Asia/Colombo</small></div></div>'+status+'<div class="table-wrap subject-table"><table><thead><tr><th>Period</th><th>Time</th><th>Subject</th></tr></thead><tbody>'+rows+'</tbody></table></div><div class="schedule-note">'+(isToday?'Today: '+escapeHTML(day)+' · ':'Selected day: '+escapeHTML(day)+' · ')+'Live period is highlighted when school is in session.</div></section>';
+}
+
 function findKnowledge(question){
  const w=words(question),q=w.join(' ');if(!q)return null;
+ const live=findClassTimetable(question);
+ if(live)return {id:'live-timetable-'+live.found.id,category:'Timetable',title:'Live '+live.gradeLabel+' Timetable',content:live.found.content,liveTimetable:live};
+ const liveSchool=findLiveSchoolPeriod(question);
+ if(liveSchool)return liveSchool;
  // Accept grade 09A, grade 9 A, class 9B, 09A teacher and ordinary grade 11.
  const teacherIntent=w.some(x=>['teacher','teachers','techer','teachr'].some(y=>similar(x,y)));
  const headIntent=w.some(x=>['sectional','section','head'].some(y=>similar(x,y)));
@@ -184,6 +311,8 @@ function answerHTML(answer,found){
  if(found?.id?.startsWith('class-teacher-sections-'))return teacherSectionsHTML(found);
  if(/^class-teacher-/.test(found?.id||''))return teacherProfileHTML(found);
  if(found&&(/principal|sectional-head/.test(found.id)))return leadershipProfileHTML(found);
+ if(found?.liveTimetable)return liveTimetableHTML(found.liveTimetable);
+ if(found?.id==='live-school-period')return liveSchoolPeriodHTML();
  if(found?.id==='timetable-full')return scheduleHTML();
  if(found?.id==='interval'||/^period-[1-8]$/.test(found?.id||'')){const r=found.id==='interval'?PERIOD_TIMES[4]:PERIOD_TIMES[Number(found.id.split('-')[1])>4?Number(found.id.split('-')[1]):Number(found.id.split('-')[1])-1];return '<div class="time-card'+(found.id==='interval'?' break-card':'')+'"><div class="time-card-label">'+(found.id==='interval'?'☕':'🕒')+' '+escapeHTML(r[0])+'</div><div class="time-card-value">'+r[1]+' – '+r[2]+'</div></div>';}
  return markdown(answer);
@@ -192,10 +321,10 @@ function bubble(text,role,found){const el=document.createElement('div');el.class
 async function submitQuestion(text){text=text.trim();if(!text||busy)return;busy=true;send.disabled=true;input.value='';document.getElementById('welcome')?.remove();bubble(text,'user');history.push({role:'user',content:text});const pending=bubble('Searching school knowledge…','assistant');pending.classList.add('typing');pending.innerHTML='<span class="typing-dots" role="status" aria-label="Thinking"><i></i><i></i><i></i></span>';try{
 const loaded=await knowledgeReady;const found=findKnowledge(text);
 if(found){const answer=found.content;pending.classList.remove('typing');if(visualAnswer(found))pending.classList.add('visual-answer');pending.innerHTML=answerHTML(answer,found);decorateAnswer(pending,found);history.push({role:'assistant',content:answer});}
-else {if(!loaded && /\b(teacher|principal|sectional|grade|class|timetable|period)\b/i.test(text)){pending.classList.remove('typing');pending.textContent='School knowledge could not be loaded. Please check that knowledge.json is published beside index.html and refresh the page.';history.pop();return;}pending.innerHTML='<span class="typing-dots" role="status" aria-label="Thinking"><i></i><i></i><i></i></span>';if(!groqKey || groqKey==='PASTE_YOUR_GROQ_API_KEY_HERE')throw Error('Replace PASTE_YOUR_GROQ_API_KEY_HERE in the HTML code with your Groq API key.');
+else {if(!loaded && /\b(teacher|principal|sectional|grade|class|timetable|period)\b/i.test(text)){pending.classList.remove('typing');pending.textContent='School knowledge could not be loaded. Please check that knowledge.json is published beside index.html and refresh the page.';history.pop();return;}pending.innerHTML='<span class="typing-dots" role="status" aria-label="Thinking"><i></i><i></i><i></i></span>';
 const schoolContext=loaded?knowledge.map(e=>({title:e.title,content:e.content})):[];
 const messages=[{role:'system',content:AI_SYSTEM+'\nVerified school knowledge (public information only): '+JSON.stringify(schoolContext).slice(0,28000)},...history.slice(-10)];
-const res=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},body:JSON.stringify({model:GROQ_MODEL,messages,max_completion_tokens:1024})});const data=await res.json();if(!res.ok)throw Error(typeof data.error==='string'?data.error:data.error?.message||'Request failed');const answer=data.choices?.[0]?.message?.content;if(typeof answer!=='string'||!answer.trim())throw Error('Empty AI response');pending.classList.remove('typing');pending.innerHTML=answerHTML(answer);decorateAnswer(pending,null);history.push({role:'assistant',content:answer});}
+const res=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:GROQ_MODEL,messages,max_completion_tokens:1024})});const data=await res.json();if(!res.ok)throw Error(typeof data.error==='string'?data.error:data.error?.message||'Request failed');const answer=data.choices?.[0]?.message?.content;if(typeof answer!=='string'||!answer.trim())throw Error('Empty AI response');pending.classList.remove('typing');pending.innerHTML=answerHTML(answer);decorateAnswer(pending,null);history.push({role:'assistant',content:answer});}
 }catch(err){pending.classList.remove('typing');const fallback=findKnowledge(text);if(visualAnswer(fallback))pending.classList.add('visual-answer');pending.innerHTML=fallback?answerHTML(fallback.content,fallback):markdown('AI Brain unavailable: '+(err instanceof TypeError?'Direct browser request blocked or network unavailable. Groq may require a backend.':String(err.message||err))); if(fallback)decorateAnswer(pending,fallback);if(fallback)history.push({role:'assistant',content:fallback.content});else history.pop();console.error('Chat request failed:',err);}finally{busy=false;send.disabled=false;input.focus();chat.scrollTop=chat.scrollHeight;}}
 form.addEventListener('submit',e=>{e.preventDefault();submitQuestion(input.value);});
 document.querySelectorAll('[data-question]').forEach(btn=>btn.addEventListener('click',()=>submitQuestion(btn.dataset.question)));
