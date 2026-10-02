@@ -270,7 +270,7 @@
         "all grade teachers",
         "who are the class teachers"
       ],
-      "content": "B/Hindu College – Class Teachers\n\nGrade 1 – Mrs. Thusyanthi\nGrade 2 – Mrs. Kalaimalar\nGrade 3 – Mrs. Pavithra\nGrade 4 – Mrs. Vijayamala\nGrade 5 – Mrs. Vijithakumari\nGrade 6 – Mrs. Dharshini\nGrade 6E – Mrs. Vinopriya\nGrade 7A – Mrs. Hasriya\nGrade 7B – Mrs. Shobika\nGrade 7E – Mrs. Sanjeevani\nGrade 8A – Mr. Stanly Thilagarthnam\nGrade 8B – Mrs. Fazmila\nGrade 9A – Mr. Rameshraja\nGrade 9B – Mrs. Manohara\nGrade 10A – Mr. Bernad\nGrade 10B – Mrs. Silmy\nGrade 11 – Mrs. Pushparani\nGrade 12 – Mrs. Sivaranjani\nGrade 13 – Mr. Sivakumar"
+      "content": "B/Hindu College – Class Teachers\n\nGrade 1 – Mrs. Thusyanthi\nGrade 2 – Mrs. Kalaimalar\nGrade 3 – Mrs. Pavithra\nGrade 4 – Mrs. Vijayamala\nGrade 5 – Mrs. Vijithakumari\nGrade 6 – Mrs. Dharshini\nGrade 6E – Mrs. Vinopriya\nGrade 7A – Mrs. Hasriya\nGrade 7B – Mrs. Shobika\nGrade 7E – Mrs. Sanjeevani\nGrade 8A – Mr. Stanly Thilagarathnam\nGrade 8B – Mrs. Fazmila\nGrade 9A – Mr. Rameshraja\nGrade 9B – Mrs. Manohara\nGrade 10A – Mr. Bernad\nGrade 10B – Mrs. Silmy\nGrade 11 – Mrs. Pushparani\nGrade 12 – Mrs. Sivaranjani\nGrade 13 – Mr. Sivakumar"
     },
     {
       "id": "class-teacher-1",
@@ -433,9 +433,9 @@
         "who teaches grade 8A",
         "who is the class teacher of 8A",
         "8A class teacher",
-        "Mr Stanly Thilagarthnam"
+        "Mr Stanly Thilagarathnam"
       ],
-      "content": "The Grade 8A class teacher of B/Hindu College is Mr. Stanly Thilagarthnam."
+      "content": "The Grade 8A class teacher of B/Hindu College is Mr. Stanly Thilagarathnam."
     },
     {
       "id": "class-teacher-8b",
@@ -595,7 +595,7 @@
         "grade boundaries",
         "examination grades"
       ],
-      "content": "The Marks Schedule system displays marks using these ranges:\n\n75–100: A\n60–below 75: B\n45–below 60: C\nAbove 35 and below 45: S\n35 or below: W\nAb: Absent"
+      "content": "The Marks Schedule system displays marks using these ranges:\n\n75–100: A\n60–74: B\n45–59: C\n36–44: S\n0–35: W\nAb: Absent"
     },
     {
       "id": "system-login-marks",
@@ -905,16 +905,354 @@
         "teacher account password",
         "forgot staff login"
       ],
-      "content": "The supplied systems do not show a documented self-service password-reset workflow. Contact the school administrator (Sudharshan Sir)responsible for Teacher Management so the staff account can be checked or updated."
+      "content": "The supplied systems do not show a documented self-service password-reset workflow. Contact the school administrator (Sudharshan Sir) responsible for Teacher Management so the staff account can be checked or updated."
     },
     {
       "id": "a8a88b04-9c04-47e5-b2cb-ea5df3eb5cc9",
       "category": "Teachers",
-      "title": "Grade 09A Subject Techers",
+      "title": "Grade 09A Subject Teachers",
       "keywords": [
-        "Grade 09A Subject Teacher"
+        "Grade 09A Subject Teachers",
+        "Grade 9A Subject Teachers",
+        "9A subject teachers",
+        "Grade 09A teachers",
+        "Grade 9A teachers",
+        "teachers by subject 9A",
+        "subject teacher list 9A",
+        "who teaches Grade 9A",
+        "9A Tamil teacher",
+        "9A Maths teacher",
+        "9A Science teacher",
+        "9A English teacher",
+        "9A ICT teacher",
+        "9A History teacher",
+        "9A Religion teacher",
+        "9A Geography teacher",
+        "9A Sinhala teacher",
+        "9A Civics teacher",
+        "9A Library teacher"
       ],
-      "content": "Subjects        -| Teachers\nTamil           -| Mrs. Jeyalatha\nMaths           -| Mrs. Pushparani\nScience         -| Mrs. Dharshini\nEnglish         -| Mrs. Sivaranjani\nArt/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma\nICT \t        -| Mrs. Jeyalatha\nPTS \t\t-| Mrs. Manohara\nHealth Science  -| Mrs. Sathiyakanthi\nHistory  \t-| Mr. Sudharshan\nReligion        -| Mrs. Shobika\nGeography       -| Mr. Rameshraja\nShinhala        -| Mr. Rameshraja\nCivics          -| Mrs. Silmy\nLibrary         -| Mrs. Jeyalatha"
+      "content": "Subjects        -| Teachers\nTamil           -| Mrs. Jeyalatha\nMaths           -| Mrs. Pushparani\nScience         -| Mrs. Dharshini\nEnglish         -| Mrs. Sivaranjani\nArt/Dance/Music -| Mrs. Hasriya/ Mrs. Manojini/ Mrs. Uma\nICT \t        -| Mrs. Jeyalatha\nPTS \t\t-| Mrs. Manohara\nHealth Science  -| Mrs. Sathiyakanthi\nHistory  \t-| Mr. Sudharshan\nReligion        -| Mrs. Shobika\nGeography       -| Mr. Rameshraja\nSinhala        -| Mr. Rameshraja\nCivics          -| Mrs. Silmy\nLibrary         -| Mrs. Jeyalatha"
+    },
+    {
+      "id": "timetable-grade-7a",
+      "category": "Timetable",
+      "title": "Grade 7A Complete Timetable",
+      "keywords": [
+        "Grade 7A timetable",
+        "7A timetable",
+        "7A Monday",
+        "7A Tuesday",
+        "7A Wednesday",
+        "7A Thursday",
+        "7A Friday",
+        "Grade 7A subjects",
+        "7A periods"
+      ],
+      "content": "Grade 7A Timetable\n\nMonday: 1 ENG, 2 MA, 3 LIB, 4 HIS, 5 SCI, 6 ICT, 7 TA, 8 GEO\nTuesday: 1 ENG, 2 ART/MUS/DAN, 3 TA, 4 REL, 5 GEO, 6 SCI, 7 MA, 8 HIS\nWednesday: 1 SIN, 2 ART/MUS/DAN, 3 TA, 4 SCI, 5 HE, 6 MA, 7 PTS, 8 ENG\nThursday: 1 ENG, 2 ART/MUS/DAN, 3 PTS, 4 CIV, 5 REL, 6 TA, 7 SCI, 8 MA\nFriday: 1 SCI, 2 SIN, 3 MA, 4 TA, 5 ENG, 6 PTS, 7 HE, 8 CIV"
+    },
+    {
+      "id": "timetable-grade-7b",
+      "category": "Timetable",
+      "title": "Grade 7B Complete Timetable",
+      "keywords": [
+        "Grade 7B timetable",
+        "7B timetable",
+        "7B Monday",
+        "7B Tuesday",
+        "7B Wednesday",
+        "7B Thursday",
+        "7B Friday",
+        "Grade 7B subjects",
+        "7B periods"
+      ],
+      "content": "Grade 7B Timetable\n\nMonday: 1 LIB, 2 TA, 3 HIS, 4 ENG, 5 GEO, 6 PTS, 7 MA, 8 SCI\nTuesday: 1 TA, 2 ART/MUS/DAN, 3 CIV, 4 PTS, 5 REL, 6 MA, 7 SCI, 8 ENG\nWednesday: 1 TA, 2 ART/MUS/DAN, 3 HE, 4 MA, 5 SIN, 6 ENG, 7 SCI, 8 CIV\nThursday: 1 TA, 2 ART/MUS/DAN, 3 ENG, 4 PTS, 5 HIS, 6 MA, 7 SIN, 8 SCI\nFriday: 1 REL, 2 GEO, 3 TA, 4 ENG, 5 ICT, 6 HE, 7 SCI, 8 MA"
+    },
+    {
+      "id": "timetable-grade-8a",
+      "category": "Timetable",
+      "title": "Grade 8A Complete Timetable",
+      "keywords": [
+        "Grade 8A timetable",
+        "8A timetable",
+        "8A Monday",
+        "8A Tuesday",
+        "8A Wednesday",
+        "8A Thursday",
+        "8A Friday",
+        "Grade 8A subjects",
+        "8A periods"
+      ],
+      "content": "Grade 8A Timetable\n\nMonday: 1 ENG, 2 LIB, 3 TA, 4 MA, 5 REL, 6 CIV, 7 SCI, 8 HE\nTuesday: 1 ENG, 2 SCI, 3 SIN, 4 TA, 5 MA, 6 GEO, 7 ART/MUS/DAN, 8 PTS\nWednesday: 1 ENG, 2 REL, 3 ART/MUS/DAN, 4 MA, 5 TA, 6 PTS, 7 HIS, 8 SCI\nThursday: 1 ENG, 2 MA, 3 TA, 4 SCI, 5 CIV, 6 PTS, 7 ICT, 8 SIN\nFriday: 1 ENG, 2 SCI, 3 HIS, 4 MA, 5 HE, 6 GEO, 7 ART/MUS/DAN, 8 TA"
+    },
+    {
+      "id": "timetable-grade-8b",
+      "category": "Timetable",
+      "title": "Grade 8B Complete Timetable",
+      "keywords": [
+        "Grade 8B timetable",
+        "8B timetable",
+        "8B Monday",
+        "8B Tuesday",
+        "8B Wednesday",
+        "8B Thursday",
+        "8B Friday",
+        "Grade 8B subjects",
+        "8B periods"
+      ],
+      "content": "Grade 8B Timetable\n\nMonday: 1 SCI, 2 SIN, 3 REL, 4 CIV, 5 PTS, 6 ENG, 7 TA, 8 MA\nTuesday: 1 SCI, 2 TA, 3 PTS, 4 MA, 5 GEO, 6 SIN, 7 ART/MUS/DAN, 8 ENG\nWednesday: 1 SCI, 2 MA, 3 ART/MUS/DAN, 4 ENG, 5 LIB, 6 ICT, 7 TA, 8 HIS\nThursday: 1 SCI, 2 REL, 3 HE, 4 TA, 5 MA, 6 ENG, 7 HIS, 8 CIV\nFriday: 1 SCI, 2 HE, 3 ENG, 4 MA, 5 PTS, 6 TA, 7 ART/MUS/DAN, 8 GEO"
+    },
+    {
+      "id": "timetable-grade-9a",
+      "category": "Timetable",
+      "title": "Grade 9A Complete Timetable",
+      "keywords": [
+        "Grade 9A timetable",
+        "9A timetable",
+        "9A Monday",
+        "9A Tuesday",
+        "9A Wednesday",
+        "9A Thursday",
+        "9A Friday",
+        "Grade 9A subjects",
+        "9A periods"
+      ],
+      "content": "Grade 9A Timetable\n\nMonday: 1 GEO, 2 SCI, 3 HE, 4 TA, 5 ART/MUS/DAN, 6 MA, 7 PTS, 8 ENG\nTuesday: 1 GEO, 2 REL, 3 ENG, 4 SCI, 5 MA, 6 CIV, 7 TA, 8 ICT\nWednesday: 1 SCI, 2 HIS, 3 PTS, 4 TA, 5 ENG, 6 ART/MUS/DAN, 7 MA, 8 LIB\nThursday: 1 SIN, 2 TA, 3 SCI, 4 MA, 5 ART/MUS/DAN, 6 HIS, 7 REL, 8 ENG\nFriday: 1 SIN, 2 CIV, 3 SCI, 4 TA, 5 MA, 6 ENG, 7 PTS, 8 HE"
+    },
+    {
+      "id": "timetable-grade-9b",
+      "category": "Timetable",
+      "title": "Grade 9B Complete Timetable",
+      "keywords": [
+        "Grade 9B timetable",
+        "9B timetable",
+        "9B Monday",
+        "9B Tuesday",
+        "9B Wednesday",
+        "9B Thursday",
+        "9B Friday",
+        "Grade 9B subjects",
+        "9B periods"
+      ],
+      "content": "Grade 9B Timetable\n\nMonday: 1 TA, 2 PTS, 3 SCI, 4 ENG, 5 ART/MUS/DAN, 6 LIB, 7 SIN, 8 MA\nTuesday: 1 TA, 2 CIV, 3 SCI, 4 ICT, 5 ENG, 6 HE, 7 MA, 8 PTS\nWednesday: 1 TA, 2 PTS, 3 SCI, 4 GEO, 5 HIS, 6 ART/MUS/DAN, 7 ENG, 8 MA\nThursday: 1 TA, 2 SCI, 3 REL, 4 GEO, 5 ART/MUS/DAN, 6 ENG, 7 HE, 8 MA\nFriday: 1 TA, 2 REL, 3 SIN, 4 ENG, 5 HIS, 6 MA, 7 CIV, 8 SCI"
+    },
+    {
+      "id": "timetable-grade-10a",
+      "category": "Timetable",
+      "title": "Grade 10A Complete Timetable",
+      "keywords": [
+        "Grade 10A timetable",
+        "10A timetable",
+        "10A Monday",
+        "10A Tuesday",
+        "10A Wednesday",
+        "10A Thursday",
+        "10A Friday",
+        "Grade 10A subjects",
+        "10A periods"
+      ],
+      "content": "Grade 10A Timetable\n\nMonday: 1 SCI, 2 ENG, 3 MA, 4 ART/MUS/DAN, 5 SIN/GEO/COM, 6 TA, 7 HIS, 8 REL\nTuesday: 1 MA, 2 TA, 3 ICT/H.SCI/HOME-SCI/BIO/AGRI, 4 MA, 5 SCI, 6 ART/MUS/DAN, 7 ENG, 8 SCI\nWednesday: 1 ENG, 2 MA, 3 MA, 4 SIN/GEO/COM, 5 SCI, 6 TA, 7 REL, 8 ICT/H.SCI/HOME-SCI/BIO/AGRI\nThursday: 1 SCI, 2 SIN/GEO/COM, 3 HIS, 4 TA, 5 LIB, 6 MA, 7 ENG, 8 REL\nFriday: 1 HIS, 2 MA, 3 ICT/H.SCI/HOME-SCI/BIO/AGRI, 4 SCI, 5 TA, 6 SCI, 7 ENG, 8 ART/MUS/DAN"
+    },
+    {
+      "id": "timetable-grade-10b",
+      "category": "Timetable",
+      "title": "Grade 10B Complete Timetable",
+      "keywords": [
+        "Grade 10B timetable",
+        "10B timetable",
+        "10B Monday",
+        "10B Tuesday",
+        "10B Wednesday",
+        "10B Thursday",
+        "10B Friday",
+        "Grade 10B subjects",
+        "10B periods"
+      ],
+      "content": "Grade 10B Timetable\n\nMonday: 1 TA, 2 ENG, 3 SCI, 4 ART/MUS/DAN, 5 SIN/GEO/COM, 6 MA, 7 MA, 8 SCI\nTuesday: 1 TA, 2 HIS, 3 ICT/H.SCI/HOME-SCI/BIO/AGRI, 4 ENG, 5 SCI, 6 ART/MUS/DAN, 7 REL, 8 MA\nWednesday: 1 TA, 2 ENG, 3 REL, 4 SIN/GEO/COM, 5 HIS, 6 SCI, 7 MA, 8 ICT/H.SCI/HOME-SCI/BIO/AGRI\nThursday: 1 TA, 2 SIN/GEO/COM, 3 SCI, 4 MA, 5 MA, 6 HIS, 7 LIB, 8 ENG\nFriday: 1 TA, 2 ENG, 3 ICT/H.SCI/HOME-SCI/BIO/AGRI, 4 SCI, 5 SCI, 6 REL, 7 MA, 8 ART/MUS/DAN"
+    },
+    {
+      "id": "timetable-grade-11",
+      "category": "Timetable",
+      "title": "Grade 11 Complete Timetable",
+      "keywords": [
+        "Grade 11 timetable",
+        "11 timetable",
+        "11 Monday",
+        "11 Tuesday",
+        "11 Wednesday",
+        "11 Thursday",
+        "11 Friday",
+        "Grade 11 subjects",
+        "11 periods"
+      ],
+      "content": "Grade 11 Timetable\n\nMonday: 1 MA, 2 HIS, 3 ENG, 4 REL, 5 TA, 6 SCI, 7 ICT/H.SCI/HOME-SCI/BIO/AGRI, 8 ART/MUS/DAN\nTuesday: 1 MA, 2 SCI, 3 REL, 4 SIN/GEO/COM, 5 ENG, 6 SCI, 7 TA, 8 ART/MUS/DAN\nWednesday: 1 MA, 2 SIN/GEO/COM, 3 SCI, 4 REL, 5 ENG, 6 HIS, 7 TA, 8 MA\nThursday: 1 MA, 2 MA, 3 ART/MUS/DAN, 4 SCI, 5 ENG, 6 SCI, 7 TA, 8 ICT/H.SCI/HOME-SCI/BIO/AGRI\nFriday: 1 MA, 2 SCI, 3 LIB, 4 ICT/H.SCI/HOME-SCI/BIO/AGRI, 5 SIN/GEO/COM, 6 TA, 7 HIS, 8 ENG"
+    },
+    {
+      "id": "timetable-grade-12arts",
+      "category": "Timetable",
+      "title": "Grade 12 Arts Complete Timetable",
+      "keywords": [
+        "Grade 12 Arts timetable",
+        "12 Arts timetable",
+        "12ARTS timetable",
+        "Grade 12ARTS",
+        "12 Arts Monday",
+        "12 Arts Tuesday",
+        "12 Arts Wednesday",
+        "12 Arts Thursday",
+        "12 Arts Friday",
+        "Grade 12 Arts subjects"
+      ],
+      "content": "Grade 12 Arts Timetable\n\nMonday: 1 GEO, 2 P.sci/Art/Dance, 3 P.sci/Art/Dance, 4 GEO, 5 TA, 6 ENG, 7 GIT, 8 —\nTuesday: 1 GEO, 2 ENG, 3 GK, 4 P.sci/Art/Dance, 5 P.sci/Art/Dance, 6 TA, 7 TA, 8 GEO\nWednesday: 1 GEO, 2 GK, 3 TA, 4 TA, 5 P.sci/Art/Dance, 6 ENG, 7 P.sci/Art/Dance, 8 GEO\nThursday: 1 GEO, 2 ENG, 3 TA, 4 TA, 5 GIT, 6 P.sci/Art/Dance, 7 P.sci/Art/Dance, 8 GEO\nFriday: 1 GEO, 2 LIB, 3 ENG, 4 GEO, 5 P.sci/Art/Dance, 6 P.sci/Art/Dance, 7 TA, 8 TA"
+    },
+    {
+      "id": "timetable-grade-13arts",
+      "category": "Timetable",
+      "title": "Grade 13 Arts Complete Timetable",
+      "keywords": [
+        "Grade 13 Arts timetable",
+        "13 Arts timetable",
+        "13ARTS timetable",
+        "Grade 13ARTS",
+        "13 Arts Monday",
+        "13 Arts Tuesday",
+        "13 Arts Wednesday",
+        "13 Arts Thursday",
+        "13 Arts Friday",
+        "Grade 13 Arts subjects"
+      ],
+      "content": "Grade 13 Arts Timetable\n\nMonday: 1 Art, 2 GEO, 3 GEO, 4 TA, 5 LIB, 6 Art, 7 ENG, 8 TA\nTuesday: 1 Art, 2 ENG, 3 Art, 4 TA, 5 GK, 6 GEO, 7 GEO, 8 TA\nWednesday: 1 GIT, 2 TA, 3 GEO, 4 Art, 5 TA, 6 ENG, 7 GEO, 8 Art\nThursday: 1 Art, 2 TA, 3 GK, 4 ENG, 5 GEO, 6 GEO, 7 TA, 8 Art\nFriday: 1 GIT, 2 Art, 3 GEO, 4 Art, 5 TA, 6 TA, 7 ENG, 8 GEO"
+    },
+    {
+      "id": "timetable-grade-6",
+      "category": "Timetable",
+      "title": "Grade 6 Complete Timetable",
+      "keywords": [
+        "Grade 6 timetable",
+        "6 timetable",
+        "6 Monday",
+        "6 Tuesday",
+        "6 Wednesday",
+        "6 Thursday",
+        "6 Friday",
+        "Grade 6 subjects",
+        "6 periods"
+      ],
+      "content": "Grade 6 Timetable\n\nMonday: 1 GEO, 2 ICT, 3 ENG, 4 PTS, 5 MA, 6 SCI, 7 REL, 8 TA\nTuesday: 1 SCI, 2 MA, 3 GEO, 4 ENG, 5 CIV, 6 TA, 7 HE, 8 SIN\nWednesday: 1 AT/MC/DCE/DMA, 2 SCI, 3 TA, 4 CIV, 5 MA, 6 SIN, 7 PTS, 8 ENG\nThursday: 1 HIS, 2 HE, 3 MA, 4 AT/MC/DCE/DMA, 5 SCI, 6 PTS, 7 ENG, 8 TA\nFriday: 1 AT/MC/DCE/DMA, 2 TA, 3 LIB, 4 HIS, 5 SCI, 6 MA, 7 REL, 8 ENG"
+    },
+    {
+      "id": "timetable-grade-6e",
+      "category": "Timetable",
+      "title": "Grade 6E Complete Timetable",
+      "keywords": [
+        "Grade 6E timetable",
+        "6E timetable",
+        "6E Monday",
+        "6E Tuesday",
+        "6E Wednesday",
+        "6E Thursday",
+        "6E Friday",
+        "Grade 6E subjects",
+        "6E periods"
+      ],
+      "content": "Grade 6E Timetable\n\nMonday: 1 MA, 2 ICT, 3 ENG, 4 PTS, 5 SCI, 6 GEO, 7 REL, 8 TA\nTuesday: 1 GEO, 2 MA, 3 SCI, 4 ENG, 5 CIV, 6 TA, 7 HE, 8 SIN\nWednesday: 1 AT/MC/DCE/DMA, 2 SCI, 3 TA, 4 CIV, 5 MA, 6 SIN, 7 PTS, 8 ENG\nThursday: 1 HIS, 2 HE, 3 MA, 4 AT/MC/DCE/DMA, 5 SCI, 6 PTS, 7 ENG, 8 TA\nFriday: 1 AT/MC/DCE/DMA, 2 TA, 3 LIB, 4 HIS, 5 MA, 6 SCI, 7 REL, 8 ENG"
+    },
+    {
+      "id": "timetable-grade-7e",
+      "category": "Timetable",
+      "title": "Grade 7E Complete Timetable",
+      "keywords": [
+        "Grade 7E timetable",
+        "7E timetable",
+        "7E Monday",
+        "7E Tuesday",
+        "7E Wednesday",
+        "7E Thursday",
+        "7E Friday",
+        "Grade 7E subjects",
+        "7E periods"
+      ],
+      "content": "Grade 7E Timetable\n\nMonday: 1 ENG, 2 HIS, 3 LIB, 4 SCI, 5 MA, 6 ICT, 7 TA, 8 GEO\nTuesday: 1 ENG, 2 ART/MUS/DAN, 3 TA, 4 REL, 5 GEO, 6 MA, 7 HIS, 8 SCI\nWednesday: 1 SIN, 2 ART/MUS/DAN, 3 TA, 4 SCI, 5 HE, 6 MA, 7 PTS, 8 ENG\nThursday: 1 ENG, 2 ART/MUS/DAN, 3 PTS, 4 CIV, 5 REL, 6 TA, 7 MA, 8 SCI\nFriday: 1 MA, 2 SIN, 3 SCI, 4 TA, 5 ENG, 6 PTS, 7 HE, 8 CIV"
+    },
+    {
+      "id": "timetable-grade-3",
+      "category": "Timetable",
+      "title": "Grade 3 Complete Timetable",
+      "keywords": [
+        "Grade 3 timetable",
+        "3 timetable",
+        "3 Monday",
+        "3 Tuesday",
+        "3 Wednesday",
+        "3 Thursday",
+        "3 Friday",
+        "Grade 3 subjects"
+      ],
+      "content": "Grade 3 Timetable\n\nMonday: 1 —, 2 —, 3 —, 4 —, 5 ENG, 6 —, 7 —, 8 —\nTuesday: 1 —, 2 SIN, 3 —, 4 ENG, 5 —, 6 —, 7 —, 8 —\nWednesday: 1 —, 2 —, 3 —, 4 —, 5 ENG, 6 —, 7 —, 8 —\nThursday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 —, 7 SIN, 8 —\nFriday: 1 —, 2 —, 3 ENG, 4 —, 5 —, 6 —, 7 —, 8 —"
+    },
+    {
+      "id": "timetable-grade-4",
+      "category": "Timetable",
+      "title": "Grade 4 Complete Timetable",
+      "keywords": [
+        "Grade 4 timetable",
+        "4 timetable",
+        "4 Monday",
+        "4 Tuesday",
+        "4 Wednesday",
+        "4 Thursday",
+        "4 Friday",
+        "Grade 4 subjects"
+      ],
+      "content": "Grade 4 Timetable\n\nMonday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 SIN, 7 ENG, 8 —\nTuesday: 1 —, 2 —, 3 —, 4 ENG, 5 —, 6 —, 7 —, 8 —\nWednesday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 —, 7 ENG, 8 —\nThursday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 ENG, 7 —, 8 —\nFriday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 ENG, 7 —, 8 SIN"
+    },
+    {
+      "id": "timetable-grade-5",
+      "category": "Timetable",
+      "title": "Grade 5 Complete Timetable",
+      "keywords": [
+        "Grade 5 timetable",
+        "5 timetable",
+        "5 Monday",
+        "5 Tuesday",
+        "5 Wednesday",
+        "5 Thursday",
+        "5 Friday",
+        "Grade 5 subjects"
+      ],
+      "content": "Grade 5 Timetable\n\nMonday: 1 —, 2 ENG, 3 —, 4 —, 5 —, 6 —, 7 —, 8 —\nTuesday: 1 ENG, 2 SIN, 3 —, 4 —, 5 —, 6 —, 7 —, 8 —\nWednesday: 1 ENG, 2 —, 3 —, 4 —, 5 —, 6 —, 7 —, 8 —\nThursday: 1 —, 2 —, 3 —, 4 ENG, 5 —, 6 —, 7 —, 8 —\nFriday: 1 —, 2 ENG, 3 —, 4 —, 5 —, 6 —, 7 SIN, 8 —"
+    },
+    {
+      "id": "timetable-grade-1",
+      "category": "Timetable",
+      "title": "Grade 1 Complete Timetable",
+      "keywords": [
+        "Grade 1 timetable",
+        "1 timetable",
+        "1 Monday",
+        "1 Tuesday",
+        "1 Wednesday",
+        "1 Thursday",
+        "1 Friday",
+        "Grade 1 subjects"
+      ],
+      "content": "Grade 1 Timetable\n\nMonday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 —, 7 —, 8 —\nTuesday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 —, 7 —, 8 ENG\nWednesday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 —, 7 —, 8 —\nThursday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 —, 7 —, 8 —\nFriday: 1 —, 2 —, 3 —, 4 —, 5 ENG, 6 —, 7 —, 8 —"
+    },
+    {
+      "id": "timetable-grade-2",
+      "category": "Timetable",
+      "title": "Grade 2 Complete Timetable",
+      "keywords": [
+        "Grade 2 timetable",
+        "2 timetable",
+        "2 Monday",
+        "2 Tuesday",
+        "2 Wednesday",
+        "2 Thursday",
+        "2 Friday",
+        "Grade 2 subjects"
+      ],
+      "content": "Grade 2 Timetable\n\nMonday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 ENG, 7 —, 8 —\nTuesday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 —, 7 —, 8 —\nWednesday: 1 —, 2 —, 3 —, 4 ENG, 5 —, 6 —, 7 —, 8 —\nThursday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 —, 7 —, 8 —\nFriday: 1 —, 2 —, 3 —, 4 —, 5 —, 6 —, 7 —, 8 —"
     }
   ]
 }
